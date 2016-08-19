@@ -32,8 +32,8 @@ namespace Test_ArkMath
 			Assert::IsTrue(def == Vec3(1, 1, 1));
 			Assert::IsFalse(def != Vec3(1, 1, 1));
 			// Eps check
-			Assert::IsTrue(def != Vec3(1.0000001, 1.0000001, 1.0000001));
-			Assert::IsTrue(def == Vec3(1.00000001, 1.00000001, 1.00000001));
+			Assert::IsTrue(def != Vec3(1.0000001f, 1.0000001f, 1.0000001f));
+			Assert::IsTrue(def == Vec3(1.00000001f, 1.00000001f, 1.00000001f));
 		}
 
 		TEST_METHOD(Addition)
@@ -46,6 +46,8 @@ namespace Test_ArkMath
 			vec += vec1;
 
 			Assert::IsTrue(vec == Vec3(3, 3, 3));
+
+			Assert::IsTrue(-Vec3(2, 2, 2) + Vec3(4, 4, 4) == Vec3(2, 2, 2));
 		}
 
 		TEST_METHOD(Subtraction)
