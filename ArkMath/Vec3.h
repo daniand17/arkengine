@@ -20,7 +20,7 @@ struct Vec3
 
 	float dot(Vec3 const & other) const { return x * other.x + y * other.y + z * other.z; }
 	Vec3 cross(Vec3 const & other) const { return Vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x); }
-	float magnitude() const { return sqrt(sqrMagnitude()); }
+	float magnitude() const { return sqrtf(sqrMagnitude()); }
 	float sqrMagnitude() const { return x * x + y * y + z * z; }
 	Vec3 normalized() const { float val = magnitude(); return Vec3(x / val, y / val, z / val); }
 

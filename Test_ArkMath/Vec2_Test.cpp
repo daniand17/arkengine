@@ -118,8 +118,6 @@ namespace Test_ArkMath
 		TEST_METHOD(Normalization)
 		{
 			Assert::IsTrue(Vec2(1, 0).normalized() == Vec2(1, 0));
-
-
 		}
 	};
 }

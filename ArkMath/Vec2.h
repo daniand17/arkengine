@@ -17,7 +17,7 @@ struct Vec2
 
 	float dot(Vec2 const & other) const { return x * other.x + y * other.y; }
 	Vec2 cross(Vec2 const & other) const {}
-	float magnitude() const { return sqrt(x * x + y * y); }
+	float magnitude() const { return sqrtf(x * x + y * y); }
 	float sqrMagnitude() const { return x * x + y * y; }
 	Vec2 normalized() const { float mag = magnitude(); return Vec2(x / mag, y / mag); }
 
