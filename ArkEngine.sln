@@ -14,6 +14,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArkMath", "ArkMath\ArkMath.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ArkMath", "Test_ArkMath\Test_ArkMath.vcxproj", "{148929DD-BCD1-4B93-9D8B-707F77FE5AEF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArkPhysics", "ArkPhysics\ArkPhysics.vcxproj", "{B794526F-75D6-463C-96A8-0995D452E4C9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2725A01E-9D3D-4B1B-B3EC-C863DFD6D240} = {2725A01E-9D3D-4B1B-B3EC-C863DFD6D240}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -60,6 +65,18 @@ Global
 		{148929DD-BCD1-4B93-9D8B-707F77FE5AEF}.Test|x64.Build.0 = Test|x64
 		{148929DD-BCD1-4B93-9D8B-707F77FE5AEF}.Test|x86.ActiveCfg = Test|Win32
 		{148929DD-BCD1-4B93-9D8B-707F77FE5AEF}.Test|x86.Build.0 = Test|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Debug|x64.ActiveCfg = Debug|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Debug|x64.Build.0 = Debug|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Debug|x86.ActiveCfg = Debug|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Debug|x86.Build.0 = Debug|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Release|x64.ActiveCfg = Release|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Release|x64.Build.0 = Release|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Release|x86.ActiveCfg = Release|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Release|x86.Build.0 = Release|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Test|x64.ActiveCfg = Release|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Test|x64.Build.0 = Release|x64
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Test|x86.ActiveCfg = Release|Win32
+		{B794526F-75D6-463C-96A8-0995D452E4C9}.Test|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

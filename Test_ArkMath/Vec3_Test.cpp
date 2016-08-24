@@ -165,5 +165,11 @@ namespace Test_ArkMath
 			Assert::IsTrue(sqrMag == 3.0f);
 			Assert::IsTrue(mag == sqrtf(sqrMag));
 		}
+
+		TEST_METHOD(Memory_Footprint_Is_12_Bytes)
+		{
+			unsigned long long siz = 12;
+			Assert::AreEqual(sizeof(Vec3), siz);
+		}
 	};
 }

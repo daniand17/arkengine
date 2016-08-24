@@ -124,5 +124,11 @@ namespace Test_ArkMath
 		{
 			Assert::IsTrue(Vec2(1, 0).normalized() == Vec2(1, 0));
 		}
+
+		TEST_METHOD(Memory_Footprint_Is_8_Bytes)
+		{
+			unsigned long long siz = 8;
+			Assert::AreEqual(sizeof(Vec2), siz);
+		}
 	};
 }
