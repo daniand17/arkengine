@@ -239,6 +239,8 @@
     </ClCompile>
     <ClCompile Include="Vec2_Test.cpp" />
     <ClCompile Include="Vec3_Test.cpp" />
+    <ClCompile Include="Vec4_Test.cpp" />
+    <ClCompile Include="Vec_Mat_Integration_Test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

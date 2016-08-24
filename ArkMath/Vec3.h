@@ -10,7 +10,7 @@ struct Vec3
 
 	Vec3() : x(0.0), y(0.0), z(0.0) {}
 	Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
-	Vec3(Vec3 & other) : x(other.x), y(other.y), z(other.z) {}
+	Vec3(Vec3 const & other) : x(other.x), y(other.y), z(other.z) {}
 
 	void operator += (Vec3 const & other) { x += other.x; y += other.y;	z += other.z; }
 	void operator -= (Vec3 const & other) { x -= other.x; y -= other.y; z -= other.z; }
@@ -26,6 +26,8 @@ struct Vec3
 
 	static Vec3 cross(Vec3 const & lhs, Vec3 const & rhs) { return Vec3(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x); }
 	static float dot(Vec3 const & lhs, Vec3 const & rhs) { return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; }
+	static const Vec3 one;
+	static const Vec3 zero;
 };
 
 bool operator == (Vec3 const & lhs, Vec3 const & rhs);

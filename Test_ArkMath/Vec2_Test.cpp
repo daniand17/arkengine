@@ -22,6 +22,12 @@ namespace Test_ArkMath
 			Assert::IsTrue(vec2 == vec1);
 		}
 
+		TEST_METHOD(Const_Static_Vecs)
+		{
+			Assert::IsTrue(Vec2::one + Vec2::one == Vec2(2.0f, 2.0f));
+			Assert::IsTrue(Vec2::one + Vec2::zero == Vec2::one);
+		}
+
 		TEST_METHOD(Assignment)
 		{
 			Vec2 vec1;
@@ -65,9 +71,8 @@ namespace Test_ArkMath
 			Assert::IsFalse(vec == Vec2(2, 2));
 			Assert::IsTrue(vec != Vec2(2, 2));
 
-			Assert::IsTrue(vec != Vec2(1.000001f, 1.000001f));
 			// Eps
-			Assert::IsTrue(vec == Vec2(1.00000001f, 1.00000001f));
+			Assert::IsTrue(vec != Vec2(1.0f + FLT_EPSILON, 1.0f + FLT_EPSILON));
 			Assert::IsTrue(vec == Vec2(1.000000001f, 1.000000001f)); // can't eval at this accuracy
 		}
 

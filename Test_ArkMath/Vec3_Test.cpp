@@ -23,6 +23,13 @@ namespace Test_ArkMath
 			// Copy constructor
 			Vec3 cpy(vec1);
 			Assert::IsTrue(cpy == vec1);
+
+		}
+
+		TEST_METHOD(Const_Static_Vecs)
+		{
+			Assert::IsTrue(Vec3::one + Vec3::one == Vec3(2.0f, 2.0f, 2.0f));
+			Assert::IsTrue(Vec3::one + Vec3::zero == Vec3::one);
 		}
 
 		TEST_METHOD(Equality)
@@ -32,7 +39,7 @@ namespace Test_ArkMath
 			Assert::IsTrue(def == Vec3(1, 1, 1));
 			Assert::IsFalse(def != Vec3(1, 1, 1));
 			// Eps check
-			Assert::IsTrue(def != Vec3(1.0000001f, 1.0000001f, 1.0000001f));
+			Assert::IsTrue(def != Vec3(1.0f + FLT_EPSILON, 1.0f + FLT_EPSILON, 1.0f + FLT_EPSILON));
 			Assert::IsTrue(def == Vec3(1.00000001f, 1.00000001f, 1.00000001f));
 		}
 

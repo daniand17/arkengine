@@ -1,3 +1,4 @@
+#pragma once
 #include <math.h>
 
 struct Vec2
@@ -22,6 +23,8 @@ struct Vec2
 	Vec2 normalized() const { float mag = magnitude(); return Vec2(x / mag, y / mag); }
 
 	static float dot(Vec2 const & lhs, Vec2 const & rhs) { return lhs.x * rhs.x + lhs.y * rhs.y; }
+	static const Vec2 zero;
+	static const Vec2 one;
 };
 
 bool operator == (Vec2 const & lhs, Vec2 const & rhs);

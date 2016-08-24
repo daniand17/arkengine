@@ -1,6 +1,8 @@
 #include <float.h>
 
 #include "Vec3.h"
+const Vec3 Vec3::one(1.0f, 1.0f, 1.0f);
+const Vec3 Vec3::zero(0.0f, 0.0f, 0.0f);
 
 bool operator==(Vec3 const & lhs, Vec3 const & rhs)
 {
