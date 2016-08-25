@@ -1,4 +1,8 @@
 #include "Vec3.h"
+#include "ArkString.h"
+
+#include <string>
+#include <iostream>
 
 int main(int argc, char ** argv) {
 
@@ -7,6 +11,10 @@ int main(int argc, char ** argv) {
 	vec.y = 1.0;
 	vec.z = 3.0;
 
+	ArkString str = "Hello world";
+
+
+	std::cout << str << std::endl;
 
 	return 0;
 }
