@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Physics.h">
+    <ClInclude Include="ArkString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rigidbody.h">
+    <ClInclude Include="..\ArkPhysics\Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Rigidbody3D.cpp">
+    <ClCompile Include="ArkString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
