@@ -3,9 +3,9 @@
 #include "Quaternion.h"
 #include "Physics.h"
 
-class Rigidbody
+class Physics::Rigidbody
 {
-
+	friend class Physics::Integrators::Rk4Integrator;
 public:
 	Vec3 position;
 	Vec3 velocity;
@@ -21,14 +21,16 @@ private: // General calculation stuff
 	Vec3 mUnresolvedForce;
 
 public:
-	Rigidbody() : 
-		mass(1.0f), 
-		drag(1.0f), 
-		angularDrag(1.0f), 
+	Rigidbody() :
+		mass(1.0f),
+		drag(1.0f),
+		angularDrag(1.0f),
 		gravityScale(1.0f),
-		velocity(Vec3::zero), 
-		angularVelocity(Vec3::zero), 
-		mUnresolvedForce(Vec3::zero) {}
+		velocity(Vec3::zero),
+		angularVelocity(Vec3::zero),
+		mUnresolvedForce(Vec3::zero)
+	{
+	}
 
 	~Rigidbody() { position = Vec3::zero; velocity = Vec3::zero; angularVelocity = Vec3::zero; }
 

@@ -2,8 +2,9 @@
 #include "CppUnitTest.h"
 
 #include "Rigidbody.h"
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace Physics;
 namespace Test_ArkPhysics
 {
 	TEST_CLASS(Rigidbody_Test)

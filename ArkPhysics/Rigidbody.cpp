@@ -1,4 +1,6 @@
+
 #include "Rigidbody.h"
+using namespace Physics;
 
 void Rigidbody::addForce(Vec3 force, Physics::ForceType forceType)
 {

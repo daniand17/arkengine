@@ -1,3 +1,4 @@
+#pragma once
 
 namespace Physics
 {
@@ -8,5 +9,15 @@ namespace Physics
 		Impulse,		// mass * distance / time
 		VelocityChange	// Distance / Time
 	};
+
+	Vec3 const gravity = Vec3(0.0f, 9.81f, 0.0f);
+
+	class Rigidbody;
+	namespace Integrators
+	{
+		struct State;
+		struct Derivative;
+		class Rk4Integrator;
+	}
 
 };
