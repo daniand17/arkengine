@@ -9,4 +9,6 @@ namespace Physics
 		VelocityChange	// Distance / Time
 	};
 
+	Vec3 const gravity = Vec3(0.0f, 9.81f, 0.0f);
+
 };

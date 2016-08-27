@@ -29,8 +29,5 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsIntegrators.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
