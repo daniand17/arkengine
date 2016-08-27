@@ -14,7 +14,6 @@ int main(int argc, char ** argv) {
 	ArkString str = "Hello world";
 
 
-	std::cout << str << std::endl;
 
 	return 0;
 }

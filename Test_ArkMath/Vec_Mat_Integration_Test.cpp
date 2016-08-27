@@ -21,7 +21,6 @@ namespace Test_ArkMath
 
 		TEST_METHOD(Vec4_Creation)
 		{
-
 			Vec4 vec;
 			Assert::IsTrue(vec == Vec4::zero);
 
@@ -32,9 +31,7 @@ namespace Test_ArkMath
 		TEST_METHOD(Mat4_Creation)
 		{
 			Mat4 mat(transformArray);
-
 			(mat * Mat4::identity() == mat);
-
 		}
 
 		TEST_METHOD(Mat_Vec_Multiply)

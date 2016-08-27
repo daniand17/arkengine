@@ -31,7 +31,7 @@ struct Vec3
 };
 
 bool operator == (Vec3 const & lhs, Vec3 const & rhs);
-bool operator != (Vec3 const & lhs, Vec3 const & rhs); 
+bool operator != (Vec3 const & lhs, Vec3 const & rhs);
 inline Vec3 operator + (Vec3 const & lhs, Vec3 const & rhs) { return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 inline Vec3 operator - (Vec3 const & lhs, Vec3 const & rhs) { return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
 inline Vec3 operator * (Vec3 const & vec, float scalar) { return Vec3(vec.x * scalar, vec.y * scalar, vec.z * scalar); }
