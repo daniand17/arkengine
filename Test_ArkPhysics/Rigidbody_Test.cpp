@@ -24,11 +24,10 @@ namespace Test_ArkPhysics
 			Assert::IsTrue(rigidbody.angularVelocity == Vec3::zero);
 		}
 
-		TEST_METHOD(SizeOf_Rigidbody_is_80_bytes) {
-
+		TEST_METHOD(SizeOf_Rigidbody_is_LT_2_Cache_Lines)
+		{
 			Rigidbody rb;
-			Assert::IsTrue(sizeof(rb) == 80);
-
+			Assert::IsTrue(128 > sizeof(rb));
 		}
 	};
 }

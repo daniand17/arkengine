@@ -2,8 +2,9 @@
 #include "Vec3.h"
 #include "Quaternion.h"
 #include "Physics.h"
+#include "Component.h"
 
-class Physics::Rigidbody
+class Physics::Rigidbody : public Component
 {
 	friend class Physics::Integrators::Rk4Integrator;
 public:

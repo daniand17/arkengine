@@ -19,5 +19,4 @@ namespace Physics
 		struct Derivative;
 		class Rk4Integrator;
 	}
-
 };

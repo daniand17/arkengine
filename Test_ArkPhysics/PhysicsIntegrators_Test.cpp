@@ -25,10 +25,11 @@ namespace Test_ArkPhysics
 			Assert::IsTrue(d.vel == Vec3::zero);
 		}
 
-		TEST_METHOD(Integrate_Unit_Velocity)
+		TEST_METHOD(Integrate_Unit_Velocity_No_Grav)
 		{
 			// An initial state with a velocity of (1, 1, 1) and a position of (0, 0, 0)
 			Rigidbody rb;
+			rb.gravityScale = 0.0f;
 			rb.velocity = Vec3(1, 0, 0);
 			rb.position = Vec3::zero;
 
@@ -48,9 +49,10 @@ namespace Test_ArkPhysics
 			Assert::IsTrue(rb.position == Vec3::one / 2);
 		}
 
-		TEST_METHOD(Integrate_Neg_Velocity)
+		TEST_METHOD(Integrate_Neg_Velocity_No_Grav)
 		{
 			Rigidbody rb;
+			rb.gravityScale = 0.0f;
 			rb.velocity = -Vec3::one;
 			rb.position = Vec3::zero;
 
@@ -61,6 +63,17 @@ namespace Test_ArkPhysics
 			
 			rk4.integrate(rb, 0.0f, 1.0f);
 			Assert::IsTrue(rb.position == Vec3::zero);
+		}
+
+		TEST_METHOD(Integrate_Rigidbody_With_Gravity)
+		{
+			Rigidbody rb;
+			float dt = 1.0f;
+			rk4.integrate(rb, 0.0f, dt);
+			//Vec3 finalPos = Vec3::zero + Vec3::zero * dt + 0.5 * Physics::gravity * dt * dt;
+
+			//Assert::IsTrue(rb.position == finalPos);
+
 		}
 	};
 }

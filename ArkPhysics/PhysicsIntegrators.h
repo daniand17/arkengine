@@ -54,19 +54,18 @@ namespace Physics::Integrators
 			Derivative output;
 			output.vel = state.vel;
 			output.accel = acceleration(state, rigidbody, dt); // maybe t + dt?
-
 			return output;
 		}
 
 		// Returns the acceleration at this time
 		Vec3 acceleration(State const & state, Rigidbody const & rigidbody, float t)
 		{
-			
+			Vec3 accel = rigidbody.mUnresolvedForce / rigidbody.mass + rigidbody.gravityScale * Physics::gravity;
 			// TODO Eventually unresolved force may go here?
 			// Need to factor in mass somehow
 			// Need to be able to calculate all acceleration forces from here
 			// TODO Eventually gravity may go here? 
-			return Vec3::zero;
+			return accel * t;
 		}
 	};
 };

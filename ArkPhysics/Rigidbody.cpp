@@ -21,5 +21,5 @@ void Rigidbody::addForce(Vec3 force, Physics::ForceType forceType)
 
 void Rigidbody::addTorque(Vec3 torque, Physics::ForceType forceType)
 {
-
+	// TODO Rigidbody::addTorque method stub
 }
