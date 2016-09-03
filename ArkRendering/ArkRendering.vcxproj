@@ -100,10 +100,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
@@ -111,10 +112,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,10 +124,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
@@ -133,10 +136,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +150,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -154,6 +158,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,7 +168,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -171,13 +176,20 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Shared.h" />
+    <ClInclude Include="VkRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Shared.cpp" />
+    <ClCompile Include="VkRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
