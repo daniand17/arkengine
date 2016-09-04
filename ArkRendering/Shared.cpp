@@ -1,4 +1,7 @@
 #include "Shared.h"
+#include "BuildOptions.h"
+
+#if BUILD_ENABLE_VULKAN_RUNTIME_DEBUG
 
 void ErrorCheck(VkResult result)
 {
@@ -71,3 +74,6 @@ void ErrorCheck(VkResult result)
 		std::exit(-1);
 	}
 }
+#else
+void ErrorCheck(VkResult) {}
+#endif // BUILD_ENABLE_VULKAN_RUNTIME_DEBUG

@@ -7,32 +7,45 @@
 #include <Windows.h>
 
 #include "VkRenderer.h"
+#include "BuildOptions.h"
+#include "ArkString.h"
 #include "Shared.h"
+#include "ArkGlobals.h"
 
-VkRenderer::VkRenderer()
+using namespace ArkConstants;
+
+VkRenderer::VkRenderer() :
+	mQueueFamilyIndex(DATA_NONE),
+	mWindow(NULL)
 {
-	_setupDebug();
-	_initInstance();
-	_initDebug();
-	_initDevice();
+	setupDebug();
+	initInstance();
+	initDebug();
+	initDevice();
 }
 
 VkRenderer::~VkRenderer()
 {
-	_deInitDevice();
-	_deInitDebug();
-	_deInitInstance();
+	deInitDevice();
+	deInitDebug();
+	deInitInstance();
 }
 
-void VkRenderer::_initInstance()
+ArkWindow const * VkRenderer::CreateArkWindow(uint32_t sizeX, uint32_t sizeY, ArkString name)
 {
-	VkApplicationInfo applicationInfo {};
-	applicationInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	applicationInfo.apiVersion			= VK_MAKE_VERSION(1, 0, 24);	// NOTE Set vk version here
-	applicationInfo.applicationVersion	= VK_MAKE_VERSION(0, 1, 0);
-	applicationInfo.pApplicationName	= "Ark Engine 0.1.0";
+	mWindow = new ArkWindow();
+	return mWindow;
+}
 
-	VkInstanceCreateInfo instanceCreateInfo {};
+void VkRenderer::initInstance()
+{
+	VkApplicationInfo applicationInfo{};
+	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 24);	// NOTE Set vk version here
+	applicationInfo.applicationVersion = VK_MAKE_VERSION(0, 1, 0);
+	applicationInfo.pApplicationName = "Ark Engine 0.1.0";
+
+	VkInstanceCreateInfo instanceCreateInfo{};
 	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.pApplicationInfo = &applicationInfo;
 	instanceCreateInfo.enabledLayerCount = mInstanceLayers.size();
@@ -44,15 +57,15 @@ void VkRenderer::_initInstance()
 	ErrorCheck(vkCreateInstance(&instanceCreateInfo, NULL /* TODO Memory alloc stuff */, &mInstance));
 }
 
-void VkRenderer::_deInitInstance()
+void VkRenderer::deInitInstance()
 {
 	vkDestroyInstance(mInstance, NULL /* TODO Memory management for VkRenderer::_DeInit*/);
 	mInstance = NULL;
 }
 
-void VkRenderer::_initDevice()
+void VkRenderer::initDevice()
 {
-	_getPhysicalDeviceAndProperties();
+	getPhysicalDeviceAndProperties();
 
 	{
 		uint32_t layerCount;
@@ -70,44 +83,63 @@ void VkRenderer::_initDevice()
 
 	float queuePriorities[]{1.0f};
 	VkDeviceQueueCreateInfo deviceQueueCreateInfo{};
-	deviceQueueCreateInfo.sType				= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	deviceQueueCreateInfo.queueFamilyIndex	= getFamilyIndex();	// which type of queue family we are going to use (can ask the GPU)
-	deviceQueueCreateInfo.queueCount		= 1;
-	deviceQueueCreateInfo.pQueuePriorities	= queuePriorities;	// Tell vk driver which queue takes priority (how much compute time per queue)
+	deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	deviceQueueCreateInfo.queueFamilyIndex = GetQueueFamilyIndex();	// which type of queue family we are going to use (can ask the GPU)
+	deviceQueueCreateInfo.queueCount = 1;
+	deviceQueueCreateInfo.pQueuePriorities = queuePriorities;	// Tell vk driver which queue takes priority (how much compute time per queue)
 
 	VkDeviceCreateInfo deviceCreateInfo{};
-	deviceCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceCreateInfo.queueCreateInfoCount	= 1;
-	deviceCreateInfo.pQueueCreateInfos		= &deviceQueueCreateInfo;
-	deviceCreateInfo.enabledLayerCount		= mDeviceExtensions.size();
-	deviceCreateInfo.ppEnabledLayerNames	= mDeviceExtensions.data();
+	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceCreateInfo.queueCreateInfoCount = 1;
+	deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
+	deviceCreateInfo.enabledLayerCount = mDeviceExtensions.size();
+	deviceCreateInfo.ppEnabledLayerNames = mDeviceExtensions.data();
 
 	ErrorCheck(vkCreateDevice(mGpu, &deviceCreateInfo, nullptr /*TODO memory allocator*/, &mDevice));
+
+	vkGetDeviceQueue(mDevice, GetQueueFamilyIndex(), 0, &mQueue);
 }
 
 
-int VkRenderer::getFamilyIndex()
+bool VkRenderer::Run()
 {
-	uint32_t familyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(mGpu, &familyCount, NULL);
-	std::vector<VkQueueFamilyProperties> familyPropertyList(familyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(mGpu, &familyCount, familyPropertyList.data());
-
-	bool found = false;
-	for ( uint32_t i = 0; i < familyCount ; i++ )
-		if ( familyPropertyList[i].queueFlags & VK_QUEUE_GRAPHICS_BIT )
-			return i;
-
-	if ( !found )
-	{
-		assert(0 && "Vulkan ERROR: Queue family supporting graphics not found.");
-		std::exit(-1);	// TODO maybe do something else with exiting?
-	}
-
-	return -1;
+	if ( mWindow )
+		return mWindow->Update();
+	
+	return true;
 }
 
-void VkRenderer::_getPhysicalDeviceAndProperties()
+int VkRenderer::GetQueueFamilyIndex()
+{
+	if ( mQueueFamilyIndex == DATA_NONE)
+	{
+
+		uint32_t familyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(mGpu, &familyCount, NULL);
+		std::vector<VkQueueFamilyProperties> familyPropertyList(familyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(mGpu, &familyCount, familyPropertyList.data());
+
+		bool found = false;
+		for ( uint32_t i = 0; i < familyCount ; i++ )
+			if ( familyPropertyList[i].queueFlags & VK_QUEUE_GRAPHICS_BIT )
+			{
+				mQueueFamilyIndex = i;
+				return mQueueFamilyIndex;
+			}
+
+		if ( !found )
+		{
+			assert(0 && "Vulkan ERROR: Queue family supporting graphics not found.");
+			std::exit(ARK_ERR);	// TODO maybe do something else with exiting?
+		}
+	}
+	else
+		return mQueueFamilyIndex;
+
+	return DATA_NONE;
+}
+
+void VkRenderer::getPhysicalDeviceAndProperties()
 {
 	uint32_t gpuCount = 0;
 	vkEnumeratePhysicalDevices(mInstance, &gpuCount, NULL);
@@ -117,16 +149,18 @@ void VkRenderer::_getPhysicalDeviceAndProperties()
 	vkGetPhysicalDeviceProperties(mGpu, &mGpuProperties);
 }
 
-void VkRenderer::_deInitDevice()
+void VkRenderer::deInitDevice()
 {
 	vkDestroyDevice(mDevice, NULL /* TODO memory management */);
 	mDevice = NULL;
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL 
+#if BUILD_ENABLE_VULKAN_DEBUG
+
+VKAPI_ATTR VkBool32 VKAPI_CALL
 VulkanDebugCallback(
-	VkDebugReportFlagsEXT		flags, 
-	VkDebugReportObjectTypeEXT	objType, 
+	VkDebugReportFlagsEXT		flags,
+	VkDebugReportObjectTypeEXT	objType,
 	uint64_t					srcObj,			// The pointer to the object
 	size_t						location,		// the line where the error occurred? 
 	int32_t						msgCode,		// related to flags
@@ -167,13 +201,13 @@ VulkanDebugCallback(
 	return false;
 }
 
-void VkRenderer::_setupDebug()
+void VkRenderer::setupDebug()
 {
 	mDebugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
 	mDebugCallbackCreateInfo.pfnCallback = VulkanDebugCallback;
 	mDebugCallbackCreateInfo.flags =
 		//VK_DEBUG_REPORT_INFORMATION_BIT_EXT |
-		VK_DEBUG_REPORT_WARNING_BIT_EXT	| 
+		VK_DEBUG_REPORT_WARNING_BIT_EXT |
 		VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
 		VK_DEBUG_REPORT_ERROR_BIT_EXT |
 		//VK_DEBUG_REPORT_DEBUG_BIT_EXT |
@@ -191,25 +225,33 @@ void VkRenderer::_setupDebug()
 	// device layers not needed here anymore
 }
 
-PFN_vkCreateDebugReportCallbackEXT fvkCreateDebugReportCallbackEXT		= NULL;
-PFN_vkDestroyDebugReportCallbackEXT fvkDestroyDebugReportCallbackEXT	= NULL;
+PFN_vkCreateDebugReportCallbackEXT fvkCreateDebugReportCallbackEXT = NULL;
+PFN_vkDestroyDebugReportCallbackEXT fvkDestroyDebugReportCallbackEXT = NULL;
 
-void VkRenderer::_initDebug()
+void VkRenderer::initDebug()
 {
-	fvkCreateDebugReportCallbackEXT		= (PFN_vkCreateDebugReportCallbackEXT)	vkGetInstanceProcAddr(mInstance, "vkCreateDebugReportCallbackEXT");
-	fvkDestroyDebugReportCallbackEXT	= (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(mInstance, "vkDestroyDebugReportCallbackEXT");
+	fvkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(mInstance, "vkCreateDebugReportCallbackEXT");
+	fvkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(mInstance, "vkDestroyDebugReportCallbackEXT");
 
 	if ( !fvkCreateDebugReportCallbackEXT || !fvkDestroyDebugReportCallbackEXT )
 	{
 		assert(0 && "Vulkan ERROR: Can't fetch debug function pointers.");
-		std::exit(-1);
+		std::exit(ARK_ERR);
 	}
 
 	fvkCreateDebugReportCallbackEXT(mInstance, &mDebugCallbackCreateInfo, NULL, &mDebugReport);
 }
 
-void VkRenderer::_deInitDebug()
+void VkRenderer::deInitDebug()
 {
 	fvkDestroyDebugReportCallbackEXT(mInstance, mDebugReport, NULL);
 	mDebugReport = NULL;
 }
+
+#else
+void VkRenderer::setupDebug() {}
+
+void VkRenderer::initDebug(){}
+
+void VkRenderer::deInitDebug() {}
+#endif // BUILD_ENABLE_VULKAN_DEBUG

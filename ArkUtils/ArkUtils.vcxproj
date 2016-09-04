@@ -175,6 +175,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ArkPhysics\Time.h" />
+    <ClInclude Include="ArkGlobals.h" />
     <ClInclude Include="ArkString.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Transform.h" />

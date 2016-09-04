@@ -1,37 +1,56 @@
 #pragma once
 #include <vector>
-#include <vulkan.h>
+#include "Platform.h"
+#include "ArkWindow.h"
+class ArkWindow;
+class ArkString;
 
 class VkRenderer
 {
 public:
 	VkRenderer();
 	~VkRenderer();
-	int getFamilyIndex();
-private:
-	void _initInstance();
-	void _deInitInstance();
 
-	void _initDevice();
-	void _deInitDevice();
-	void _getPhysicalDeviceAndProperties();
+	ArkWindow const * CreateArkWindow(uint32_t sizeX, uint32_t sizeY, ArkString name);
 
-	void _setupDebug();
-	void _initDebug();
-	void _deInitDebug();
+	bool Run();	// TODO Eventually move this out of this class
+
+
+	int GetQueueFamilyIndex();
+	VkDevice & GetDevice() { return mDevice; }
+	VkQueue & GetQueue() { return mQueue; }
 
 private:
-	VkInstance					mInstance{};
-	VkPhysicalDeviceProperties	mGpuProperties{};
-	VkPhysicalDevice			mGpu{};
-	VkDevice					mDevice{};	// TODO make sure this goes back to private
+	void initInstance();
+	void deInitInstance();
 
-	std::vector<char const *>	mInstanceLayers;
-	std::vector<char const *>	mInstanceExtensions;
+	void initDevice();
+	void deInitDevice();
+	void getPhysicalDeviceAndProperties();
 
-	std::vector<char const *>	mDeviceExtensions;
+	void setupDebug();
+	void initDebug();
+	void deInitDebug();
 
-	VkDebugReportCallbackEXT	mDebugReport{};
-	VkDebugReportCallbackCreateInfoEXT mDebugCallbackCreateInfo{};
+private:
+	VkInstance							mInstance{};
+	VkPhysicalDeviceProperties			mGpuProperties{};
+	VkPhysicalDevice					mGpu{};
+	VkDevice							mDevice{};	// TODO make sure this goes back to private
+
+	VkQueue								mQueue{};
+
+	std::vector<char const *>			mInstanceLayers;
+	std::vector<char const *>			mInstanceExtensions;
+
+	std::vector<char const *>			mDeviceExtensions;
+
+	VkDebugReportCallbackEXT			mDebugReport{};
+	VkDebugReportCallbackCreateInfoEXT	mDebugCallbackCreateInfo{};
+
+	int									mQueueFamilyIndex;
+
+	ArkWindow * mWindow;
+	
 
 };
