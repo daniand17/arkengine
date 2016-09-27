@@ -187,12 +187,14 @@
     <ClInclude Include="Platform.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shared.h" />
+    <ClInclude Include="SwapchainManager.h" />
     <ClInclude Include="VkRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkWindow.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shared.cpp" />
+    <ClCompile Include="SwapchainManager.cpp" />
     <ClCompile Include="VkRenderer.cpp" />
     <ClCompile Include="Window_win32.cpp" />
   </ItemGroup>

@@ -1,18 +1,25 @@
 #include <string>
 #include <iostream>
 
+#include "ArkEngineCore.h"
 #include "VkRenderer.h"
 #include "Shared.h"
 
 int main(int argc, char ** argv)
 {
+	ArkEngineCore engine;
+	try
+	{
+		engine.run();
+	}
+	catch ( const std::runtime_error& e )
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 
-	VkRenderer renderer;
-
-	//renderer.CreateArkWindow(512, 512, "New Ark Window");
-
-	
-	return 0;
+	engine.shutdown();
+	return EXIT_SUCCESS;
 }
 
 //VkDevice device = renderer.GetDevice();

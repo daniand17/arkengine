@@ -1,8 +1,10 @@
 #include <assert.h>
-
+#pragma comment(lib, "user32.lib")
+#pragma comment(lib, "Gdi32.lib")
 #include "ArkWindow.h"
 #include "BuildOptions.h"
 #include "Platform.h"
+#include "Shared.h"
 
 #if VK_USE_PLATFORM_WIN32_KHR
 
@@ -61,11 +63,15 @@ void ArkWindow::initOSWindow()
 	DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 
 	// Creating the window
-	RECT wr = {0, 0, LONG(mSizeX), LONG(mSizeY)};
+	RECT wr = {10, 10, LONG(mSizeX), LONG(mSizeY)};
 	AdjustWindowRectEx(&wr, style, FALSE, exStyle);	// convert size of window (increase a bit) to get the surface size we want
-	_win32_window = CreateWindow(
+
+
+	_win32_window = CreateWindowExA(
 		0,
 		_win32_class_name.c_str(),		// Class name
+		reinterpret_cast<LPCSTR>(mWindowName.c_str()),
+		// _In_opt_ LPCSTR lpClassName,	
 		style,							// window style
 		CW_USEDEFAULT, CW_USEDEFAULT,	// xy coords
 		wr.right - wr.left,				// width
@@ -78,7 +84,7 @@ void ArkWindow::initOSWindow()
 
 	if ( !_win32_window )
 	{
-		assert(1 && "Cannot create a window in which to draw!\n");
+		assert(0 && "Cannot create a window in which to draw!\n");
 		fflush(stdout);
 		std::exit(-1);
 	}
@@ -103,6 +109,15 @@ void ArkWindow::updateOSWindow()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+}
+
+void ArkWindow::initOSSurface()
+{
+	VkWin32SurfaceCreateInfoKHR createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	createInfo.hinstance = _win32_instance;
+	createInfo.hwnd		 = _win32_window;
+	ErrorCheck(vkCreateWin32SurfaceKHR(mRenderer->GetVkInstance(), &createInfo, NULL /* TODO alloc callback */, &mSurface));
 }
 
 #endif	// VK_USE_PLATFORM_WIN32_KHR

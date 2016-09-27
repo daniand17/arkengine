@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include "Platform.h"
-#include "ArkWindow.h"
+#include "ArkString.h"
+
 class ArkWindow;
-class ArkString;
 
 class VkRenderer
 {
@@ -15,10 +15,12 @@ public:
 
 	bool Run();	// TODO Eventually move this out of this class
 
-
-	int GetQueueFamilyIndex();
-	VkDevice & GetDevice() { return mDevice; }
-	VkQueue & GetQueue() { return mQueue; }
+	const int GetQueueFamilyIndex() const;
+	const VkInstance 						GetVkInstance()					const { return mInstance; }
+	const VkPhysicalDevice					GetVkPhysicalDevice()			const { return mGpu; }
+	const VkDevice							GetVkDevice()					const { return mDevice; }
+	const VkQueue							GetVkQueue()					const { return mQueue; }
+	const VkPhysicalDeviceProperties &		GetVkPhysicalDeviceProperties() const { return mGpuProperties; }
 
 private:
 	void initInstance();
@@ -31,6 +33,8 @@ private:
 	void setupDebug();
 	void initDebug();
 	void deInitDebug();
+
+	void setupLayersAndExtensions();
 
 private:
 	VkInstance							mInstance{};
@@ -48,9 +52,7 @@ private:
 	VkDebugReportCallbackEXT			mDebugReport{};
 	VkDebugReportCallbackCreateInfoEXT	mDebugCallbackCreateInfo{};
 
-	int									mQueueFamilyIndex;
+	mutable int							mQueueFamilyIndex;
 
 	ArkWindow * mWindow;
-	
-
 };

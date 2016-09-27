@@ -4,13 +4,11 @@
 #include <iostream>
 #include <sstream>
 
-#include <Windows.h>
-
 #include "VkRenderer.h"
 #include "BuildOptions.h"
-#include "ArkString.h"
 #include "Shared.h"
 #include "ArkGlobals.h"
+#include "ArkWindow.h"
 
 using namespace ArkConstants;
 
@@ -18,6 +16,7 @@ VkRenderer::VkRenderer() :
 	mQueueFamilyIndex(DATA_NONE),
 	mWindow(NULL)
 {
+	setupLayersAndExtensions();
 	setupDebug();
 	initInstance();
 	initDebug();
@@ -26,14 +25,16 @@ VkRenderer::VkRenderer() :
 
 VkRenderer::~VkRenderer()
 {
+	mWindow->Close();
 	deInitDevice();
 	deInitDebug();
 	deInitInstance();
+	delete mWindow;
 }
 
 ArkWindow const * VkRenderer::CreateArkWindow(uint32_t sizeX, uint32_t sizeY, ArkString name)
 {
-	mWindow = new ArkWindow();
+	mWindow = new ArkWindow(this, sizeX, sizeY, name);
 	return mWindow;
 }
 
@@ -67,20 +68,21 @@ void VkRenderer::initDevice()
 {
 	getPhysicalDeviceAndProperties();
 
-	{
+	{	// Instance
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, NULL);
 		std::vector<VkLayerProperties> layerPropertyList(layerCount);
 		vkEnumerateInstanceLayerProperties(&layerCount, layerPropertyList.data());
 	}
 
-	{
+	{	// Device
 		uint32_t layerCount;
 		vkEnumerateDeviceLayerProperties(mGpu, &layerCount, NULL);
 		std::vector<VkLayerProperties> layerPropertyList(layerCount);
 		vkEnumerateDeviceLayerProperties(mGpu, &layerCount, layerPropertyList.data());
 	}
 
+	// Queue
 	float queuePriorities[]{1.0f};
 	VkDeviceQueueCreateInfo deviceQueueCreateInfo{};
 	deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -88,18 +90,18 @@ void VkRenderer::initDevice()
 	deviceQueueCreateInfo.queueCount = 1;
 	deviceQueueCreateInfo.pQueuePriorities = queuePriorities;	// Tell vk driver which queue takes priority (how much compute time per queue)
 
+	// Device
 	VkDeviceCreateInfo deviceCreateInfo{};
 	deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	deviceCreateInfo.queueCreateInfoCount = 1;
 	deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
-	deviceCreateInfo.enabledLayerCount = mDeviceExtensions.size();
-	deviceCreateInfo.ppEnabledLayerNames = mDeviceExtensions.data();
+	deviceCreateInfo.enabledExtensionCount = mDeviceExtensions.size();
+	deviceCreateInfo.ppEnabledExtensionNames = mDeviceExtensions.data();
 
 	ErrorCheck(vkCreateDevice(mGpu, &deviceCreateInfo, nullptr /*TODO memory allocator*/, &mDevice));
 
 	vkGetDeviceQueue(mDevice, GetQueueFamilyIndex(), 0, &mQueue);
 }
-
 
 bool VkRenderer::Run()
 {
@@ -109,7 +111,7 @@ bool VkRenderer::Run()
 	return true;
 }
 
-int VkRenderer::GetQueueFamilyIndex()
+const int VkRenderer::GetQueueFamilyIndex() const
 {
 	if ( mQueueFamilyIndex == DATA_NONE)
 	{
@@ -195,7 +197,7 @@ VulkanDebugCallback(
 
 	std::cout << stream.str();
 
-	if ( flags & VK_DEBUG_REPORT_ERROR_BIT_EXT )
+ 	if ( flags & VK_DEBUG_REPORT_ERROR_BIT_EXT )
 		assert(0, stream.str().c_str());
 
 	return false;
@@ -206,21 +208,12 @@ void VkRenderer::setupDebug()
 	mDebugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
 	mDebugCallbackCreateInfo.pfnCallback = VulkanDebugCallback;
 	mDebugCallbackCreateInfo.flags =
-		//VK_DEBUG_REPORT_INFORMATION_BIT_EXT |
 		VK_DEBUG_REPORT_WARNING_BIT_EXT |
 		VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
 		VK_DEBUG_REPORT_ERROR_BIT_EXT |
-		//VK_DEBUG_REPORT_DEBUG_BIT_EXT |
 		0;
 
 	mInstanceLayers.push_back("VK_LAYER_LUNARG_standard_validation");
-	//mInstanceLayers.push_back("VK_LAYER_GOOGLE_threading");
-	////mInstanceLayers.push_back("VK_LAYER_LUNARG_draw_state");
-	//mInstanceLayers.push_back("VK_LAYER_LUNARG_image");
-	////mInstanceLayers.push_back("VK_LAYER_LUNARG_mem_tracker");
-	//mInstanceLayers.push_back("VK_LAYER_LUNARG_object_tracker");
-	//mInstanceLayers.push_back("VK_LAYER_LUNARG_parameter_validation");
-
 	mInstanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 	// device layers not needed here anymore
 }
@@ -246,6 +239,15 @@ void VkRenderer::deInitDebug()
 {
 	fvkDestroyDebugReportCallbackEXT(mInstance, mDebugReport, NULL);
 	mDebugReport = NULL;
+}
+
+void VkRenderer::setupLayersAndExtensions()
+{
+	// mInstanceExtensions.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);	// for custom embedded systems
+	mInstanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+	mInstanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+	
+	mDeviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 }
 
 #else
