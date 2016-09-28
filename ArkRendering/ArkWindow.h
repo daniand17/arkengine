@@ -1,11 +1,20 @@
 #pragma once
+#include "BuildOptions.h"
 
-#include "VkRenderer.h"
+#ifdef USE_OPENGL
+
+#define GLEW_STATIC
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
+
+#elif USE_VULKAN
+#endif // BUILD_ENABLE_OPENGL
+
 #include "ArkString.h"
 class ArkWindow
 {
 public:
-	ArkWindow();
+	ArkWindow(unsigned int sizeX, unsigned int sizeY, ArkString windowName);
 	~ArkWindow();
 
 	void Close();
@@ -22,8 +31,12 @@ private:
 	void initOSWindow();
 	void deInitOSWindow();
 	void updateOSWindow();
-	void initOSSurface();
 
+#ifdef  USE_OPENGL
+	GLFWwindow * mWindow;
+public:
+	GLFWwindow * getOSWindowHandle() const { return mWindow; }
+#endif //  USE_OPENGL
 
 #if VK_USE_PLATFORM_WIN32_KHR
 	HINSTANCE _win32_instance	= NULL;

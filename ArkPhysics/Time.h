@@ -1,3 +1,4 @@
+#pragma once
 namespace Time
 {
 	const float fps = 90.0f;			// TODO (AD) FPS may change

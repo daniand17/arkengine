@@ -2,10 +2,8 @@
 
 #include "ArkWindow.h"
 #include "BuildOptions.h"
-#include "Platform.h"
 
-#if VK_USE_PLATFORM_WIN32_KHR
-
+#if USE_VULKAN
 LRESULT CALLBACK WindowsEventHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	ArkWindow * window = reinterpret_cast<ArkWindow *>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));

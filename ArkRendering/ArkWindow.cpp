@@ -1,10 +1,13 @@
+#include <stdint.h>
+
 #include "ArkWindow.h"
 
-ArkWindow::ArkWindow() :
+
+ArkWindow::ArkWindow(unsigned int sizeX, unsigned int sizeY, ArkString windowName) :
 	mWindowShouldRun(true),
-	mSizeX(512),
-	mSizeY(512),
-	mWindowName("New Ark Window")
+	mSizeX(sizeX),
+	mSizeY(sizeY),
+	mWindowName(windowName)
 {
 	initOSWindow();
 }

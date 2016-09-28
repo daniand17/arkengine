@@ -30,6 +30,9 @@
     <ClInclude Include="ArkGlobals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ArkDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp">

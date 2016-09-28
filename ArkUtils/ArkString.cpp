@@ -7,7 +7,7 @@ bool operator == (ArkString const & lhs, ArkString const & rhs)
 	if ( len != rhs.length() )
 		return false;
 
-	for ( size_t i = 0 ; i < len ; i++ )
+	for ( unsigned int i = 0 ; i < len ; i++ )
 		if ( lhs.charAt(i) != rhs.charAt(i) )
 			return false;
 
