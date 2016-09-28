@@ -28,8 +28,7 @@ void ArkEngineCore::startThreads()
 	// TODO start other threads and pass ownership of each part to them:
 	Debug::Log("Initializing threads");
 	// RenderThread
-	mRenderThread = new std::thread(&OpenGLRenderer::start, mRenderer);
-
+	
 	// SystemThread
 	// PhysicsThread
 

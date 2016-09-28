@@ -178,6 +178,7 @@
     <ClInclude Include="ArkDebug.h" />
     <ClInclude Include="ArkGlobals.h" />
     <ClInclude Include="ArkString.h" />
+    <ClInclude Include="ArkThread.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>

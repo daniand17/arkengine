@@ -1,5 +1,4 @@
 #pragma once
-#include <thread>
 
 #include "BuildOptions.h"
 #include "ArkWindow.h"
@@ -44,7 +43,6 @@ private:
 #ifdef USE_OPENGL
 	OpenGLRenderer * mRenderer;
 #endif // USE_OPENGL
-	std::thread * mRenderThread;
 
 
 };

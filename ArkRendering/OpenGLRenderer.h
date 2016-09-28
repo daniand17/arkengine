@@ -1,17 +1,20 @@
 #pragma once
 #include "BuildOptions.h"
 #include "ArkWindow.h"
+#include "ArkThread.h"
 
 #ifdef USE_OPENGL
-class OpenGLRenderer
+class OpenGLRenderer : public ArkThreading::WorkerTask
 {
-
 public:
 	OpenGLRenderer(ArkWindow * windowHandle);
 	OpenGLRenderer(size_t sizeX, size_t sizeY);
 	~OpenGLRenderer();
-	void start();
 	void stop() { mShouldRun = false; }
+
+protected:
+	void init();
+	void run();
 
 private:
 	GLFWwindow * mWindow;

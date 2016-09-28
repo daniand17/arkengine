@@ -16,14 +16,17 @@ OpenGLRenderer::~OpenGLRenderer()
 {
 }
 
-void OpenGLRenderer::start()
+void OpenGLRenderer::init()
 {
-	std::move(mWindow);
 	mShouldRun = true;
+}
+
+void OpenGLRenderer::run()
+{
 	do
 	{
 		glfwSwapBuffers(mWindow); // TODO (AD) move to a rendering thread?
 		glfwPollEvents(); // TODO (AD) move to a system thread?
 	}
-	while ( mShouldRun || glfwGetKey(mWindow, GLFW_KEY_ESCAPE) != GLFW_PRESS && !glfwWindowShouldClose(mWindow));
+	while ( mShouldRun || glfwGetKey(mWindow, GLFW_KEY_ESCAPE) != GLFW_PRESS && !glfwWindowShouldClose(mWindow) );
 }
