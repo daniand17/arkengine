@@ -43,6 +43,6 @@ private:
 #ifdef USE_OPENGL
 	OpenGLRenderer * mRenderer;
 #endif // USE_OPENGL
-
+	ArkThreading::ArkThread * mRenderThread;
 
 };
