@@ -4,6 +4,17 @@
 #include "ArkDebug.h"
 
 using namespace ArkThreading;
+ArkEngineCore * ArkEngineCore::mInstance = NULL;
+
+ArkEngineCore * ArkEngineCore::Instance()
+{
+	return mInstance;
+}
+
+void ArkEngineCore::InitEngine()
+{
+	mInstance = new ArkEngineCore();
+}
 
 void ArkEngineCore::initMemory()
 {
@@ -11,37 +22,28 @@ void ArkEngineCore::initMemory()
 
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);
+	mRenderer->InitializeRenderer();
 #endif // USE_OPENGL
-}
-
-void ArkEngineCore::initSystem()
-{
-	// TODO (AD) Initialize other system stuff here
 }
 
 void ArkEngineCore::startThreads()
 {
-	mRenderThread = new ArkThread(mRenderer);
-	
-	// SystemThread
-	// PhysicsThread
-
+	// SystemThread?
+	// PhysicsThread?
 }
 
 void ArkEngineCore::runMainLoop()
 {
+	mRenderer->Run();
 }
 
 void ArkEngineCore::stopThreads()
 {
-	mRenderThread->join();
-}
-
-void ArkEngineCore::deinitSystem()
-{
+	mRenderer->Stop();
 }
 
 void ArkEngineCore::deinitMemory()
 {
 	delete mRenderer;
+	delete mWindow;
 }

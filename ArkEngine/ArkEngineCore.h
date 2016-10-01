@@ -7,34 +7,34 @@
 class ArkEngineCore
 {
 public:
-	int run()
+	static ArkEngineCore * Instance();
+	static void InitEngine();
+	int Run()
 	{
-		// NOTE Maybe pass off to another thread here?
 		initMemory();
-		initSystem();
 		startThreads();
 
 		runMainLoop();
 		return 0;
 	}
 
-	int shutdown()
+	int Shutdown()
 	{
 		stopThreads();
-		deinitSystem();
 		deinitMemory();
 
 		return 0;
 	}
 
 private:
+	static ArkEngineCore * mInstance;
+
+	ArkEngineCore() {}
 	void initMemory();
-	void initSystem();
 	void startThreads();
 	void runMainLoop();
 
 	void stopThreads();
-	void deinitSystem();
 	void deinitMemory();
 
 private:
@@ -43,6 +43,5 @@ private:
 #ifdef USE_OPENGL
 	OpenGLRenderer * mRenderer;
 #endif // USE_OPENGL
-	ArkThreading::ArkThread * mRenderThread;
 
 };

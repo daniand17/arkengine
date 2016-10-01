@@ -186,6 +186,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkWindow.cpp" />

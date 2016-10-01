@@ -203,6 +203,10 @@
   <ItemGroup>
     <ClInclude Include="ArkEngineCore.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleFragmentShader.frag" />
+    <None Include="SimpleVertexShader.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

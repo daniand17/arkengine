@@ -5,10 +5,10 @@
 
 int main(int argc, char ** argv)
 {
-	ArkEngineCore engine;
+	ArkEngineCore::InitEngine();
 	try
 	{
-		engine.run();
+		ArkEngineCore::Instance()->Run();
 	}
 	catch ( const std::runtime_error& e )
 	{
@@ -16,7 +16,7 @@ int main(int argc, char ** argv)
 		return EXIT_FAILURE;
 	}
 
-	engine.shutdown();
+	ArkEngineCore::Instance()->Shutdown();
 	return EXIT_SUCCESS;
 	
 	return 0;

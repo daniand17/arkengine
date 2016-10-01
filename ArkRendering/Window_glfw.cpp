@@ -4,9 +4,7 @@
 void ArkWindow::initOSWindow()
 {
 	if ( !glfwInit() )
-	{
 		fprintf(stderr, "Failed to initialize GLFW\n");
-	}
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

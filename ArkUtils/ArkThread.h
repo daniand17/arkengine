@@ -17,10 +17,11 @@ namespace ArkThreading
 	class ArkThread
 	{
 	public:
-		ArkThread(WorkerTask * workerTask) : mWorkerTask(workerTask), mThread(&ArkThread::run, this) {}
-		void join() { mThread.join(); }
-
+		ArkThread(WorkerTask * workerTask) : mWorkerTask(workerTask), mThread(NULL) {}
+		void init() { mThread = new std::thread(&ArkThread::run, this); }
+		void join() { mThread->join(); }
 	private:
+
 		void run()
 		{
 			if ( mWorkerTask )
@@ -29,9 +30,9 @@ namespace ArkThreading
 				mWorkerTask->initialize();
 				mWorkerTask->runTask();
 			}
-			
+
 		}
-		std::thread mThread;
+		std::thread * mThread;
 		WorkerTask * mWorkerTask;
 	};
 }
