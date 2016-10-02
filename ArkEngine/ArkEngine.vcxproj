@@ -111,6 +111,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
@@ -123,6 +124,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
@@ -138,6 +140,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glew32sd.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
@@ -152,6 +155,7 @@
       <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include\vulkan;$(SolutionDir)\ArkRendering;$(SolutionDir)\ArkPhysics;$(SolutionDir)\ArkUtils;$(SolutionDir)ArkMath\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
@@ -170,6 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -188,6 +193,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)\ArkRendering;$(SolutionDir)\ArkPhysics;$(SolutionDir)\ArkUtils;$(SolutionDir)ArkMath\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

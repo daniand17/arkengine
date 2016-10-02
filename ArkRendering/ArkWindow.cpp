@@ -3,11 +3,15 @@
 #include "ArkWindow.h"
 
 
+ArkWindow::ArkWindow(ArkSize windowSize, ArkString windowName) : mSize(windowSize), mWindowName(windowName)
+{
+	initOSWindow();
+}
+
 ArkWindow::ArkWindow(unsigned int sizeX, unsigned int sizeY, ArkString windowName) :
-	mWindowShouldRun(true),
-	mSizeX(sizeX),
-	mSizeY(sizeY),
-	mWindowName(windowName)
+	mWindowShouldRun(true)
+	, mSize(sizeX, sizeY)
+	, mWindowName(windowName)
 {
 	initOSWindow();
 }

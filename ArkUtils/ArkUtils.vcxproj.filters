@@ -36,6 +36,9 @@
     <ClInclude Include="ArkThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ArkSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp">

@@ -15,7 +15,7 @@ public:
 	void Run();
 
 private:
-	GLFWwindow * mWindow;
+	ArkWindow * mWindow;
 	bool mShouldRun;
 	GLuint mProgramID;
 	GLuint mVertexBuffer;

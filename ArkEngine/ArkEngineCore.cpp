@@ -2,6 +2,7 @@
 
 #include "ArkString.h"
 #include "ArkDebug.h"
+#include "ArkSize.h"
 
 using namespace ArkThreading;
 ArkEngineCore * ArkEngineCore::mInstance = NULL;
@@ -18,7 +19,7 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
-	mWindow = new ArkWindow(512, 512, "Ark Engine");
+	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
 
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);

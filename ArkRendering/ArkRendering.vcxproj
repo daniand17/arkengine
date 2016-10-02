@@ -101,6 +101,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\dependencies\lib</AdditionalLibraryDirectories>
@@ -113,6 +114,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(SolutionDir)dependencies\include</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\dependencies\lib</AdditionalLibraryDirectories>
@@ -125,6 +127,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(SolutionDir)dependencies\include</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
@@ -137,6 +140,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
@@ -151,6 +155,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(VULKAN_SDK)\Include\vulkan</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -169,6 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath</AdditionalIncludeDirectories>
+      <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

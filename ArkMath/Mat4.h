@@ -1,4 +1,5 @@
 #pragma once
+
 struct Mat4
 {
 private:

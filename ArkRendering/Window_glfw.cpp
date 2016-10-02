@@ -12,7 +12,7 @@ void ArkWindow::initOSWindow()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	mWindow	= glfwCreateWindow(mSizeX, mSizeY, mWindowName.toStdString().c_str(), NULL, NULL);
+	mWindow	= glfwCreateWindow(mSize.width(), mSize.height(), mWindowName.toStdString().c_str(), NULL, NULL);
 
 	if ( !mWindow)
 	{

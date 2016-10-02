@@ -11,9 +11,12 @@
 #endif // BUILD_ENABLE_OPENGL
 
 #include "ArkString.h"
+#include "ArkSize.h"
+
 class ArkWindow
 {
 public:
+	ArkWindow(ArkSize windowSize, ArkString windowName);
 	ArkWindow(unsigned int sizeX, unsigned int sizeY, ArkString windowName);
 	~ArkWindow();
 
@@ -25,8 +28,7 @@ private:
 
 	ArkString mWindowName;
 
-	uint32_t mSizeX;
-	uint32_t mSizeY;
+	ArkSize mSize;
 
 	void initOSWindow();
 	void deInitOSWindow();
