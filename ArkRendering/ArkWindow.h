@@ -22,6 +22,8 @@ public:
 
 	void Close();
 	bool Update();
+	ArkSize size() const { return mSize; }
+	float aspectRatio() const { return (float) mSize.width() / (float) mSize.height(); }
 
 private:
 	bool mWindowShouldRun;

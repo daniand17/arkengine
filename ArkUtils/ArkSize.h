@@ -7,9 +7,10 @@ public:
 	void setWidth(int width) { mWidth = width; }
 	void setHeight(int height) { mHeight = height; }
 
-	int width() { return mWidth; }
-	int height() { return mHeight; }
-	int isValid() { return mWidth >= 0 && mHeight >= 0; }
+	int width() const { return mWidth; }
+	int height() const { return mHeight; }
+	int isValid() const { return mWidth >= 0 && mHeight >= 0; }
+	int area() const { return mWidth * mHeight; }
 	void transpose()
 	{
 		int temp = mWidth;

@@ -1,3 +1,5 @@
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\vec3.hpp>
 #include "OpenGLRenderer.h"
 #include "ShaderLoader.h"
 #include "ArkMath.h"
@@ -23,6 +25,7 @@ void OpenGLRenderer::InitializeRenderer()
 		0, 1, 0
 	};
 
+
 	mProgramID = LoadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 
 	// This will identify our vertex buffer
@@ -43,7 +46,13 @@ void OpenGLRenderer::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(mProgramID);
 
-		//ArkMath::perspective(ArkMath::toRadians(45.0f), mWindow->) // TODO 
+		Mat4 perspectiveMatrix = ArkMath::perspective(ArkMath::toRadians(45.0f), mWindow->aspectRatio(), 0.1f, 100.0f);
+		Mat4 viewMatrix = ArkMath::lookAt(Vec3(4, 3, 3), Vec3(0, 0, 0), Vec3(0, 1, 0));
+		Mat4 mvp = perspectiveMatrix * viewMatrix/** modelMatrix*/;
+
+		GLuint mvpId = glGetUniformLocation(mProgramID, "mvp");
+		
+		glUniformMatrix4fv(mvpId, 1, GL_FALSE,	&mvp[0][0]);
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);

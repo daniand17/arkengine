@@ -32,3 +32,27 @@ bool operator!=(Vec4 const & lhs, Vec4 const & rhs)
 	if ( wDel < 0 ) wDel = -wDel;
 	return !(xDel < FLT_EPSILON && yDel < FLT_EPSILON && zDel < FLT_EPSILON && wDel < FLT_EPSILON);
 }
+
+float & Vec4::operator[](unsigned short i)
+{
+	switch ( i )
+	{
+	case 0: return x;
+	case 1: return y;
+	case 2: return z;
+	case 3: return w;
+	}
+	return x;
+}
+
+float const & Vec4::operator[](unsigned short i) const
+{
+	switch ( i )
+	{
+	case 0: return x;
+	case 1: return y;
+	case 2: return z;
+	case 3: return w;
+	}
+	return x;
+}

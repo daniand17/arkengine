@@ -18,6 +18,8 @@ struct Vec4
 	void operator *= (float scalar) { x *= scalar; y *= scalar; z *= scalar; w *= scalar; }
 	void operator /= (float scalar) { x /= scalar; y /= scalar; z /= scalar; w /= scalar; }
 	void operator = (Vec4 const & other) { x = other.x;	y = other.y; z = other.z; w = other.w; }
+	float & operator [] (unsigned short i);
+	float const & operator [] (unsigned short i) const;
 
 	float dot(Vec4 const & other) const { return x * other.x + y * other.y + z * other.z + w * other.w; }
 	float magnitude() const { return sqrtf(sqrMagnitude()); }
