@@ -30,6 +30,7 @@ void ArkWindow::initOSWindow()
 
 void ArkWindow::deInitOSWindow()
 {
+	glfwTerminate();
 }
 
 void ArkWindow::updateOSWindow()

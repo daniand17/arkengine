@@ -173,7 +173,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;$(SolutionDir)dependencies\include</AdditionalIncludeDirectories>
       <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
@@ -181,15 +181,17 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(VULKAN_SDK)\Bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ArkUtils\BuildOptions.h" />
     <ClInclude Include="ArkWindow.h" />
+    <ClInclude Include="ImageLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="OglGlobals.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -197,6 +199,7 @@
   <ItemGroup>
     <ClCompile Include="ArkWindow.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="OglGlobals.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="Window_glfw.cpp" />
     <ClCompile Include="Window_win32.cpp" />
