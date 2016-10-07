@@ -18,4 +18,4 @@
 #endif // !USE_OPENGL
 
 
-
+#define COMPILE_TIME_ASSERT(name, n) struct name { char a[(n) ? 1 : -1];}

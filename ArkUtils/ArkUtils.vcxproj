@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

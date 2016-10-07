@@ -208,6 +208,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArkEngineCore.h" />
+    <ClInclude Include="CameraControls.h" />
+    <ClInclude Include="Input.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleFragmentShader.frag" />

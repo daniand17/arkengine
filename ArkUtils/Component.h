@@ -3,7 +3,9 @@
 
 class Component
 {
+public:
+	Transform const * getTransform() { return mTransform; }
 
-protected:
-	Transform transform;
+private:
+	Transform * mTransform;
 };

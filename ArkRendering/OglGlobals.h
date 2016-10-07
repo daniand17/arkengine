@@ -4,11 +4,6 @@
 
 namespace RendererUtils
 {
-	class BufferData
-	{
-
-	};
-
 	class Texture
 	{
 	public:

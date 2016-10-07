@@ -26,6 +26,12 @@
     <ClInclude Include="ArkEngineCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CameraControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleFragmentShader.frag">

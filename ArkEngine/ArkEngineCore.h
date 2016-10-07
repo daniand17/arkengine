@@ -26,6 +26,9 @@ public:
 		return 0;
 	}
 
+	ArkWindow const * GetMainWindowHandle() const { return mWindow; }
+
+
 private:
 	static ArkEngineCore * mInstance;
 

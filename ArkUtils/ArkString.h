@@ -10,6 +10,7 @@ private:
 
 public:
 
+	ArkString() : mString("") { }
 	ArkString(std::string str) : mString(str) {}
 	ArkString(char * c) : mString(c) {}
 

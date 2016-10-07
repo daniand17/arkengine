@@ -1,10 +1,13 @@
-#include <vector>
-
+#pragma once
 #include "Vec3.h"
+#include "Quaternion.h"
 
-struct Transform
+class Transform
 {
+public:
+	Transform();
+
 private:
-	Vec3 position;
-	std::vector<Transform *> children;
+	Vec3 mPosition;
+	Quaternion mRotation;
 };

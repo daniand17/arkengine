@@ -188,9 +188,12 @@
   <ItemGroup>
     <ClInclude Include="..\ArkUtils\BuildOptions.h" />
     <ClInclude Include="ArkWindow.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ImageLoader.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OglGlobals.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="Renderer.h" />
@@ -198,7 +201,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkWindow.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="OglGlobals.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="Window_glfw.cpp" />

@@ -3,21 +3,34 @@
 
 #include "OpenGLRenderer.h"
 #include "ArkMath.h"
+#include "Camera.h"
+#include "ModelLoader.h"
 
 using namespace RendererUtils;
 
-OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle) : mWindow(windowHandle)
+OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
+
+OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle) 
+	: mWindow(windowHandle)
+	, mVertexBuffer(BufferTypes::ArrayBuffer)
+	, mUvBuffer(BufferTypes::ArrayBuffer)
+	, mNormalBuffer(BufferTypes::ArrayBuffer)
 {
+	if ( !mInstance )
+		mInstance = this;
 }
 
-OpenGLRenderer::OpenGLRenderer() : mShouldRun(true) {}
+OpenGLRenderer::OpenGLRenderer() 
+	: mShouldRun(true)
+	, mVertexBuffer(BufferTypes::ArrayBuffer)
+	, mUvBuffer(BufferTypes::ArrayBuffer)
+	, mNormalBuffer(BufferTypes::ArrayBuffer) 
+{}
 
 OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
 
 void OpenGLRenderer::DeinitRenderer()
 {
-	glDeleteBuffers(1, &mVertexBufferId);
-	glDeleteBuffers(1, &mUvBufferId);
 	delete mShaderProgram;
 	glDeleteVertexArrays(1, &mVertexArrayId);
 }
@@ -28,94 +41,26 @@ void OpenGLRenderer::InitializeRenderer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f, // triangle 1 : end
-		1.0f, 1.0f,-1.0f, // triangle 2 : begin
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f, // triangle 2 : end
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f
-	};
-
 	glGenVertexArrays(1, &mVertexArrayId);
 	glBindVertexArray(mVertexArrayId);
 
-	glGenBuffers(1, &mVertexBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, mVertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	std::vector<Vec3> verts;
+	std::vector<Vec2> uvs;
+	std::vector<Vec3> normals;
+	std::vector<unsigned int> indices;
 
-	static const GLfloat g_uv_buffer_data[] = {
-		0.000059f, 1.0f - 0.000004f,
-		0.000103f, 1.0f - 0.336048f,
-		0.335973f, 1.0f - 0.335903f,
-		1.000023f, 1.0f - 0.000013f,
-		0.667979f, 1.0f - 0.335851f,
-		0.999958f, 1.0f - 0.336064f,
-		0.667979f, 1.0f - 0.335851f,
-		0.336024f, 1.0f - 0.671877f,
-		0.667969f, 1.0f - 0.671889f,
-		1.000023f, 1.0f - 0.000013f,
-		0.668104f, 1.0f - 0.000013f,
-		0.667979f, 1.0f - 0.335851f,
-		0.000059f, 1.0f - 0.000004f,
-		0.335973f, 1.0f - 0.335903f,
-		0.336098f, 1.0f - 0.000071f,
-		0.667979f, 1.0f - 0.335851f,
-		0.335973f, 1.0f - 0.335903f,
-		0.336024f, 1.0f - 0.671877f,
-		1.000004f, 1.0f - 0.671847f,
-		0.999958f, 1.0f - 0.336064f,
-		0.667979f, 1.0f - 0.335851f,
-		0.668104f, 1.0f - 0.000013f,
-		0.335973f, 1.0f - 0.335903f,
-		0.667979f, 1.0f - 0.335851f,
-		0.335973f, 1.0f - 0.335903f,
-		0.668104f, 1.0f - 0.000013f,
-		0.336098f, 1.0f - 0.000071f,
-		0.000103f, 1.0f - 0.336048f,
-		0.000004f, 1.0f - 0.671870f,
-		0.336024f, 1.0f - 0.671877f,
-		0.000103f, 1.0f - 0.336048f,
-		0.336024f, 1.0f - 0.671877f,
-		0.335973f, 1.0f - 0.335903f,
-		0.667969f, 1.0f - 0.671889f,
-		1.000004f, 1.0f - 0.671847f,
-		0.667979f, 1.0f - 0.335851f
-	};
+	bool result = ModelLoading::loadOBJ(ArkString("suzanne.obj"), verts, uvs, normals);
 
-	glGenBuffers(1, &mUvBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, mUvBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+	mNumVerts = verts.size();
+
+	mVertexBuffer.SetBufferData(verts);
+	mNormalBuffer.SetBufferData(normals);
+	mUvBuffer.SetBufferData(uvs);
+
+	/*GLuint elementBufferId;
+	glGenBuffers(1, &elementBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferId);*/
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	mShaderProgram = new ArkShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
@@ -132,60 +77,51 @@ void OpenGLRenderer::Run()
 	double lastTime = glfwGetTime();
 	int nbFrames = 0;
 
+	Camera cam(Camera::Perspective, 45.0f, 0.1f, 100.0f, Vec2(0, 0), Vec2(1, 1));
+	cam.setPosition(Vec3(4, 3, 3));
+	cam.setTarget(Vec3(0, 0, 0));
+	float rotY = 0.0f;
+	GLuint pId = glGetUniformLocation(mShaderProgram->getId(), "P");
+	GLuint mId = glGetUniformLocation(mShaderProgram->getId(), "M");
+	GLuint vId = glGetUniformLocation(mShaderProgram->getId(), "V");
+
 	do
 	{
+		// Timer
 		double currentTime = glfwGetTime();
 		nbFrames++;
-		// Temporary timer stuff
 		if ( currentTime - lastTime >= 1.0 )
 		{
-			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			//printf("%f ms/frame\n", 1000.0 / double(nbFrames));
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
 
+		rotY += 0.01f;
+
 		glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		glUseProgram(mShaderProgram->getId());
+		cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
+		cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
 
-		Mat4 perspectiveMatrix = ArkMath::perspective(ArkMath::toRadians(45.0f), mWindow->aspectRatio(), 0.1f, 100.0f);
-		Mat4 viewMatrix = ArkMath::lookAt(Vec3(4, 3, 3), Vec3(0, 0, 0), Vec3(0, 1, 0));
-		Mat4 modelMatrix = Mat4::identity();
-		Mat4 mvp = perspectiveMatrix * viewMatrix /** modelMatrix*/;
+		Mat4 model = Mat4::identity();
+		Mat4 vMat = cam.getViewMatrix();
 
-		GLuint mvpId = glGetUniformLocation(mShaderProgram->getId(), "MVP");
+		Mat4 p = cam.getProjectionMatrix();
+		glUniformMatrix4fv(pId, 1, GL_FALSE, &p[0][0]);
+		glUniformMatrix4fv(mId, 1, GL_FALSE, &model[0][0]);
+		glUniformMatrix4fv(vId, 1, GL_FALSE, &vMat[0][0]);
 
-		glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
+		mVertexBuffer.BindBufferForDrawing(0);
+		mUvBuffer.BindBufferForDrawing(1);
+		mNormalBuffer.BindBufferForDrawing(2);
 
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, mVertexBufferId);
-		glVertexAttribPointer(
-			0,                  // location 0 in shader
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*) 0            // array buffer offset
-		);
+		glDrawArrays(GL_TRIANGLES, 0, mVertexBuffer.Size());
 
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, mUvBufferId);
-		glVertexAttribPointer(
-			1,
-			2,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void *) 0
-		);
-
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3 * 12); // Starting from vertex 0; 3 vertices total -> 1 triangle
-
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
+		mNormalBuffer.DisableBufferForDrawing(2);
+		mUvBuffer.DisableBufferForDrawing(1);
+		mVertexBuffer.DisableBufferForDrawing(0);
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
