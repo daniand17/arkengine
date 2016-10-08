@@ -190,13 +190,11 @@
     <ClInclude Include="ArkWindow.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ImageLoader.h" />
-    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OglGlobals.h" />
     <ClInclude Include="OpenGLRenderer.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderingGlobals.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>

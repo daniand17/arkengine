@@ -207,6 +207,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ArkRendering\Light.h" />
     <ClInclude Include="ArkEngineCore.h" />
     <ClInclude Include="CameraControls.h" />
     <ClInclude Include="Input.h" />

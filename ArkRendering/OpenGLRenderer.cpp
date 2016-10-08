@@ -5,8 +5,10 @@
 #include "ArkMath.h"
 #include "Camera.h"
 #include "ModelLoader.h"
+#include "RenderingGlobals.h"
 
 using namespace RendererUtils;
+using namespace RendererGlobals;
 
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
 
@@ -66,6 +68,14 @@ void OpenGLRenderer::InitializeRenderer()
 	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
 }
 
+void bindLight(GLuint posId, GLuint dirId, GLuint colId, GLuint powId, LightInfo const & light)
+{
+	glUniform3f(posId, light.worldPosition.x, light.worldPosition.y, light.worldPosition.z);
+	glUniform3f(dirId, light.direction.x, light.direction.y, light.direction.z);
+	glUniform3f(colId, light.color.x, light.color.y, light.color.z);
+	glUniform1f(powId, light.lightPower);
+}
+
 void OpenGLRenderer::Run()
 {
 	GLFWwindow * win = mWindow->getOSWindowHandle();
@@ -78,16 +88,28 @@ void OpenGLRenderer::Run()
 	int nbFrames = 0;
 
 	Camera cam(Camera::Perspective, 45.0f, 0.1f, 100.0f, Vec2(0, 0), Vec2(1, 1));
-	cam.setPosition(Vec3(4, 3, 3));
+	cam.setPosition(Vec3(3, 3, 3));
 	cam.setTarget(Vec3(0, 0, 0));
 	float rotY = 0.0f;
-	GLuint pId = glGetUniformLocation(mShaderProgram->getId(), "P");
-	GLuint mId = glGetUniformLocation(mShaderProgram->getId(), "M");
+
 	GLuint vId = glGetUniformLocation(mShaderProgram->getId(), "V");
+	GLuint mId = glGetUniformLocation(mShaderProgram->getId(), "M");
+	GLuint mvpId = glGetUniformLocation(mShaderProgram->getId(), "MVP");
+	GLuint normId = glGetUniformLocation(mShaderProgram->getId(), "N");
+
+	GLuint ltWorldPosition = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.eyePosition");
+	GLuint ltDirection = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.direction");
+	GLuint ltColor = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.color");
+	GLuint ltPower = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.power");
+
+	RendererGlobals::LightInfo light;
+	light.worldPosition = Vec3(3, 0, 3);
+	light.direction = Vec3(-1, -1, -1);
+	light.color = Vec3(1, 1, 1);
+	light.lightPower = 0.5f;
 
 	do
 	{
-		// Timer
 		double currentTime = glfwGetTime();
 		nbFrames++;
 		if ( currentTime - lastTime >= 1.0 )
@@ -99,20 +121,26 @@ void OpenGLRenderer::Run()
 
 		rotY += 0.01f;
 
-		glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+		glClearColor(0.0, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(mShaderProgram->getId());
 		cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
 		cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
 
-		Mat4 model = Mat4::identity();
-		Mat4 vMat = cam.getViewMatrix();
+		Mat4 modelMat = Mat4::identity();
+		Mat4 viewMat = cam.getViewMatrix();
+		Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
+		Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
 
-		Mat4 p = cam.getProjectionMatrix();
-		glUniformMatrix4fv(pId, 1, GL_FALSE, &p[0][0]);
-		glUniformMatrix4fv(mId, 1, GL_FALSE, &model[0][0]);
-		glUniformMatrix4fv(vId, 1, GL_FALSE, &vMat[0][0]);
+		glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
+		glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
+		glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
+		glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
 
+		// Binding the light (TODO (AD) eventually extract... )
+		bindLight(ltWorldPosition, ltDirection, ltColor, ltPower, light);
+
+		// Bind the buffers for drawing
 		mVertexBuffer.BindBufferForDrawing(0);
 		mUvBuffer.BindBufferForDrawing(1);
 		mNormalBuffer.BindBufferForDrawing(2);

@@ -1,41 +1,55 @@
 #version 330 core
 
+struct MaterialInfo
+{
+	float ka;
+	float kd;
+	float ks;
+	float shininess;
+};
+
+struct LightInfo
+{
+	vec3 eyePosition;
+	vec3 direction;
+	vec3 color;
+	float power;
+};
+
 in vec2 UV;
-in vec3 position_worldspace;
-in vec3 normal_cameraspace;
-in vec3 eyeDirection_cameraspace;
-in vec3 lightDirection_cameraspace;
-
-out vec3 color;			// Out to the gfx card
-
-vec3 lightPos_worldspace = vec3(2, 2, 2);
-
+in vec3 normal_eyespace;
+in vec3 position_eyespace;
 
 uniform sampler2D myTextureSampler;
+uniform LightInfo lightInfo;
+
+const float shininess = 64.0;
+const float screenGamma = 2.2;
+
+out vec4 frag_color;			// Out to the gfx card
 
 void main()
 {
-	vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);
-	float lightPower = 500.0f;
+
+	vec3 normal = normalize(normal_eyespace);
+	vec3 lightDir = normalize(lightInfo.eyePosition - position_eyespace);
+	float lambertian = max(dot(lightDir, normal), 0.0);
+	float specular = 0.0;
+
+	if(lambertian > 0.0)
+	{
+		vec3 viewDir = normalize(-position_eyespace);
+		
+		vec3 halfDir = normalize(lightDir + viewDir);
+		float specAngle = max(dot(halfDir, normal), 0.0);
+		specular = pow(specAngle, shininess);
+	}
+	vec3 diffuseColor = texture(myTextureSampler, UV).rgb;
+
+	vec3 colorLinear =	vec3(0.1, 0.1, 0.1) +
+						lambertian * diffuseColor +
+						specular * lightInfo.color * lightInfo.power;
+
+	frag_color = vec4(colorLinear, 1.0);
 	
-	vec3 materialDiffuseColor = texture(myTextureSampler, UV).rgb;
-	vec3 materialAmbientColor = vec3(0.1, 0.1, 0.1) * materialDiffuseColor;
-	vec3 materialSpecularColor = vec3(1.0, 1.0, 1.0);
-
-	float distance = length( lightPos_worldspace - position_worldspace);
-
-	vec3 n = normalize( normal_cameraspace );
-	vec3 l = normalize (lightDirection_cameraspace);
-
-	float cosTheta = clamp( dot(n, l), 0, 1);
-	
-	vec3 eye = normalize(eyeDirection_cameraspace);
-	vec3 r = reflect(-l, n);
-	
-	float cosAlpha = clamp( dot( eye, r ), 0, 1);
-
-	color = materialAmbientColor +
-			materialDiffuseColor * lightColor * lightPower * cosTheta +
-			materialSpecularColor * lightColor * lightPower * pow(cosAlpha, 5);
-
 }
