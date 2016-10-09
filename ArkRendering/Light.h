@@ -8,7 +8,7 @@ public:
 	
 
 private:
-	RendererGlobals::LightType mType;
+	ArkRendering::LightType mType;
 	Vec3 mColor;
 	float mIntensity;
 };

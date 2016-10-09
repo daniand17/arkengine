@@ -4,8 +4,7 @@
 #include "BuildOptions.h"
 #include "ArkWindow.h"
 #include "ArkThread.h"
-#include "OglGlobals.h"
-
+#include "RenderingGlobals.h"
 #include "Vec2.h"
 #include "Vec3.h"
 
@@ -24,12 +23,12 @@ public:
 	void BindBufferForDrawing(unsigned int numInOrder) const;
 	void DisableBufferForDrawing(unsigned int numInOrder) { glDisableVertexAttribArray(numInOrder); }
 	void SetBufferData(std::vector<T> & data);
-	size_t Size() const { return mSize; }
+	GLsizei Size() const { return mSize; }
 
 private:
 	GLuint mBufferId;
 	GLuint mBufferType;
-	size_t mSize;
+	GLsizei mSize;
 };
 
 template<typename T>
@@ -58,9 +57,8 @@ inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 {
 	GLenum bufType = mBufferType == ArrayBuffer ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
 	glBindBuffer(bufType, mBufferId);
-	size_t siz = (sizeof(T)) * data.size();
-	mSize = siz;
-	glBufferData(bufType, siz, &data[0], GL_STATIC_DRAW);
+	mSize = (sizeof(T)) * data.size();
+	glBufferData(bufType, mSize, &data[0], GL_STATIC_DRAW);
 }
 
 #ifdef USE_OPENGL
@@ -84,11 +82,11 @@ private:
 	GLuint	mVertexBufferId;
 	GLuint	mVertexArrayId;
 
-	RendererUtils::ArkShaderProgram	* mShaderProgram;
+	ArkRendering::ShaderProgram	* mShaderProgram;
 	BufferData<Vec3> mVertexBuffer;
 	BufferData<Vec2> mUvBuffer;
 	BufferData<Vec3> mNormalBuffer;
-	int mNumVerts;
+	size_t mNumVerts;
 	GLuint mUvBufferId;
 	GLuint mNormalBufferId;
 

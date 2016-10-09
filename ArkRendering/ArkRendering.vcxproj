@@ -192,7 +192,6 @@
     <ClInclude Include="ImageLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
-    <ClInclude Include="OglGlobals.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="RenderingGlobals.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -202,7 +201,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="OglGlobals.cpp" />
+    <ClCompile Include="RenderingGlobals.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="Window_glfw.cpp" />
     <ClCompile Include="Window_win32.cpp" />

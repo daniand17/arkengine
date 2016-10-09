@@ -1,8 +1,8 @@
-#include "OglGlobals.h"
+#include "RenderingGlobals.h"
 #include "ShaderLoader.h"
 #include "ImageLoader.h"
 
-RendererUtils::ArkShaderProgram::ArkShaderProgram(ArkString vertexShader, ArkString fragmentShader)
+ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fragmentShader)
 {
 	mProgramId = LoadShaders(vertexShader.c_str(), fragmentShader.c_str());
 
@@ -12,7 +12,7 @@ RendererUtils::ArkShaderProgram::ArkShaderProgram(ArkString vertexShader, ArkStr
 	// TODO (AD) code to get more info http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
 }
 
-RendererUtils::Texture::Texture(ArkString filename)
+ArkRendering::Texture::Texture(ArkString filename)
 	: mTextureId(0)
 {
 	mTextureId = loadBMP_custom(filename.c_str());

@@ -7,8 +7,8 @@
 #include "ModelLoader.h"
 #include "RenderingGlobals.h"
 
-using namespace RendererUtils;
-using namespace RendererGlobals;
+using namespace ArkRendering;
+using namespace ArkMath;
 
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
 
@@ -64,7 +64,7 @@ void OpenGLRenderer::InitializeRenderer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferId);*/
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-	mShaderProgram = new ArkShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	mShaderProgram = new ShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
 }
 
@@ -102,7 +102,7 @@ void OpenGLRenderer::Run()
 	GLuint ltColor = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.color");
 	GLuint ltPower = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.power");
 
-	RendererGlobals::LightInfo light;
+	ArkRendering::LightInfo light;
 	light.worldPosition = Vec3(3, 0, 3);
 	light.direction = Vec3(-1, -1, -1);
 	light.color = Vec3(1, 1, 1);
@@ -137,8 +137,13 @@ void OpenGLRenderer::Run()
 		glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
 		glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
 
+		Vec3 worldLightPos = light.worldPosition;
+		Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
+		xform = viewMat * xform;
+		light.worldPosition = Vec3(xform.x, xform.y, xform.z);
 		// Binding the light (TODO (AD) eventually extract... )
 		bindLight(ltWorldPosition, ltDirection, ltColor, ltPower, light);
+		light.worldPosition = worldLightPos;
 
 		// Bind the buffers for drawing
 		mVertexBuffer.BindBufferForDrawing(0);
