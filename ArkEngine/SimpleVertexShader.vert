@@ -2,18 +2,16 @@
 
 struct MaterialInfo
 {
-	float ka;
-	float kd;
-	float ks;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
 	float shininess;
 };
 
 struct LightInfo
 {
 	vec3 eyePosition;
-	vec3 direction;
 	vec3 color;
-	float power;
 };
 
 layout (location = 0) in vec3 vertexPosition_modelspace;
@@ -25,6 +23,7 @@ out vec3 normal_eyespace;
 out vec2 UV;
 
 uniform LightInfo lightInfo;
+uniform MaterialInfo material;
 uniform mat4 V, M, N, MVP;
 
 void main()

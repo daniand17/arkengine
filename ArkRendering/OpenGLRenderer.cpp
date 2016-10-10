@@ -5,7 +5,6 @@
 #include "ArkMath.h"
 #include "Camera.h"
 #include "ModelLoader.h"
-#include "RenderingGlobals.h"
 
 using namespace ArkRendering;
 using namespace ArkMath;
@@ -59,21 +58,8 @@ void OpenGLRenderer::InitializeRenderer()
 	mNormalBuffer.SetBufferData(normals);
 	mUvBuffer.SetBufferData(uvs);
 
-	/*GLuint elementBufferId;
-	glGenBuffers(1, &elementBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferId);*/
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
 	mShaderProgram = new ShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
-}
-
-void bindLight(GLuint posId, GLuint dirId, GLuint colId, GLuint powId, LightInfo const & light)
-{
-	glUniform3f(posId, light.worldPosition.x, light.worldPosition.y, light.worldPosition.z);
-	glUniform3f(dirId, light.direction.x, light.direction.y, light.direction.z);
-	glUniform3f(colId, light.color.x, light.color.y, light.color.z);
-	glUniform1f(powId, light.lightPower);
 }
 
 void OpenGLRenderer::Run()
@@ -81,6 +67,7 @@ void OpenGLRenderer::Run()
 	GLFWwindow * win = mWindow->getOSWindowHandle();
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
 
@@ -97,16 +84,17 @@ void OpenGLRenderer::Run()
 	GLuint mvpId = glGetUniformLocation(mShaderProgram->getId(), "MVP");
 	GLuint normId = glGetUniformLocation(mShaderProgram->getId(), "N");
 
-	GLuint ltWorldPosition = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.eyePosition");
-	GLuint ltDirection = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.direction");
-	GLuint ltColor = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.color");
-	GLuint ltPower = glGetUniformLocation(mShaderProgram->getId(), "lightInfo.power");
-
 	ArkRendering::LightInfo light;
-	light.worldPosition = Vec3(3, 0, 3);
-	light.direction = Vec3(-1, -1, -1);
-	light.color = Vec3(1, 1, 1);
-	light.lightPower = 0.5f;
+	light.eyePosition = Vec3(3, 3, 3);
+	light.color = Vec3(0.5, 0.5, 0.5);
+	light.getUniformLocationsFromShader(mShaderProgram->getId());
+
+	ArkRendering::MaterialInfo material;
+	material.ambient = Vec3(1, 1, 1);
+	material.diffuse = Vec3(1, 1, 1);
+	material.specular =Vec3(1, 1, 1);
+	material.shininess = 128;
+	material.getUniformLocationsFromShader(mShaderProgram->getId());
 
 	do
 	{
@@ -137,13 +125,14 @@ void OpenGLRenderer::Run()
 		glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
 		glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
 
-		Vec3 worldLightPos = light.worldPosition;
+		// Converting the light to eye pos
+		Vec3 worldLightPos = light.eyePosition;
 		Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
 		xform = viewMat * xform;
-		light.worldPosition = Vec3(xform.x, xform.y, xform.z);
-		// Binding the light (TODO (AD) eventually extract... )
-		bindLight(ltWorldPosition, ltDirection, ltColor, ltPower, light);
-		light.worldPosition = worldLightPos;
+		light.eyePosition = Vec3(xform.x, xform.y, xform.z);
+		light.bindLightToShader();
+		material.bindMaterialToShader();
+		light.eyePosition = worldLightPos;
 
 		// Bind the buffers for drawing
 		mVertexBuffer.BindBufferForDrawing(0);

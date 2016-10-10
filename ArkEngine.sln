@@ -28,6 +28,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ArkPhysics", "Test_ArkPhysics\Test_ArkPhysics.vcxproj", "{BD8F54CE-265A-4606-982E-D21B0479B907}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArkRendering", "ArkRendering\ArkRendering.vcxproj", "{FA3C8630-D79B-48CE-9B3E-B02AEA52E4AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2725A01E-9D3D-4B1B-B3EC-C863DFD6D240} = {2725A01E-9D3D-4B1B-B3EC-C863DFD6D240}
+		{6BCB26E1-DD12-4154-A0E9-8E99474E9238} = {6BCB26E1-DD12-4154-A0E9-8E99474E9238}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

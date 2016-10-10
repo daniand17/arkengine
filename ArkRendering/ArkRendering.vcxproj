@@ -193,7 +193,8 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OpenGLRenderer.h" />
-    <ClInclude Include="RenderingGlobals.h" />
+    <ClInclude Include="ArkRendering.h" />
+    <ClInclude Include="RendererResourceManager.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -201,8 +202,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="RenderingGlobals.cpp" />
+    <ClCompile Include="ArkRendering.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
+    <ClCompile Include="RendererResourceManager.cpp" />
     <ClCompile Include="Window_glfw.cpp" />
     <ClCompile Include="Window_win32.cpp" />
   </ItemGroup>

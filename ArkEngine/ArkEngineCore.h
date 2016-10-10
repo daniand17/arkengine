@@ -3,6 +3,7 @@
 #include "BuildOptions.h"
 #include "ArkWindow.h"
 #include "OpenGLRenderer.h"
+#include "ArkThread.h"
 
 class ArkEngineCore
 {
@@ -33,6 +34,7 @@ private:
 	static ArkEngineCore * mInstance;
 
 	ArkEngineCore() {}
+
 	void initMemory();
 	void startThreads();
 	void runMainLoop();
@@ -42,6 +44,7 @@ private:
 
 private:
 	ArkWindow * mWindow;	
+	ArkThreading::ArkThread * mSystemThread;
 
 #ifdef USE_OPENGL
 	OpenGLRenderer * mRenderer;

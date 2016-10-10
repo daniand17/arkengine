@@ -1,8 +1,8 @@
 #include "ArkEngineCore.h"
 
 #include "ArkString.h"
-#include "ArkDebug.h"
 #include "ArkSize.h"
+#include "SystemTasks.h"
 
 using namespace ArkThreading;
 ArkEngineCore * ArkEngineCore::mInstance = NULL;
@@ -29,6 +29,8 @@ void ArkEngineCore::initMemory()
 
 void ArkEngineCore::startThreads()
 {
+	mSystemThread = new ArkThread(new SystemTask());
+	mSystemThread->init();
 	// SystemThread?
 	// PhysicsThread?
 }

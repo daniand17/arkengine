@@ -1,52 +1,47 @@
 #include "BuildOptions.h"
 #include "ArkEngineCore.h"
 
-namespace Input
+class Input
 {
+public:
 	enum KeyCodes
 	{
 		KEY_INVALID = -1, // Needs to be the first
 
-		KEY_W = 0,
-		KEY_S,
-		KEY_A,
-		KEY_D,
+		Key_A = 0,
+		Key_B,
+		Key_C,
+		Key_D,
+		Key_E,
+		Key_F,
+		Key_G,
+		Key_H,
+		Key_I,
+		Key_J,
+		Key_K,
+		Key_L,
+		Key_M,
+		Key_N,
+		Key_O,
+		Key_P,
+		Key_Q,
+		Key_R,
+		Key_S,
+		Key_T,
+		Key_U,
+		Key_V,
+		Key_W,
+		Key_X,
+		Key_Y,
+		Key_Z,
 
 		NUM_KEYS			// Needs to be the last
 	};
 	
-	bool GetKeyDown(KeyCodes keyCode)
-	{
-		ArkEngineCore * inst = ArkEngineCore::Instance();
-		ArkWindow const * win;
-		if ( inst )
-			win = inst->GetMainWindowHandle();
-
-		if ( win )
-			return glfwGetKey(win->getOSWindowHandle(), GetGlfwKeyMapping(keyCode) == GLFW_PRESS);
-		else
-			return false;
-	}
-
-	KeyCodes GetArkEngineKeyMapping(unsigned int glfwKey)
-	{
-		switch ( glfwKey )
-		{
-		case GLFW_KEY_W: return KEY_W;
-		case GLFW_KEY_S: return KEY_S;
-		case GLFW_KEY_A: return KEY_A;
-		case GLFW_KEY_D: return KEY_D;
-		}
-	}
-
-	unsigned int GetGlfwKeyMapping(KeyCodes key)
-	{
-		switch ( key )
-		{
-		case KEY_W: return GLFW_KEY_W;
-		case KEY_S: return GLFW_KEY_S;
-		case KEY_A: return GLFW_KEY_A;
-		case KEY_D: return GLFW_KEY_D;
-		}
-	}
-}
+	static bool GetKeyDown(KeyCodes keyCode);
+	
+private:
+	static bool keys[NUM_KEYS];
+	static KeyCodes GetArkEngineKeyMapping(unsigned int glfwKey);
+	static unsigned int GetGlfwKeyMapping(Input::KeyCodes key);
+};

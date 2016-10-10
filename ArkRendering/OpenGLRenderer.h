@@ -4,7 +4,7 @@
 #include "BuildOptions.h"
 #include "ArkWindow.h"
 #include "ArkThread.h"
-#include "RenderingGlobals.h"
+#include "ArkRendering.h"
 #include "Vec2.h"
 #include "Vec3.h"
 
@@ -57,7 +57,7 @@ inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 {
 	GLenum bufType = mBufferType == ArrayBuffer ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
 	glBindBuffer(bufType, mBufferId);
-	mSize = (sizeof(T)) * data.size();
+	mSize = static_cast<GLsizei>((sizeof(T)) * data.size());
 	glBufferData(bufType, mSize, &data[0], GL_STATIC_DRAW);
 }
 

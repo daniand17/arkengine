@@ -1,4 +1,6 @@
 #pragma once
+#include "Vec3.h"
+#include "Quaternion.h"
 
 namespace Physics
 {
@@ -12,11 +14,19 @@ namespace Physics
 
 	Vec3 const gravity = Vec3(0.0f, 9.81f, 0.0f);
 
-	class Rigidbody;
 	namespace Integrators
 	{
 		struct State;
 		struct Derivative;
 		class Rk4Integrator;
 	}
+
+	struct RigidbodyInfo
+	{
+		Vec3 position;
+		Quaternion rotation;
+		float mass;
+		float drag;
+		float angularDrag;
+	};
 };

@@ -18,15 +18,12 @@
     <ClInclude Include="Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rigidbody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PhysicsIntegrators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Rigidbody.cpp">
+    <ClCompile Include="PhysicsIntegrators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
