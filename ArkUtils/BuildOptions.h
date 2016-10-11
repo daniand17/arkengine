@@ -17,3 +17,4 @@
 
 
 #define COMPILE_TIME_ASSERT(name, n) struct name { char a[(n) ? 1 : -1];}
+#define DATA_NONE -1

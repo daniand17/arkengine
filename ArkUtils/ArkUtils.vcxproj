@@ -180,12 +180,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ArkPhysics\Time.h" />
     <ClInclude Include="ArkDebug.h" />
     <ClInclude Include="ArkGlobals.h" />
     <ClInclude Include="ArkSize.h" />
     <ClInclude Include="ArkString.h" />
     <ClInclude Include="ArkThread.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp" />

@@ -42,7 +42,16 @@
     <ClInclude Include="ArkRendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RendererResourceManager.h">
+    <ClInclude Include="RendererModelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,7 +80,10 @@
     <ClCompile Include="ArkRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererResourceManager.cpp">
+    <ClCompile Include="RendererModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

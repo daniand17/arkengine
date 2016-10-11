@@ -26,6 +26,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Rk4Integrator.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Rk4Integrator.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B794526F-75D6-463C-96A8-0995D452E4C9}</ProjectGuid>
     <RootNamespace>ArkPhysics</RootNamespace>
@@ -182,13 +189,6 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="PhysicsIntegrators.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="PhysicsIntegrators.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

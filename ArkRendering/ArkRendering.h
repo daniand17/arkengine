@@ -7,6 +7,8 @@
 #include "ArkString.h"
 #include "Mat4.h"
 
+typedef unsigned int Resource_Id;
+
 namespace ArkRendering
 {
 	enum LightType
@@ -18,6 +20,8 @@ namespace ArkRendering
 
 	struct LightInfo
 	{
+		Resource_Id id;
+
 		Vec3 eyePosition;
 		Vec3 color;
 
@@ -31,6 +35,8 @@ namespace ArkRendering
 
 	struct MeshInfo
 	{
+		Resource_Id id;
+
 		std::vector<Vec3> vertices;
 		std::vector<Vec3> normals;
 		std::vector<Vec2> uvs;
@@ -38,6 +44,8 @@ namespace ArkRendering
 
 	struct MaterialInfo
 	{
+		Resource_Id id;
+
 		Vec3 ambient;
 		Vec3 diffuse;
 		Vec3 specular;
@@ -60,7 +68,8 @@ namespace ArkRendering
 
 	struct ModelInfo
 	{
-		unsigned int id;
+		Resource_Id id;
+
 		MaterialInfo * material;
 		MeshInfo * mesh;
 		Mat4 modelMatrix;

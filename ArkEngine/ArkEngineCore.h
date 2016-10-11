@@ -12,7 +12,6 @@ public:
 	static void InitEngine();
 	int Run()
 	{
-		initMemory();
 		startThreads();
 
 		runMainLoop();
@@ -33,7 +32,7 @@ public:
 private:
 	static ArkEngineCore * mInstance;
 
-	ArkEngineCore() {}
+	ArkEngineCore();
 
 	void initMemory();
 	void startThreads();

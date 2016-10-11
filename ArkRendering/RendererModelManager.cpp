@@ -1,4 +1,6 @@
-#include "RendererResourceManager.h"
+#include "RendererModelManager.h"
+
+RendererModelManager * RendererModelManager::mInstance = NULL;
 
 void RendererModelManager::ReleaseModelInfoById(Resource_Id modelId)
 {
@@ -8,14 +10,15 @@ void RendererModelManager::ReleaseModelInfoById(Resource_Id modelId)
 
 ArkRendering::ModelInfo * RendererModelManager::getModelInfoForPopulate()
 {
+	mLock.lock();
 	size_t siz = mAvailableModelIds.size();
 	if ( siz > 0 )
 	{
 		Resource_Id index = mAvailableModelIds[siz - 1];
-		mAvailableModelIds.pop_back();
-
 		ModelAllocation & alloc = mModels[index];
 		alloc.isFree = false;
+		mAvailableModelIds.pop_back();
+		mLock.unlock();
 		return alloc.modelInfo;
 	}
 	else
@@ -23,8 +26,9 @@ ArkRendering::ModelInfo * RendererModelManager::getModelInfoForPopulate()
 		ModelAllocation modelAlloc;
 		modelAlloc.isFree = false;
 		modelAlloc.modelInfo = new ArkRendering::ModelInfo();
-		modelAlloc.modelInfo->id = siz;
+		modelAlloc.modelInfo->id = static_cast<Resource_Id>(siz);
 		mModels.push_back(modelAlloc);
+		mLock.unlock();
 		return modelAlloc.modelInfo;
 	}
 }

@@ -1,11 +1,16 @@
 #include "ArkEngineCore.h"
-
+#include "RendererModelManager.h"
 #include "ArkString.h"
 #include "ArkSize.h"
 #include "SystemTasks.h"
 
 using namespace ArkThreading;
 ArkEngineCore * ArkEngineCore::mInstance = NULL;
+
+ArkEngineCore::ArkEngineCore()
+{
+	initMemory();
+}
 
 ArkEngineCore * ArkEngineCore::Instance()
 {
@@ -19,7 +24,10 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
+	RendererModelManager::Initialize();
+
 	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
+	mSystemThread = new ArkThread(new SystemTask());
 
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);
@@ -29,9 +37,8 @@ void ArkEngineCore::initMemory()
 
 void ArkEngineCore::startThreads()
 {
-	mSystemThread = new ArkThread(new SystemTask());
 	mSystemThread->init();
-	// SystemThread?
+
 	// PhysicsThread?
 }
 

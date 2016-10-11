@@ -14,7 +14,7 @@ void SystemTask::run()
 	{
 		if ( Input::GetKeyDown(Input::KeyCodes::Key_W) )
 		{
-
+			Debug::Log("Hello world");
 		}
 		glfwPollEvents();
 	}
