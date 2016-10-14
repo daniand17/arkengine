@@ -1,4 +1,5 @@
 #include "RendererModelManager.h"
+#include "ArkDebug.h"
 
 RendererModelManager * RendererModelManager::smInstance = NULL;
 
@@ -7,6 +8,7 @@ using namespace ArkRendering;
 RendererModelManager::RendererModelManager()
 	: mModelsDirty(true)
 {
+	Debug::Log("Initialized RendererModelManager");
 }
 
 RendererModelManager::~RendererModelManager()

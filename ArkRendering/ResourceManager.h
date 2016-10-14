@@ -3,6 +3,7 @@
 #include "MaterialFactory.h"
 #include "MeshFactory.h"
 #include "ModelFactory.h"
+#include "ShaderFactory.h"
 
 class ResourceManager
 {
@@ -23,6 +24,7 @@ public:
 	MeshFactory * GetMeshFactory() const { return mMeshFactory; }
 	MaterialFactory * GetMaterialFactory() const { return mMaterialFactory; }
 	ModelFactory * GetModelFactory() const { return mModelFactory; }
+	ShaderFactory * GetShaderFactory() const { return mShaderFactory; }
 
 private:
 	static ResourceManager * mInstance;
@@ -30,4 +32,5 @@ private:
 	MeshFactory * mMeshFactory;
 	MaterialFactory * mMaterialFactory;
 	ModelFactory * mModelFactory;
+	ShaderFactory * mShaderFactory;
 };

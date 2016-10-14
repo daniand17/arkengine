@@ -1,3 +1,7 @@
+#include <vector>
+#include "BuildOptions.h"
+#include "ArkMath.h"
+
 enum BufferTypes
 {
 	ArrayBuffer,
@@ -11,7 +15,7 @@ public:
 	BufferData(BufferTypes bufferType) : mBufferType(bufferType) { glGenBuffers(1, &mBufferId); }
 	~BufferData();
 	void BindBufferForDrawing(unsigned int numInOrder) const;
-	void DisableBufferForDrawing(unsigned int numInOrder) { glDisableVertexAttribArray(numInOrder); }
+	void DisableBufferForDrawing(unsigned int numInOrder) const { glDisableVertexAttribArray(numInOrder); }
 	void SetBufferData(std::vector<T> & data);
 	GLsizei Size() const { return mSize; }
 
@@ -50,3 +54,23 @@ inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 	mSize = static_cast<GLsizei>((sizeof(T)) * data.size());
 	glBufferData(bufType, mSize, &data[0], GL_STATIC_DRAW);
 }
+
+class BufferCache
+{
+
+public:
+	BufferCache();
+	
+	BufferData<Vec3> * GetVertexBuffer() { return &mVertexBuffer; }
+	BufferData<Vec3> * GetNormalBuffer() { return &mNormalBuffer; }
+	BufferData<Vec2> * GetUVBuffer() { return &mUVBuffer; }
+	
+	size_t Size() const { return mVertexBuffer.Size(); }
+	
+	void BindBuffersForDrawing() const;
+	void DisableBuffers() const;
+private:
+	BufferData<Vec3> mVertexBuffer;
+	BufferData<Vec3> mNormalBuffer;
+	BufferData<Vec2> mUVBuffer;
+};

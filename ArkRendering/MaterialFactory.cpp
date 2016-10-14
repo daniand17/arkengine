@@ -1,8 +1,10 @@
 #include "MaterialFactory.h"
 
+using namespace ArkRendering;
+
 Resource_Id MaterialFactory::CreateMaterial()
 {
-	ArkRendering::MaterialInfo * material = new ArkRendering::MaterialInfo();
+	MaterialInfo * material = new MaterialInfo();
 	material->id = mLoadedMaterials.size();
 	material->ambient = Vec3(1, 1, 1);
 	material->diffuse = Vec3(1, 1, 1);

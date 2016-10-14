@@ -44,10 +44,13 @@ namespace ArkRendering
 		Vec3 diffuse;
 		Vec3 specular;
 		float shininess;
+		
+		void setShaderProgram(GLuint shaderProgram);
+		void UseShaderProgram() const;
+		GLuint GetShaderProgramId() const { return mShaderProgram; }
 
-		void getUniformLocationsFromShader(GLuint shaderProgramId);
-		void bindMaterialToShader() const;
 	private:
+		GLuint mShaderProgram;
 		GLuint shiId;
 		GLuint ambId;
 		GLuint difId;
@@ -69,9 +72,14 @@ namespace ArkRendering
 
 	struct ModelInfo : Resource
 	{
+		ModelInfo() 
+			: materialId(0)
+			, meshId(0)
+		{}
+
 		Resource_Id materialId;
 		Resource_Id meshId;
-		Mat4 modelMatrix;
+		Mat4 modelMatrix = Mat4::identity();
 	};
 
 	class Texture

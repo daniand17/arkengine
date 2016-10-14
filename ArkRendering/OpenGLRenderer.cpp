@@ -12,13 +12,12 @@
 using namespace ArkRendering;
 using namespace ArkMath;
 
+#define DEBUG_MATERIAL_ID 0
+
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
 
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: mWindow(windowHandle)
-	, mVertexBuffer(BufferTypes::ArrayBuffer)
-	, mUvBuffer(BufferTypes::ArrayBuffer)
-	, mNormalBuffer(BufferTypes::ArrayBuffer)
 	, mNumModelsInLastBuffer(0)
 {
 	if ( !mInstance )
@@ -27,9 +26,6 @@ OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 
 OpenGLRenderer::OpenGLRenderer()
 	: mShouldRun(true)
-	, mVertexBuffer(BufferTypes::ArrayBuffer)
-	, mUvBuffer(BufferTypes::ArrayBuffer)
-	, mNormalBuffer(BufferTypes::ArrayBuffer)
 {
 }
 
@@ -37,12 +33,12 @@ OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
 
 void OpenGLRenderer::DeinitRenderer()
 {
-	delete mShaderProgram;
 	glDeleteVertexArrays(1, &mVertexArrayId);
 }
 
 void OpenGLRenderer::InitializeRenderer()
 {
+	Debug::Log("Initializing Renderer");
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -50,18 +46,15 @@ void OpenGLRenderer::InitializeRenderer()
 	glGenVertexArrays(1, &mVertexArrayId);
 	glBindVertexArray(mVertexArrayId);
 
-	mShaderProgram = new ShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_CULL_FACE);
+	glDepthFunc(GL_LESS);
 }
 
 void OpenGLRenderer::Run()
 {
 	GLFWwindow * win = mWindow->getOSWindowHandle();
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_CULL_FACE);
-	glDepthFunc(GL_LESS);
 
 	double lastTime = glfwGetTime();
 	int nbFrames = 0;
@@ -71,73 +64,82 @@ void OpenGLRenderer::Run()
 	cam.setTarget(Vec3(0, 0, 0));
 	float rotY = 0.0f;
 
-	GLuint vId = glGetUniformLocation(mShaderProgram->getId(), "V");
-	GLuint mId = glGetUniformLocation(mShaderProgram->getId(), "M");
-	GLuint mvpId = glGetUniformLocation(mShaderProgram->getId(), "MVP");
-	GLuint normId = glGetUniformLocation(mShaderProgram->getId(), "N");
-
 	LightInfo light;
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
-	light.getUniformLocationsFromShader(mShaderProgram->getId());
 
-	MaterialInfo material;
-	material.ambient = Vec3(1, 1, 1);
-	material.diffuse = Vec3(1, 1, 1);
-	material.specular = Vec3(1, 1, 1);
-	material.shininess = 128;
-	material.getUniformLocationsFromShader(mShaderProgram->getId());
+	Resource_Id shaderId = ResourceManager::Instance()->GetShaderFactory()->CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	ShaderProgram * program = ResourceManager::Instance()->GetShaderFactory()->GetShaderProgramByResourceId(shaderId);
+	program->setTexture(new Texture("./rock_texture.bmp"));
+	MaterialFactory * matFac = ResourceManager::Instance()->GetMaterialFactory();
+	MaterialInfo * material = matFac->GetMaterialById(matFac->CreateMaterial());
+	material->setShaderProgram(program->getId());
+
+	ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
+	modelInfo->materialId = material->id;
+	modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
+	modelInfo->modelMatrix = Mat4::identity();
 
 	do
 	{
-		double currentTime = glfwGetTime();
-		nbFrames++;
-		if ( currentTime - lastTime >= 1.0 )
-		{
-			printf("%f ms/frame : %f\n", 1000.0 / double(nbFrames), static_cast<double>(mNumModelsInLastBuffer));
-			nbFrames = 0;
-			lastTime += 1.0;
-		}
-
-		updateBuffers();
-
-		rotY += 0.01f;
-
 		glClearColor(0.0, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(mShaderProgram->getId());
-		cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
-		cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
 
-		Mat4 modelMat = Mat4::identity();
-		Mat4 viewMat = cam.getViewMatrix();
-		Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
-		Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
+		MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->GetMaterialById(0);
 
-		glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
-		glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
-		glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
-		glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
+		if ( material )
+		{
+			GLuint programId = material->GetShaderProgramId();
 
-		// Converting the light to eye pos
-		Vec3 worldLightPos = light.eyePosition;
-		Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
-		xform = viewMat * xform;
-		light.eyePosition = Vec3(xform.x, xform.y, xform.z);
-		light.bindLightToShader();
-		material.bindMaterialToShader();
-		light.eyePosition = worldLightPos;
+			material->UseShaderProgram();
 
-		// Bind the buffers for drawing
-		mVertexBuffer.BindBufferForDrawing(0);
-		mUvBuffer.BindBufferForDrawing(1);
-		mNormalBuffer.BindBufferForDrawing(2);
+			GLuint vId = glGetUniformLocation(programId, "V");
+			GLuint mId = glGetUniformLocation(programId, "M");
+			GLuint mvpId = glGetUniformLocation(programId, "MVP");
+			GLuint normId = glGetUniformLocation(programId, "N");
+			light.getUniformLocationsFromShader(programId);
 
-		glDrawArrays(GL_TRIANGLES, 0, mVertexBuffer.Size());
+			double currentTime = glfwGetTime();
+			nbFrames++;
+			if ( currentTime - lastTime >= 1.0 )
+			{
+				printf("%f ms/frame : %f\n", 1000.0 / double(nbFrames), static_cast<double>(mNumModelsInLastBuffer));
+				nbFrames = 0;
+				lastTime += 1.0;
+			}
 
-		mNormalBuffer.DisableBufferForDrawing(2);
-		mUvBuffer.DisableBufferForDrawing(1);
-		mVertexBuffer.DisableBufferForDrawing(0);
+			updateBuffers();
+
+			rotY += 0.01f;
+
+			cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
+			cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
+
+			Mat4 modelMat = Mat4::identity();
+			Mat4 viewMat = cam.getViewMatrix();
+			Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
+			Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
+
+			glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
+			glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
+			glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
+			glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
+
+			// Converting the light to eye pos
+			Vec3 worldLightPos = light.eyePosition;
+			Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
+			xform = viewMat * xform;
+			light.eyePosition = Vec3(xform.x, xform.y, xform.z);
+			light.bindLightToShader();
+
+			light.eyePosition = worldLightPos;
+
+			mBufferCache.BindBuffersForDrawing();
+
+			glDrawArrays(GL_TRIANGLES, 0, mBufferCache.Size());
+
+			mBufferCache.DisableBuffers();
+		}
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -153,7 +155,7 @@ void OpenGLRenderer::updateBuffers()
 	if ( rendererModelManager )
 	{
 		std::vector<ModelInfo> modelInfoList;
-		rendererModelManager->GetModelsWithMaterialId(0, modelInfoList);
+		rendererModelManager->GetModelsWithMaterialId(DEBUG_MATERIAL_ID, modelInfoList);
 		size_t numModels = modelInfoList.size();
 		if ( numModels > 0 && numModels != mNumModelsInLastBuffer )
 		{
@@ -190,9 +192,10 @@ void OpenGLRenderer::updateBuffers()
 						newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
 						newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
 					}
-					mVertexBuffer.SetBufferData(newVertBuffer);
-					mNormalBuffer.SetBufferData(newNormalBuffer);
-					mUvBuffer.SetBufferData(newUvBuffer);
+
+					mBufferCache.GetVertexBuffer()->SetBufferData(newVertBuffer);
+					mBufferCache.GetNormalBuffer()->SetBufferData(newNormalBuffer);
+					mBufferCache.GetUVBuffer()->SetBufferData(newUvBuffer);
 				}
 			}
 		}

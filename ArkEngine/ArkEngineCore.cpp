@@ -30,9 +30,9 @@ void ArkEngineCore::initMemory()
 	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
 	mSystemThread = new ArkThread(new SystemTask());
 
-
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);
+
 	mRenderer->InitializeRenderer();
 #endif // USE_OPENGL
 }

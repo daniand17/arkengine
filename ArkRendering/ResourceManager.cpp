@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include "ArkDebug.h"
 
 ResourceManager * ResourceManager::mInstance = NULL;
 
@@ -10,6 +11,9 @@ ResourceManager::ResourceManager()
 	mMeshFactory = new MeshFactory();
 	mMaterialFactory = new MaterialFactory();
 	mModelFactory = new ModelFactory();
+	mShaderFactory = new ShaderFactory();
+
+	Debug::Log("Initialized Resource Manager");
 }
 
 ResourceManager::~ResourceManager()
@@ -17,10 +21,12 @@ ResourceManager::~ResourceManager()
 	delete mMeshFactory;
 	delete mMaterialFactory;
 	delete mModelFactory;
+	delete mShaderFactory;
 
 	mMeshFactory = 0;
 	mMaterialFactory = 0;
 	mModelFactory = 0;
+	mShaderFactory = 0;
 }
 
 void ResourceManager::Initialize()

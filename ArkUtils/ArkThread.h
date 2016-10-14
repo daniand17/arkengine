@@ -8,10 +8,13 @@ namespace ArkThreading
 	{
 	public:
 		void initialize() { init(); }
-		void runTask() { run(); }
+		void runTask() { mIsRunning = true; run(); }
 	protected:
 		virtual void init() = 0;
 		virtual void run() = 0;
+
+	private:
+		bool mIsRunning = false;
 	};
 
 	class ArkThread

@@ -8,31 +8,23 @@ using namespace ArkRendering;
 
 void SystemTask::init()
 {
+	Debug::Log("Initializing System task");
+	ResourceManager * resourceManager	= ResourceManager::Instance();
+	MaterialFactory * materialFactory	= resourceManager->GetMaterialFactory();
+	ShaderFactory	* shaderFactory		= resourceManager->GetShaderFactory();
+
+
 	
 }
 
 void SystemTask::run()
 {
 	bool done = false;
-
-	ResourceManager * resourceManager = ResourceManager::Instance();
-	Resource_Id meshId = resourceManager->GetMeshFactory()->LoadMesh("cube.obj");
-	Resource_Id materialId = resourceManager->GetMaterialFactory()->CreateMaterial();
+	Debug::Log("Running System Task");
 
 	do
 	{
-		if ( Input::GetKeyDown(Input::KeyCodes::Key_W) )
-		{
-			if ( RendererModelManager::Instance()->GetNumModels() < 10000 )
-			{
-				ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
-				modelInfo->materialId = materialId;
-				modelInfo->meshId = meshId;
-				modelInfo->modelMatrix = Mat4::identity();
-			}
-		}
 		glfwPollEvents();
 	}
 	while ( !done );
-
 }

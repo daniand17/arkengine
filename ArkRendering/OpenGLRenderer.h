@@ -29,11 +29,7 @@ private:
 	bool	mShouldRun;
 	GLuint	mVertexArrayId;
 
-	ArkRendering::ShaderProgram	* mShaderProgram;
-	BufferData<Vec3> mVertexBuffer;
-	BufferData<Vec2> mUvBuffer;
-	BufferData<Vec3> mNormalBuffer;
-
+	BufferCache mBufferCache;
 	size_t mNumModelsInLastBuffer;
 
 	void updateBuffers();
