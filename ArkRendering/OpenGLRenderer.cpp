@@ -5,28 +5,33 @@
 #include "ArkMath.h"
 #include "Camera.h"
 #include "ModelLoader.h"
+#include "RendererModelManager.h"
+#include "ArkDebug.h"
+#include "ResourceManager.h"
 
 using namespace ArkRendering;
 using namespace ArkMath;
 
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
 
-OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle) 
+OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: mWindow(windowHandle)
 	, mVertexBuffer(BufferTypes::ArrayBuffer)
 	, mUvBuffer(BufferTypes::ArrayBuffer)
 	, mNormalBuffer(BufferTypes::ArrayBuffer)
+	, mNumModelsInLastBuffer(0)
 {
 	if ( !mInstance )
 		mInstance = this;
 }
 
-OpenGLRenderer::OpenGLRenderer() 
+OpenGLRenderer::OpenGLRenderer()
 	: mShouldRun(true)
 	, mVertexBuffer(BufferTypes::ArrayBuffer)
 	, mUvBuffer(BufferTypes::ArrayBuffer)
-	, mNormalBuffer(BufferTypes::ArrayBuffer) 
-{}
+	, mNormalBuffer(BufferTypes::ArrayBuffer)
+{
+}
 
 OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
 
@@ -44,19 +49,6 @@ void OpenGLRenderer::InitializeRenderer()
 
 	glGenVertexArrays(1, &mVertexArrayId);
 	glBindVertexArray(mVertexArrayId);
-
-	std::vector<Vec3> verts;
-	std::vector<Vec2> uvs;
-	std::vector<Vec3> normals;
-	std::vector<unsigned int> indices;
-
-	bool result = ModelLoading::loadOBJ(ArkString("suzanne.obj"), verts, uvs, normals);
-
-	mNumVerts = verts.size();
-
-	mVertexBuffer.SetBufferData(verts);
-	mNormalBuffer.SetBufferData(normals);
-	mUvBuffer.SetBufferData(uvs);
 
 	mShaderProgram = new ShaderProgram("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	mShaderProgram->setTexture(new Texture("./IceCube.bmp"));
@@ -84,15 +76,15 @@ void OpenGLRenderer::Run()
 	GLuint mvpId = glGetUniformLocation(mShaderProgram->getId(), "MVP");
 	GLuint normId = glGetUniformLocation(mShaderProgram->getId(), "N");
 
-	ArkRendering::LightInfo light;
+	LightInfo light;
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
 	light.getUniformLocationsFromShader(mShaderProgram->getId());
 
-	ArkRendering::MaterialInfo material;
+	MaterialInfo material;
 	material.ambient = Vec3(1, 1, 1);
 	material.diffuse = Vec3(1, 1, 1);
-	material.specular =Vec3(1, 1, 1);
+	material.specular = Vec3(1, 1, 1);
 	material.shininess = 128;
 	material.getUniformLocationsFromShader(mShaderProgram->getId());
 
@@ -102,10 +94,12 @@ void OpenGLRenderer::Run()
 		nbFrames++;
 		if ( currentTime - lastTime >= 1.0 )
 		{
-			//printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			printf("%f ms/frame : %f\n", 1000.0 / double(nbFrames), static_cast<double>(mNumModelsInLastBuffer));
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
+
+		updateBuffers();
 
 		rotY += 0.01f;
 
@@ -150,4 +144,57 @@ void OpenGLRenderer::Run()
 		mShouldRun = glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
 	}
 	while ( mShouldRun && !glfwWindowShouldClose(win) );
+}
+
+void OpenGLRenderer::updateBuffers()
+{
+	RendererModelManager * rendererModelManager = RendererModelManager::Instance();
+
+	if ( rendererModelManager )
+	{
+		std::vector<ModelInfo> modelInfoList;
+		rendererModelManager->GetModelsWithMaterialId(0, modelInfoList);
+		size_t numModels = modelInfoList.size();
+		if ( numModels > 0 && numModels != mNumModelsInLastBuffer )
+		{
+			mNumModelsInLastBuffer = numModels;
+			MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
+			if ( meshFactory )
+			{
+				std::vector<Vec3> newVertBuffer;
+				std::vector<Vec3> newNormalBuffer;
+				std::vector<Vec2> newUvBuffer;
+				size_t vertCount = 0;
+				size_t normalCount = 0;
+				size_t uvCount = 0;
+				for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+				{
+					MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+					if ( meshInfo )
+					{
+						vertCount += meshInfo->vertices.size();
+						normalCount += meshInfo->normals.size();
+						uvCount += meshInfo->uvs.size();
+					}
+				}
+
+				if ( vertCount > 0 )
+				{
+					newVertBuffer.reserve(vertCount);
+					newNormalBuffer.reserve(normalCount);
+					newUvBuffer.reserve(uvCount);
+					for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+					{
+						MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+						newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
+						newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
+						newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
+					}
+					mVertexBuffer.SetBufferData(newVertBuffer);
+					mNormalBuffer.SetBufferData(newNormalBuffer);
+					mUvBuffer.SetBufferData(newUvBuffer);
+				}
+			}
+		}
+	}
 }

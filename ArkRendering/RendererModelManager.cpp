@@ -1,34 +1,65 @@
 #include "RendererModelManager.h"
 
-RendererModelManager * RendererModelManager::mInstance = NULL;
+RendererModelManager * RendererModelManager::smInstance = NULL;
+
+using namespace ArkRendering;
+
+RendererModelManager::RendererModelManager()
+	: mModelsDirty(true)
+{
+}
+
+RendererModelManager::~RendererModelManager()
+{
+}
 
 void RendererModelManager::ReleaseModelInfoById(Resource_Id modelId)
 {
-	mAvailableModelIds.push_back(modelId);
-	mModels[modelId].isFree = true;
+	if ( modelId < mModels.size() )
+	{
+		mAvailableModelIds.push_back(modelId);
+		mModels[modelId].isFree = true;
+	}
 }
 
-ArkRendering::ModelInfo * RendererModelManager::getModelInfoForPopulate()
+ArkRendering::ModelInfo * RendererModelManager::GetNextModelInfoForPopulate()
 {
 	mLock.lock();
+	ModelInfo * modelInfo;
+
 	size_t siz = mAvailableModelIds.size();
+	// There is already a free block
 	if ( siz > 0 )
 	{
+
 		Resource_Id index = mAvailableModelIds[siz - 1];
-		ModelAllocation & alloc = mModels[index];
+ 		ModelAllocation & alloc = mModels[index];
 		alloc.isFree = false;
 		mAvailableModelIds.pop_back();
-		mLock.unlock();
-		return alloc.modelInfo;
+		modelInfo = &mModels[index].modelInfo;
+		mModelsDirty = true;
 	}
+	// Need to create a new block
 	else
 	{
+		Resource_Id newBlockId = static_cast<Resource_Id>(mModels.size());
 		ModelAllocation modelAlloc;
 		modelAlloc.isFree = false;
-		modelAlloc.modelInfo = new ArkRendering::ModelInfo();
-		modelAlloc.modelInfo->id = static_cast<Resource_Id>(siz);
+		modelAlloc.modelInfo.id = newBlockId;
 		mModels.push_back(modelAlloc);
-		mLock.unlock();
-		return modelAlloc.modelInfo;
+		modelInfo = &(mModels[newBlockId].modelInfo);
+		mModelsDirty = true;
 	}
+
+	mLock.unlock();
+	return modelInfo;
+}
+
+void RendererModelManager::GetModelsWithMaterialId(Resource_Id materialId, std::vector<ArkRendering::ModelInfo>& out)
+{
+	mLock.lock();
+	for ( Resource_Id i = 0 ; i < mModels.size() ; i++ )
+		if ( mModels[i].modelInfo.materialId == materialId )
+			out.push_back(mModels[i].modelInfo);
+	mLock.unlock();
 }

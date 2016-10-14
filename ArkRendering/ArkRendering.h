@@ -7,7 +7,7 @@
 #include "ArkString.h"
 #include "Mat4.h"
 
-typedef unsigned int Resource_Id;
+typedef size_t Resource_Id;
 
 namespace ArkRendering
 {
@@ -33,19 +33,13 @@ namespace ArkRendering
 		GLuint colId;
 	};
 
-	struct MeshInfo
+	struct Resource
 	{
 		Resource_Id id;
-
-		std::vector<Vec3> vertices;
-		std::vector<Vec3> normals;
-		std::vector<Vec2> uvs;
 	};
 
-	struct MaterialInfo
+	struct MaterialInfo : Resource
 	{
-		Resource_Id id;
-
 		Vec3 ambient;
 		Vec3 diffuse;
 		Vec3 specular;
@@ -66,12 +60,17 @@ namespace ArkRendering
 		Mat4 viewMatrix;
 	};
 
-	struct ModelInfo
+	struct MeshInfo : Resource
 	{
-		Resource_Id id;
+		std::vector<Vec3> vertices;
+		std::vector<Vec3> normals;
+		std::vector<Vec2> uvs;
+	};
 
-		MaterialInfo * material;
-		MeshInfo * mesh;
+	struct ModelInfo : Resource
+	{
+		Resource_Id materialId;
+		Resource_Id meshId;
 		Mat4 modelMatrix;
 	};
 

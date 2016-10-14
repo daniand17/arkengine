@@ -8,23 +8,29 @@
 class RendererModelManager
 {
 public:
-	static void Initialize() { mInstance = new RendererModelManager(); }
-	static RendererModelManager * Instance() { return mInstance; }
+	static void Initialize() { smInstance = new RendererModelManager();}
+	static RendererModelManager * Instance() { return smInstance; }
+
+	RendererModelManager();
+	~RendererModelManager();
 
 	void ReleaseModelInfoById(Resource_Id modelId);
-	ArkRendering::ModelInfo * getModelInfoForPopulate();
+	ArkRendering::ModelInfo * GetNextModelInfoForPopulate();
+	void GetModelsWithMaterialId(Resource_Id materialId, std::vector<ArkRendering::ModelInfo> & out);
+	size_t GetNumModels() const { return mModels.size(); }
 
 private:
-	std::mutex mLock;
-
 	struct ModelAllocation
 	{
 		bool isFree = true;
-		ArkRendering::ModelInfo * modelInfo;
+		ArkRendering::ModelInfo modelInfo;
 	};
 
 	std::vector<Resource_Id> mAvailableModelIds;
 	std::vector<ModelAllocation> mModels;
 
-	static RendererModelManager * mInstance;
+	std::mutex mLock;
+	static RendererModelManager * smInstance;
+
+	bool mModelsDirty;
 };

@@ -2,13 +2,13 @@
 
 using namespace ArkRendering;
 
-ArkRendering::MeshInfo * MeshFactory::LoadMesh(ArkString modelName)
+Resource_Id MeshFactory::LoadMesh(ArkString modelName)
 {
 	bool loaded = false;
-	int index = getIndexOfLoadedMesh(modelName);
+	Resource_Id index = getIdOfLoadedMesh(modelName, loaded);
 
-	if ( index != DATA_NONE )
-		return mLoadedMeshes[index].mesh;
+	if ( loaded )
+		return index;
 	else
 	{
 		MeshInfo * meshInfo = new MeshInfo();
@@ -20,17 +20,20 @@ ArkRendering::MeshInfo * MeshFactory::LoadMesh(ArkString modelName)
 		loadedMesh.mesh = meshInfo;
 		loadedMesh.name = modelName;
 		mLoadedMeshes.push_back(loadedMesh);
+		return meshInfo->id;
 	}
 }
 
-int MeshFactory::getIndexOfLoadedMesh(ArkString modelName) const
+Resource_Id MeshFactory::getIdOfLoadedMesh(ArkString modelName, bool & found) const
 {
+	found = false;
 	int index = DATA_NONE;
 	for ( int i = 0 ; i < mLoadedMeshes.size() ; i++ )
 	{
 		if ( mLoadedMeshes[i].name == modelName )
 		{
 			index = i;
+			found = true;
 			break;
 		}
 	}

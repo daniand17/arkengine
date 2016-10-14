@@ -4,6 +4,7 @@
 #include "ArkWindow.h"
 #include "OpenGLRenderer.h"
 #include "ArkThread.h"
+#include "ResourceManager.h"
 
 class ArkEngineCore
 {

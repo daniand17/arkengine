@@ -8,8 +8,8 @@
 class MeshFactory
 {
 public:
-	ArkRendering::MeshInfo * LoadMesh(ArkString modelName);
-	
+	Resource_Id LoadMesh(ArkString modelName);
+	ArkRendering::MeshInfo * GetMeshById(Resource_Id id) const { return id < mLoadedMeshes.size() ? mLoadedMeshes[id].mesh : NULL; }
 
 private:
 	struct LoadedMesh
@@ -20,6 +20,6 @@ private:
 
 	std::vector<LoadedMesh> mLoadedMeshes;
 
-	int getIndexOfLoadedMesh(ArkString modelName) const;
+	Resource_Id getIdOfLoadedMesh(ArkString modelName, bool & found) const;
 
 };

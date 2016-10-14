@@ -24,10 +24,12 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
+	ResourceManager::Initialize();
 	RendererModelManager::Initialize();
 
 	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
 	mSystemThread = new ArkThread(new SystemTask());
+
 
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);

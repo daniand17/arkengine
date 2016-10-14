@@ -97,6 +97,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>
+    </LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -138,14 +140,19 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
-      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <MinimalRebuild>true</MinimalRebuild>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <StructMemberAlignment>Default</StructMemberAlignment>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glew32sd.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib;glew32sd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;libcd.lib;libcmtd.lib;msvcrtd.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
@@ -188,20 +195,22 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
       <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glew32s.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib;glew32s.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;libcd.lib;libcmtd.lib;msvcrtd.lib</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -218,7 +227,6 @@
     <ClInclude Include="CameraControls.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="SystemTasks.h" />
     <ClInclude Include="Transform.h" />

@@ -27,15 +27,15 @@ private:
 	static OpenGLRenderer * mInstance;
 	ArkWindow *	mWindow;
 	bool	mShouldRun;
-	GLuint	mVertexBufferId;
 	GLuint	mVertexArrayId;
 
 	ArkRendering::ShaderProgram	* mShaderProgram;
 	BufferData<Vec3> mVertexBuffer;
 	BufferData<Vec2> mUvBuffer;
 	BufferData<Vec3> mNormalBuffer;
-	size_t mNumVerts;
-	GLuint mUvBufferId;
-	GLuint mNormalBufferId;
+
+	size_t mNumModelsInLastBuffer;
+
+	void updateBuffers();
 };
 #endif

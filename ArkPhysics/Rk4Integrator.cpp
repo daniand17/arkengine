@@ -9,4 +9,5 @@ void Rk4Integrator::integrate(Physics::RigidbodyInfo rigidbodyInfo, float time, 
 
 Rk4Integrator::Derivative Rk4Integrator::evaluate(State const & initial, float t, float dt, Derivative const & d)
 {
+	return Rk4Integrator::Derivative();
 }

@@ -194,21 +194,27 @@
     <ClInclude Include="MaterialFactory.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshFactory.h" />
+    <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="ArkRendering.h" />
     <ClInclude Include="RendererModelManager.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\ArkUtils\ArkDebug.cpp" />
     <ClCompile Include="ArkWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="MaterialFactory.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshFactory.cpp" />
+    <ClCompile Include="ModelFactory.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="ArkRendering.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
     <ClCompile Include="RendererModelManager.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Window_glfw.cpp" />
     <ClCompile Include="Window_win32.cpp" />
   </ItemGroup>
