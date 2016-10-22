@@ -187,6 +187,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ArkUtils\BuildOptions.h" />
+    <ClInclude Include="AbstractResourceFactory.h" />
     <ClInclude Include="ArkWindow.h" />
     <ClInclude Include="BufferData.h" />
     <ClInclude Include="Camera.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="ArkRendering.h" />
     <ClInclude Include="RendererModelManager.h" />
+    <ClInclude Include="RenderState.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderFactory.h" />
     <ClInclude Include="ShaderLoader.h" />
@@ -206,7 +208,6 @@
   <ItemGroup>
     <ClCompile Include="..\ArkUtils\ArkDebug.cpp" />
     <ClCompile Include="ArkWindow.cpp" />
-    <ClCompile Include="BufferData.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="MaterialFactory.cpp" />
     <ClCompile Include="Mesh.cpp" />

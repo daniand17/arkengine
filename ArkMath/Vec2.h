@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include <string>
 
 struct Vec2
 {
@@ -21,6 +22,8 @@ struct Vec2
 	float magnitude() const { return sqrtf(x * x + y * y); }
 	float sqrMagnitude() const { return x * x + y * y; }
 	Vec2 normalized() const { float mag = magnitude(); return Vec2(x / mag, y / mag); }
+
+	std::string ToString() const;
 
 	static float dot(Vec2 const & lhs, Vec2 const & rhs) { return lhs.x * rhs.x + lhs.y * rhs.y; }
 	static const Vec2 zero;

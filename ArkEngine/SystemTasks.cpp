@@ -12,9 +12,6 @@ void SystemTask::init()
 	ResourceManager * resourceManager	= ResourceManager::Instance();
 	MaterialFactory * materialFactory	= resourceManager->GetMaterialFactory();
 	ShaderFactory	* shaderFactory		= resourceManager->GetShaderFactory();
-
-
-	
 }
 
 void SystemTask::run()

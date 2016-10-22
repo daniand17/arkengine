@@ -1,8 +1,6 @@
 #pragma once
-
-
-
 #include <glm\glm.hpp>
+
 struct Mat4
 {
 private:
@@ -27,6 +25,8 @@ public:
 	Mat4 transpose() const;
 	Mat4 inverse() const;
 	static Mat4 identity() { return Mat4(glm::mat4(1.0f)); }
+
+	char * toString() const;
 };
 
 Mat4 operator + (Mat4 const & lhs, Mat4 const & rhs);

@@ -56,6 +56,8 @@ void ArkEngineCore::stopThreads()
 
 void ArkEngineCore::deinitMemory()
 {
+	ResourceManager::Instance()->DesynchronizeProjectResources("testProject"); // TODO (AD) change to a shutdown method
+
 	delete mRenderer;
 	delete mWindow;
 }

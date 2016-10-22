@@ -6,9 +6,9 @@ Rigidbody::Rigidbody() :
 	drag(1.0f),
 	angularDrag(1.0f),
 	gravityScale(1.0f),
-	velocity(Vec3::zero),
-	angularVelocity(Vec3::zero),
-	mUnresolvedForce(Vec3::zero)
+	velocity(Vec3::zero()),
+	angularVelocity(Vec3::zero()),
+	mUnresolvedForce(Vec3::zero())
 {
 }
 

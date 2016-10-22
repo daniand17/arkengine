@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include "MaterialFactory.h"
 #include "MeshFactory.h"
 #include "ModelFactory.h"
@@ -20,7 +22,9 @@ public:
 	static ResourceManager * Instance() { return mInstance; }
 	static void Initialize();
 
-	ArkRendering::Resource * getResourceByIdAndType(Resource_Id id, ResourceType type) const;
+	void DesynchronizeProjectResources(ArkString projectName);
+	void SynchronizeProjectResources(ArkString projectName);
+	ArkRendering::Resource * GetResourceByIdAndType(Resource_Id id, ResourceType type) const;
 	MeshFactory * GetMeshFactory() const { return mMeshFactory; }
 	MaterialFactory * GetMaterialFactory() const { return mMaterialFactory; }
 	ModelFactory * GetModelFactory() const { return mModelFactory; }
@@ -33,4 +37,6 @@ private:
 	MaterialFactory * mMaterialFactory;
 	ModelFactory * mModelFactory;
 	ShaderFactory * mShaderFactory;
+
+	std::mutex mLock;
 };

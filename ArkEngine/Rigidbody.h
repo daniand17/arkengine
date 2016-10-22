@@ -22,7 +22,7 @@ private:
 public:
 	Rigidbody();
 
-	~Rigidbody() { position = Vec3::zero; velocity = Vec3::zero; angularVelocity = Vec3::zero; }
+	~Rigidbody() { position = Vec3::zero(); velocity = Vec3::zero(); angularVelocity = Vec3::zero(); }
 
 	// Physics
 	void addForce(Vec3 force, Physics::ForceType forceType = Physics::ForceType::Force);

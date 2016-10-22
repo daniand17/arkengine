@@ -1,6 +1,7 @@
 #include "ModelFactory.h"
 
 using namespace ArkRendering;
+using namespace std;
 
 Resource_Id ModelFactory::createModelFromMaterialAndMeshId(Resource_Id materialId, Resource_Id meshId)
 {
@@ -18,4 +19,32 @@ Resource_Id ModelFactory::createModelFromMaterialAndMeshId(Resource_Id materialI
 	mLoadedModels.push_back(newModel);
 
 	return newModel.id;
+}
+
+void ModelFactory::GetUsedMaterialIds(std::vector<Resource_Id>& out) const
+{
+	for ( vector<ModelInfo>::const_iterator iter = mLoadedModels.begin() ; iter < mLoadedModels.end() ; iter++ )
+	{
+		Resource_Id toPush = iter->materialId;
+		bool alreadyPushed = false;
+		for ( int i = 0 ; i < out.size() ; i++ )
+		{
+			if ( out[i] == toPush )
+			{
+				alreadyPushed = true;
+				break;
+			}
+		}
+
+		if ( !alreadyPushed )
+			out.push_back(toPush);
+	}
+}
+
+void ModelFactory::SynchronizeResources(ArkString projectName)
+{
+}
+
+void ModelFactory::DesynchronizeResources(ArkString projectName)
+{
 }

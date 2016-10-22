@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include "BuildOptions.h"
 #include "ArkMath.h"
@@ -55,22 +56,39 @@ inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 	glBufferData(bufType, mSize, &data[0], GL_STATIC_DRAW);
 }
 
-class BufferCache
+class BufferSet
 {
-
 public:
-	BufferCache();
+	BufferSet() 
+		: mVertexBuffer(BufferTypes::ArrayBuffer)
+		, mNormalBuffer(BufferTypes::ArrayBuffer)
+		, mUVBuffer(BufferTypes::ArrayBuffer) {}
+
+	size_t Size() const { return mVertexBuffer.Size(); }
+	bool IsDirty() const { return mIsDirty; }
 	
+	void BindBuffersForDrawing() const
+	{
+		mVertexBuffer.BindBufferForDrawing(0);
+		mUVBuffer.BindBufferForDrawing(1);
+		mNormalBuffer.BindBufferForDrawing(2);
+	}
+
+	void DisableBuffers() const
+	{
+		mNormalBuffer.DisableBufferForDrawing(2);
+		mUVBuffer.DisableBufferForDrawing(1);
+		mVertexBuffer.DisableBufferForDrawing(0);
+	}
+
+	void SetDirty(bool dirty) { mIsDirty = dirty; }
 	BufferData<Vec3> * GetVertexBuffer() { return &mVertexBuffer; }
 	BufferData<Vec3> * GetNormalBuffer() { return &mNormalBuffer; }
 	BufferData<Vec2> * GetUVBuffer() { return &mUVBuffer; }
-	
-	size_t Size() const { return mVertexBuffer.Size(); }
-	
-	void BindBuffersForDrawing() const;
-	void DisableBuffers() const;
+
 private:
 	BufferData<Vec3> mVertexBuffer;
 	BufferData<Vec3> mNormalBuffer;
 	BufferData<Vec2> mUVBuffer;
+	bool mIsDirty = false;
 };

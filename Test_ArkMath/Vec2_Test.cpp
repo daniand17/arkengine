@@ -128,7 +128,7 @@ namespace Test_ArkMath
 		TEST_METHOD(Memory_Footprint_Is_8_Bytes)
 		{
 			unsigned long long siz = 8;
-			Assert::AreEqual(sizeof(Vec2), siz);
+			Assert::AreEqual(siz, sizeof(Vec2));
 		}
 	};
 }

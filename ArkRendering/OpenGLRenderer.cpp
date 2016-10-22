@@ -11,14 +11,13 @@
 
 using namespace ArkRendering;
 using namespace ArkMath;
-
+using namespace std;
 #define DEBUG_MATERIAL_ID 0
 
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
 
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: mWindow(windowHandle)
-	, mNumModelsInLastBuffer(0)
 {
 	if ( !mInstance )
 		mInstance = this;
@@ -38,6 +37,7 @@ void OpenGLRenderer::DeinitRenderer()
 
 void OpenGLRenderer::InitializeRenderer()
 {
+
 	Debug::Log("Initializing Renderer");
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -85,60 +85,62 @@ void OpenGLRenderer::Run()
 		glClearColor(0.0, 0.0, 0.0, 0.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->GetMaterialById(0);
-
-		if ( material )
+		// Do timer
+		double currentTime = glfwGetTime();
+		nbFrames++;
+		if ( currentTime - lastTime >= 1.0 )
 		{
-			GLuint programId = material->GetShaderProgramId();
+			printf("%f ms/frame", 1000.0 / double(nbFrames));
+			nbFrames = 0;
+			lastTime += 1.0;
+		}
 
-			material->UseShaderProgram();
+		updateBufferSets();
 
-			GLuint vId = glGetUniformLocation(programId, "V");
-			GLuint mId = glGetUniformLocation(programId, "M");
-			GLuint mvpId = glGetUniformLocation(programId, "MVP");
-			GLuint normId = glGetUniformLocation(programId, "N");
-			light.getUniformLocationsFromShader(programId);
+		// Render all the render states
+		for ( RenderState * renderState : mRenderStateList )
+		{
+			MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->GetMaterialById(renderState->GetMaterialId());
 
-			double currentTime = glfwGetTime();
-			nbFrames++;
-			if ( currentTime - lastTime >= 1.0 )
+			if ( material )
 			{
-				printf("%f ms/frame : %f\n", 1000.0 / double(nbFrames), static_cast<double>(mNumModelsInLastBuffer));
-				nbFrames = 0;
-				lastTime += 1.0;
+				material->UseShaderProgram();
+				GLuint programId = material->GetShaderProgramId();
+
+				GLuint vId = glGetUniformLocation(programId, "V");
+				GLuint mId = glGetUniformLocation(programId, "M");
+				GLuint mvpId = glGetUniformLocation(programId, "MVP");
+				GLuint normId = glGetUniformLocation(programId, "N");
+
+				light.getUniformLocationsFromShader(programId);
+
+				rotY += 0.01f;
+
+				cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
+				cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
+
+				Mat4 modelMat = Mat4::identity();
+				Mat4 viewMat = cam.getViewMatrix();
+				Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
+				Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
+
+				glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
+				glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
+				glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
+				glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
+
+				// Converting the light to eye pos
+				Vec3 worldLightPos = light.eyePosition;
+				Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
+				xform = viewMat * xform;
+				light.eyePosition = Vec3(xform.x, xform.y, xform.z);
+				light.bindLightToShader();
+
+				light.eyePosition = worldLightPos;
+				renderState->BindBuffersForDrawing();
+				glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(renderState->Size()));	// TODO failure here
+				renderState->DisableBuffers();
 			}
-
-			updateBuffers();
-
-			rotY += 0.01f;
-
-			cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
-			cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
-
-			Mat4 modelMat = Mat4::identity();
-			Mat4 viewMat = cam.getViewMatrix();
-			Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
-			Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
-
-			glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
-			glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
-			glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
-			glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
-
-			// Converting the light to eye pos
-			Vec3 worldLightPos = light.eyePosition;
-			Vec4 xform(worldLightPos.x, worldLightPos.y, worldLightPos.z, 1.0f);
-			xform = viewMat * xform;
-			light.eyePosition = Vec3(xform.x, xform.y, xform.z);
-			light.bindLightToShader();
-
-			light.eyePosition = worldLightPos;
-
-			mBufferCache.BindBuffersForDrawing();
-
-			glDrawArrays(GL_TRIANGLES, 0, mBufferCache.Size());
-
-			mBufferCache.DisableBuffers();
 		}
 
 		glfwSwapBuffers(win);
@@ -148,56 +150,70 @@ void OpenGLRenderer::Run()
 	while ( mShouldRun && !glfwWindowShouldClose(win) );
 }
 
-void OpenGLRenderer::updateBuffers()
+void OpenGLRenderer::updateBufferSets()
 {
 	RendererModelManager * rendererModelManager = RendererModelManager::Instance();
 
-	if ( rendererModelManager )
+	if ( !rendererModelManager || !rendererModelManager->IsDirty() )
+		return;
+
+	MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
+	if ( !meshFactory ) return;
+
+	std::vector<Resource_Id> usedMaterialIds;
+	rendererModelManager->GetUsedMaterialIds(usedMaterialIds);
+
+	for ( vector<Resource_Id>::const_iterator resIdIter = usedMaterialIds.begin() ; resIdIter < usedMaterialIds.end() ; resIdIter++ )
 	{
+		Resource_Id resourceId = (*resIdIter);
 		std::vector<ModelInfo> modelInfoList;
-		rendererModelManager->GetModelsWithMaterialId(DEBUG_MATERIAL_ID, modelInfoList);
-		size_t numModels = modelInfoList.size();
-		if ( numModels > 0 && numModels != mNumModelsInLastBuffer )
+		rendererModelManager->GetModelsWithMaterialId((*resIdIter), modelInfoList);
+
+		BufferSet * currBufferSet = NULL;
+		if ( mBufferSetMap.find(resourceId) == mBufferSetMap.end() )
 		{
-			mNumModelsInLastBuffer = numModels;
-			MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
-			if ( meshFactory )
+			currBufferSet = new BufferSet();
+			mBufferSetMap[resourceId] = currBufferSet;
+			mRenderStateList.push_back(new RenderState(resourceId, currBufferSet));
+		}
+		else
+			currBufferSet = mBufferSetMap[resourceId];
+
+		std::vector<Vec3> newVertBuffer;
+		std::vector<Vec3> newNormalBuffer;
+		std::vector<Vec2> newUvBuffer;
+		size_t vertCount = 0;
+		size_t normalCount = 0;
+		size_t uvCount = 0;
+		for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+		{
+			MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+			if ( meshInfo )
 			{
-				std::vector<Vec3> newVertBuffer;
-				std::vector<Vec3> newNormalBuffer;
-				std::vector<Vec2> newUvBuffer;
-				size_t vertCount = 0;
-				size_t normalCount = 0;
-				size_t uvCount = 0;
-				for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
-				{
-					MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
-					if ( meshInfo )
-					{
-						vertCount += meshInfo->vertices.size();
-						normalCount += meshInfo->normals.size();
-						uvCount += meshInfo->uvs.size();
-					}
-				}
-
-				if ( vertCount > 0 )
-				{
-					newVertBuffer.reserve(vertCount);
-					newNormalBuffer.reserve(normalCount);
-					newUvBuffer.reserve(uvCount);
-					for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
-					{
-						MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
-						newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
-						newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
-						newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
-					}
-
-					mBufferCache.GetVertexBuffer()->SetBufferData(newVertBuffer);
-					mBufferCache.GetNormalBuffer()->SetBufferData(newNormalBuffer);
-					mBufferCache.GetUVBuffer()->SetBufferData(newUvBuffer);
-				}
+				vertCount += meshInfo->vertices.size();
+				normalCount += meshInfo->normals.size();
+				uvCount += meshInfo->uvs.size();
 			}
 		}
+
+		if ( vertCount > 0 )
+		{
+			newVertBuffer.reserve(vertCount);
+			newNormalBuffer.reserve(normalCount);
+			newUvBuffer.reserve(uvCount);
+			for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+			{
+				MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+				newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
+				newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
+				newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
+			}
+			
+			currBufferSet->GetVertexBuffer()->SetBufferData(newVertBuffer);
+			currBufferSet->GetNormalBuffer()->SetBufferData(newNormalBuffer);
+			currBufferSet->GetUVBuffer()->SetBufferData(newUvBuffer);
+		}
+
+		rendererModelManager->SetModelsUpdated();
 	}
 }

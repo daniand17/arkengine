@@ -18,6 +18,10 @@ public:
 	ArkRendering::ModelInfo * GetNextModelInfoForPopulate();
 	void GetModelsWithMaterialId(Resource_Id materialId, std::vector<ArkRendering::ModelInfo> & out);
 	size_t GetNumModels() const { return mModels.size(); }
+	void GetUsedMaterialIds(std::vector<Resource_Id> &out) const;
+
+	bool IsDirty() const { return mModelsDirty; }
+	void SetModelsUpdated() { mModelsDirty = false; }
 
 private:
 	struct ModelAllocation

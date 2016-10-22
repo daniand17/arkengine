@@ -1,9 +1,6 @@
 #include <float.h>
 
 #include "Vec3.h"
-// TODO maybe put these into functions to keep them out of memory
-const Vec3 Vec3::one(1.0f, 1.0f, 1.0f);
-const Vec3 Vec3::zero(0.0f, 0.0f, 0.0f);	
 
 bool operator==(Vec3 const & lhs, Vec3 const & rhs)
 {
@@ -27,4 +24,9 @@ bool operator != (Vec3 const & lhs, Vec3 const & rhs)
 	if ( yDel < 0 ) yDel = -yDel;
 	if ( zDel < 0 ) zDel = -zDel;
 	return !(xDel < FLT_EPSILON && yDel < FLT_EPSILON && zDel < FLT_EPSILON);
+}
+
+std::string Vec3::ToString() const
+{
+	return std::string("Vec3(" + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ")");
 }

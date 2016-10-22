@@ -32,21 +32,36 @@ ResourceManager::~ResourceManager()
 void ResourceManager::Initialize()
 {
 	mInstance = new ResourceManager();
-
 }
 
-ArkRendering::Resource * ResourceManager::getResourceByIdAndType(Resource_Id id, ResourceType type) const
+void ResourceManager::DesynchronizeProjectResources(ArkString projectName)
 {
-	
+	mLock.lock();
+	mMaterialFactory->DesynchronizeResources(projectName);
+	mMeshFactory->DesynchronizeResources(projectName);
+	mModelFactory->DesynchronizeResources(projectName);
+	mLock.unlock();
+}
+
+void ResourceManager::SynchronizeProjectResources(ArkString projectName)
+{
+	mLock.lock();
+	mMaterialFactory->SynchronizeResources(projectName);
+	mMeshFactory->SynchronizeResources(projectName);
+	mModelFactory->SynchronizeResources(projectName);
+	mLock.unlock();
+}
+
+ArkRendering::Resource * ResourceManager::GetResourceByIdAndType(Resource_Id id, ResourceType type) const
+{
 	switch ( type )
 	{
 	case Mesh:
 		return mMeshFactory->GetMeshById(id);
 	case Model:
-		mModelFactory->GetModelById(id);
+		return mModelFactory->GetModelById(id);
 	case Material:
-		mMaterialFactory->GetMaterialById(id);
+		return mMaterialFactory->GetMaterialById(id);
 	}
-
 	return NULL;
 }

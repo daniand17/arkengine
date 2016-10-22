@@ -28,8 +28,8 @@ namespace Test_ArkMath
 
 		TEST_METHOD(Const_Static_Vecs)
 		{
-			Assert::IsTrue(Vec3::one + Vec3::one == Vec3(2.0f, 2.0f, 2.0f));
-			Assert::IsTrue(Vec3::one + Vec3::zero == Vec3::one);
+			Assert::IsTrue(Vec3::one() + Vec3::one() == Vec3(2.0f, 2.0f, 2.0f));
+			Assert::IsTrue(Vec3::one() + Vec3::zero() == Vec3::one());
 		}
 
 		TEST_METHOD(Equality)
@@ -169,7 +169,7 @@ namespace Test_ArkMath
 		TEST_METHOD(Memory_Footprint_Is_12_Bytes)
 		{
 			unsigned long long siz = 12;
-			Assert::AreEqual(sizeof(Vec3), siz);
+			Assert::AreEqual(siz, sizeof(Vec3));
 		}
 	};
 }

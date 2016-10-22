@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <map>
 
 #include "BuildOptions.h"
 #include "ArkWindow.h"
@@ -8,6 +9,7 @@
 #include "BufferData.h"
 #include "Vec2.h"
 #include "Vec3.h"
+#include "RenderState.h"
 
 #ifdef USE_OPENGL
 class OpenGLRenderer
@@ -29,9 +31,9 @@ private:
 	bool	mShouldRun;
 	GLuint	mVertexArrayId;
 
-	BufferCache mBufferCache;
-	size_t mNumModelsInLastBuffer;
+	std::vector<RenderState *> mRenderStateList;
+	std::map<Resource_Id, BufferSet *> mBufferSetMap;
 
-	void updateBuffers();
+	void updateBufferSets();
 };
 #endif

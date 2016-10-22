@@ -36,6 +36,7 @@ namespace ArkRendering
 	struct Resource
 	{
 		Resource_Id id;
+		virtual ArkString Synchronize() const = 0;
 	};
 
 	struct MaterialInfo : Resource
@@ -45,9 +46,11 @@ namespace ArkRendering
 		Vec3 specular;
 		float shininess;
 		
-		void setShaderProgram(GLuint shaderProgram);
+		void setShaderProgram(GLuint shaderProgram, bool bind = true);
 		void UseShaderProgram() const;
 		GLuint GetShaderProgramId() const { return mShaderProgram; }
+
+		ArkString Synchronize() const override;
 
 	private:
 		GLuint mShaderProgram;
@@ -65,9 +68,12 @@ namespace ArkRendering
 
 	struct MeshInfo : Resource
 	{
+		ArkString name;
 		std::vector<Vec3> vertices;
 		std::vector<Vec3> normals;
 		std::vector<Vec2> uvs;
+
+		ArkString Synchronize() const override;
 	};
 
 	struct ModelInfo : Resource
@@ -80,6 +86,8 @@ namespace ArkRendering
 		Resource_Id materialId;
 		Resource_Id meshId;
 		Mat4 modelMatrix = Mat4::identity();
+
+		ArkString Synchronize() const override;
 	};
 
 	class Texture

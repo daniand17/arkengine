@@ -66,3 +66,9 @@ Mat4 Mat4::inverse() const
 {
 	return glm::inverse(mMat);
 }
+
+char * Mat4::toString() const
+{
+	// TODO (AD) Implement this.
+	return NULL;
+}

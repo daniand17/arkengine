@@ -140,16 +140,16 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)ArkRendering;$(SolutionDir)ArkPhysics;$(SolutionDir)ArkUtils;$(SolutionDir)ArkMath;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <StructMemberAlignment>Default</StructMemberAlignment>
       <AdditionalOptions>
       </AdditionalOptions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib;glew32sd.lib;</AdditionalDependencies>
+      <AdditionalDependencies>glew32sd.lib;OpenGL32.lib;glfw3dll.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -162,7 +162,6 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\include;$(SolutionDir)\ArkRendering;$(SolutionDir)\ArkPhysics;$(SolutionDir)\ArkUtils;$(SolutionDir)ArkMath\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
       <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>
     <Link>
@@ -171,7 +170,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)dependencies\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glew32sd.lib;glfw3.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;glfw3dll.lib;glew32sd.lib;ArkPhysics.lib;ArkRendering.lib;ArkMath.lib;ArkUtils.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

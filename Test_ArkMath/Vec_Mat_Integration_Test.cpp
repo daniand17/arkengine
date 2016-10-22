@@ -30,23 +30,15 @@ namespace Test_ArkMath
 
 		TEST_METHOD(Mat4_Creation)
 		{
-			Mat4 mat(transformArray);
-			(mat * Mat4::identity() == mat);
 		}
 
 		TEST_METHOD(Mat_Vec_Multiply)
 		{
 			Vec4 vec(Vec4::one);
 
-			Mat4 mat(transformArray);
 
-			Vec4 result = mat * vec;
-			Assert::IsTrue(result == Vec4(2, 2, 2, 1));
 
-			mat = mat.inverse();
 
-			result = mat * result;
-			Assert::IsTrue(result == vec);
 		}
 	};
 }
