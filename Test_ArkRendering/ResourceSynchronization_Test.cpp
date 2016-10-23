@@ -121,8 +121,57 @@ namespace Test_ArkRendering
 
 		TEST_METHOD(Desynchronize_Many_Meshes)
 		{
+			MeshFactory * meshFactory = new MeshFactory();
+			meshFactory->DesynchronizeResources("desyncManyMeshesTest");
+
+
+			Assert::AreEqual(static_cast<size_t>(2), meshFactory->size());
+			
+			ArkRendering::MeshInfo * cubeMesh = meshFactory->GetMeshById(0);
+			ArkRendering::MeshInfo * suzanneMesh = meshFactory->GetMeshById(1);
+
+			Assert::AreEqual(ArkString("cube.obj").toStdString(), cubeMesh->name.toStdString());
+			Assert::AreEqual(ArkString("suzanne.obj").toStdString(), suzanneMesh->name.toStdString());
+			Assert::AreEqual(static_cast<size_t>(36), cubeMesh->vertices.size());
+			Assert::AreEqual(static_cast<size_t>(2904), suzanneMesh->vertices.size());
+
+			delete meshFactory;
+		}
+
+		TEST_METHOD(CreateMeshesSyncAndDesync)
+		{
+			ArkString testName = "CreateMeshesSyncAndDesync";
+			MeshFactory * fac0 = new MeshFactory();
+			fac0->LoadMesh("cube.obj");
+			size_t vertSize = fac0->GetMeshById(0)->vertices.size();
+			Assert::AreEqual(static_cast<size_t>(36), vertSize);
+			fac0->SynchronizeResources(testName);
+			delete fac0;
+
+			MeshFactory * fac1 = new MeshFactory();
+			fac1->DesynchronizeResources(testName);
+			Assert::AreEqual(static_cast<size_t>(1), fac1->size());
+			Assert::AreEqual(vertSize, fac1->GetMeshById(0)->vertices.size());
+			delete fac1;
+		}
+
+	};
+
+	TEST_CLASS(Model_Synchronization)
+	{
+		TEST_METHOD(Synchronize_ModelInfo)
+		{
 
 		}
-		
+
+		TEST_METHOD(Synchronize_Many_Models)
+		{
+
+		}
+
+		TEST_METHOD(Desynchronize_Many_Models)
+		{
+
+		}
 	};
 }

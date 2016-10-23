@@ -76,7 +76,13 @@ namespace Test_ArkUtils
 
 			Assert::AreEqual(static_cast<size_t>(6), split.size());
 			Assert::AreEqual(hello.toStdString(), result.toStdString());
+		}
 
+		TEST_METHOD(Nothing_To_Split_Returns_String)
+		{
+			ArkString hello = "hello world!";
+			ArkStringList list = hello.split(',');
+			Assert::AreEqual(ArkString("hello world!").toStdString(), list.at(0).toStdString());
 		}
 
 	};

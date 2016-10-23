@@ -2,6 +2,7 @@
 #include "ArkDebug.h"
 
 ResourceManager * ResourceManager::mInstance = NULL;
+ArkThreading::ArkMutex ResourceManager::sm_lock;
 
 ResourceManager::ResourceManager()
 	: mModelFactory(NULL)
@@ -34,22 +35,22 @@ void ResourceManager::Initialize()
 	mInstance = new ResourceManager();
 }
 
-void ResourceManager::DesynchronizeProjectResources(ArkString projectName)
+void ResourceManager::desynchronizeResources(ArkString projectName)
 {
-	mLock.lock();
+	sm_lock.lock();
 	mMaterialFactory->DesynchronizeResources(projectName);
 	mMeshFactory->DesynchronizeResources(projectName);
 	mModelFactory->DesynchronizeResources(projectName);
-	mLock.unlock();
+	sm_lock.unlock();
 }
 
-void ResourceManager::SynchronizeProjectResources(ArkString projectName)
+void ResourceManager::synchronizeResources(ArkString projectName)
 {
-	mLock.lock();
+	sm_lock.lock();
 	mMaterialFactory->SynchronizeResources(projectName);
 	mMeshFactory->SynchronizeResources(projectName);
 	mModelFactory->SynchronizeResources(projectName);
-	mLock.unlock();
+	sm_lock.unlock();
 }
 
 ArkRendering::Resource * ResourceManager::GetResourceByIdAndType(Resource_Id id, ResourceType type) const

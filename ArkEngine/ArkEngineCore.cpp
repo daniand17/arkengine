@@ -3,6 +3,7 @@
 #include "ArkString.h"
 #include "ArkSize.h"
 #include "SystemTasks.h"
+#include "ProjectManager.h"
 
 using namespace ArkThreading;
 ArkEngineCore * ArkEngineCore::mInstance = NULL;
@@ -24,6 +25,7 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
+	ProjectManager::Initialize();
 	ResourceManager::Initialize();
 	RendererModelManager::Initialize();
 
@@ -40,7 +42,6 @@ void ArkEngineCore::initMemory()
 void ArkEngineCore::startThreads()
 {
 	mSystemThread->init();
-
 	// PhysicsThread?
 }
 
@@ -56,7 +57,7 @@ void ArkEngineCore::stopThreads()
 
 void ArkEngineCore::deinitMemory()
 {
-	ResourceManager::Instance()->DesynchronizeProjectResources("testProject"); // TODO (AD) change to a shutdown method
+	ProjectManager::Instance()->closeCurrentProject();
 
 	delete mRenderer;
 	delete mWindow;

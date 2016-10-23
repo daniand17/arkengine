@@ -1,0 +1,15 @@
+MaterialInfo {
+	resourceId	0
+	ambient 	Vec3(0.000000 0.000000 0.000000)
+	diffuse 	Vec3(0.000000 0.000000 0.000000)
+	specular 	Vec3(0.000000 0.000000 0.000000)
+	shininess 	0.000000
+	shaderId 	0
+},MaterialInfo {
+	resourceId	1
+	ambient 	Vec3(1.000000 1.000000 1.000000)
+	diffuse 	Vec3(1.000000 1.000000 1.000000)
+	specular 	Vec3(1.000000 1.000000 1.000000)
+	shininess 	32.000000
+	shaderId 	3
+}

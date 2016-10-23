@@ -31,13 +31,15 @@ int Filestream::OpenFile(FileOpenType type)
 		break;
 	}
 
-	if ( mFileStream.fail() )
-		throw FailBit;
-	else if ( mFileStream.bad() )
-		throw BadBit;
-	else if ( mFileStream.eof() )
-		throw Eof;
-
+	if ( mFileStream.is_open() )
+	{
+		if ( mFileStream.fail() )
+			throw FailBit;
+		else if ( mFileStream.bad() )
+			throw BadBit;
+		else if ( mFileStream.eof() )
+			throw Eof;
+	}
 	return GoodBit;
 }
 

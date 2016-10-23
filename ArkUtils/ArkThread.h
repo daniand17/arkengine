@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <mutex>
 
 namespace ArkThreading
 {
@@ -37,6 +38,11 @@ namespace ArkThreading
 		}
 		std::thread * mThread;
 		WorkerTask * mWorkerTask;
+	};
+
+	class ArkMutex : public std::mutex
+	{
+
 	};
 }
 

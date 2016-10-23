@@ -6,6 +6,7 @@ using namespace ArkRendering;
 
 Resource_Id MeshFactory::LoadMesh(ArkString modelName)
 {
+	if ( modelName.length() == 0 ) return -1;
 	bool loaded = false;
 	Resource_Id index = getIdOfLoadedMesh(modelName, loaded);
 
@@ -46,6 +47,21 @@ void MeshFactory::SynchronizeResources(ArkString projectName)
 
 void MeshFactory::DesynchronizeResources(ArkString projectName)
 {
+	Filestream filestream(projectName, "meshes");
+	filestream.OpenFile(Filestream::FileOpenType::Read);
+
+	ArkString fileContents("");
+	filestream.ReadAll(&fileContents);
+	filestream.CloseFile();
+
+	ArkStringList list = fileContents.split(',');
+
+	for ( unsigned i = 0 ; i < list.size() ; i++ )
+	{
+		ArkString filename = list.at(i).split('\n').at(1).split(':').at(1);
+		LoadMesh(filename);
+	}
+
 }
 
 Resource_Id MeshFactory::getIdOfLoadedMesh(ArkString modelName, bool & found) const

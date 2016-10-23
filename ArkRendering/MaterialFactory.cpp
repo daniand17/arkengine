@@ -39,7 +39,8 @@ void MaterialFactory::SynchronizeResources(ArkString projectName)
 void MaterialFactory::DesynchronizeResources(ArkString projectName)
 {
 	Filestream filestream(projectName, "materials");
-	filestream.OpenFile(Filestream::FileOpenType::Read);
+	try { filestream.OpenFile(Filestream::FileOpenType::Read); }
+	catch ( std::exception & e ) { e.what(); }
 
 	ArkString fileContents = "";
 	filestream.ReadAll(&fileContents);
@@ -51,6 +52,7 @@ void MaterialFactory::DesynchronizeResources(ArkString projectName)
 
 void MaterialFactory::createMaterialFromString(ArkString & materialString)
 {
+	if ( materialString.length() == 0 ) return;
 	ArkStringList list = materialString.split('\n');
 	MaterialInfo * material = new MaterialInfo();
 

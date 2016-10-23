@@ -51,6 +51,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ArkRendering", "Test_A
 		{6BCB26E1-DD12-4154-A0E9-8E99474E9238} = {6BCB26E1-DD12-4154-A0E9-8E99474E9238}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_ArkEngine", "Test_ArkEngine\Test_ArkEngine.vcxproj", "{4F4542D5-014F-481A-8C1F-BCA632EF1E01}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A7F807D9-36C6-4461-A720-A37A07BBB6A4} = {A7F807D9-36C6-4461-A720-A37A07BBB6A4}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -159,6 +164,18 @@ Global
 		{BDF8B35B-2B22-451D-A367-772CF7261E24}.Test|x64.Build.0 = Test|x64
 		{BDF8B35B-2B22-451D-A367-772CF7261E24}.Test|x86.ActiveCfg = Release|Win32
 		{BDF8B35B-2B22-451D-A367-772CF7261E24}.Test|x86.Build.0 = Release|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Debug|x64.ActiveCfg = Debug|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Debug|x64.Build.0 = Debug|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Debug|x86.ActiveCfg = Debug|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Debug|x86.Build.0 = Debug|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Release|x64.ActiveCfg = Release|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Release|x64.Build.0 = Release|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Release|x86.ActiveCfg = Release|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Release|x86.Build.0 = Release|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Test|x64.ActiveCfg = Test|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Test|x64.Build.0 = Test|x64
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Test|x86.ActiveCfg = Release|Win32
+		{4F4542D5-014F-481A-8C1F-BCA632EF1E01}.Test|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

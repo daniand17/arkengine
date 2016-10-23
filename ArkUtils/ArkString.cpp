@@ -56,10 +56,12 @@ ArkStringList ArkString::split(char delim) const
 		i = ++pos;
 		pos = mString.find(delim, pos);
 
-		if ( pos >= siz)
+		if ( pos >= siz )
 			list.push_back(mString.substr(i, siz));
 	}
 
+	if ( list.size() == 0 )
+		list.push_back(mString);
 	return list;
 }
 
@@ -80,7 +82,7 @@ ArkString ArkStringList::join(ArkString delim) const
 
 ArkString ArkStringList::pop_back()
 {
-	ArkString retVal = mStringList[mStringList.size() - 1]; 
-	mStringList.pop_back(); 
+	ArkString retVal = mStringList[mStringList.size() - 1];
+	mStringList.pop_back();
 	return retVal;
 }

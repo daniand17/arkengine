@@ -14,6 +14,7 @@ public:
 
 	virtual void SynchronizeResources(ArkString projectName) override;
 	virtual void DesynchronizeResources(ArkString projectName) override;
+	virtual size_t size() const override { return mLoadedMeshes.size(); }
 
 private:
 	struct LoadedMesh

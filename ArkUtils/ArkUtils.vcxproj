@@ -185,11 +185,13 @@
     <ClInclude Include="ArkSize.h" />
     <ClInclude Include="ArkString.h" />
     <ClInclude Include="ArkThread.h" />
+    <ClInclude Include="SystemDirectory.h" />
     <ClInclude Include="Filestream.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp" />
+    <ClCompile Include="SystemDirectory.cpp" />
     <ClCompile Include="Filestream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

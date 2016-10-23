@@ -50,6 +50,7 @@ void OpenGLRenderer::InitializeRenderer()
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
+
 }
 
 void OpenGLRenderer::Run()
