@@ -37,7 +37,6 @@ void OpenGLRenderer::DeinitRenderer()
 
 void OpenGLRenderer::InitializeRenderer()
 {
-
 	Debug::Log("Initializing Renderer");
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -50,7 +49,6 @@ void OpenGLRenderer::InitializeRenderer()
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
-
 }
 
 void OpenGLRenderer::Run()
@@ -69,17 +67,21 @@ void OpenGLRenderer::Run()
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
 
-	Resource_Id shaderId = ResourceManager::Instance()->GetShaderFactory()->CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	/*Resource_Id shaderId = ResourceManager::Instance()->GetShaderFactory()->CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	ShaderProgram * program = ResourceManager::Instance()->GetShaderFactory()->GetShaderProgramByResourceId(shaderId);
 	program->setTexture(new Texture("./rock_texture.bmp"));
-	MaterialFactory * matFac = ResourceManager::Instance()->GetMaterialFactory();
-	MaterialInfo * material = matFac->GetMaterialById(matFac->CreateMaterial());
-	material->setShaderProgram(program->getId());
+	material->setShaderProgram(program->getId());*/
 
-	ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
-	modelInfo->materialId = material->id;
-	modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
-	modelInfo->modelMatrix = Mat4::identity();
+	MaterialFactory * matFac = ResourceManager::Instance()->GetMaterialFactory();
+	MaterialInfo * material = matFac->GetMaterialById(0);
+	if ( material )
+	{
+		ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
+		modelInfo->materialId = material->id;
+		modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
+		modelInfo->modelMatrix = Mat4::identity();
+	}
+	
 
 	do
 	{

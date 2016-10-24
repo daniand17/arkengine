@@ -45,6 +45,8 @@ char const * ArkString::c_str() const
 ArkStringList ArkString::split(char delim) const
 {
 	ArkStringList list;
+	if ( mString.length() == 0 )
+		return list;
 
 	size_t i = 0;
 	size_t pos = mString.find(delim);

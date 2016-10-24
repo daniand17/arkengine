@@ -48,3 +48,8 @@ void ModelFactory::SynchronizeResources(ArkString projectName)
 void ModelFactory::DesynchronizeResources(ArkString projectName)
 {
 }
+
+void ModelFactory::clear()
+{
+	mLoadedModels._Pop_back_n(mLoadedModels.size());
+}

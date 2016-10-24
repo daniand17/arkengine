@@ -35,13 +35,17 @@ namespace Test_ArkEngine
 		{
 			ResourceManager::Initialize();
 			ProjectManager::Initialize();
+
+			ResourceManager * rm = ResourceManager::Instance();
 			ProjectManager * pm = ProjectManager::Instance();
 			pm->openProject("AndysTestProject");
 
-			ResourceManager::Instance()->GetMaterialFactory()->CreateMaterial();
-			ResourceManager::Instance()->GetMeshFactory()->LoadMesh("cube.obj");
-			ResourceManager::Instance()->GetModelFactory()->createModelFromMaterialAndMeshId(0, 0);
-			ProjectManager::Instance()->closeCurrentProject();
+			Assert::IsTrue(rm->GetMaterialFactory()->GetMaterialById(0)->ambient == Vec3(1, 1, 1));
+			Assert::AreEqual(rm->GetMeshFactory()->GetMeshById(0)->name.toStdString(), ArkString("cube.obj").toStdString());
+
+			pm->closeCurrentProject();
+			delete rm;
+			delete pm;
 		}
 
 	};

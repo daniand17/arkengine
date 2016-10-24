@@ -14,6 +14,7 @@ public:
 	void SynchronizeResources(ArkString projectName) override;
 	void DesynchronizeResources(ArkString projectName) override;
 	virtual size_t size() const override { return mLoadedModels.size(); }
+	virtual void clear() override;
 
 private:
 	std::vector<ArkRendering::ModelInfo> mLoadedModels;

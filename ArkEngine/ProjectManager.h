@@ -29,7 +29,7 @@ public:
 	static ProjectManager * ProjectManager::Instance() { return sm_instance; }
 	void createNewProjectWithName(ArkString name);
 	void openProject(ArkString name);
-	void closeCurrentProject() { m_currentProject->closeProject(); }
+	void closeCurrentProject();
 	ArkProject * getCurrentProject() const { return m_currentProject; }
 
 private:

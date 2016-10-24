@@ -38,6 +38,10 @@ void ResourceManager::Initialize()
 void ResourceManager::desynchronizeResources(ArkString projectName)
 {
 	sm_lock.lock();
+	mMaterialFactory->clear();
+	mMeshFactory->clear();
+	mModelFactory->clear();
+	mShaderFactory->DesynchronizeResources(projectName);
 	mMaterialFactory->DesynchronizeResources(projectName);
 	mMeshFactory->DesynchronizeResources(projectName);
 	mModelFactory->DesynchronizeResources(projectName);
@@ -47,9 +51,10 @@ void ResourceManager::desynchronizeResources(ArkString projectName)
 void ResourceManager::synchronizeResources(ArkString projectName)
 {
 	sm_lock.lock();
-	mMaterialFactory->SynchronizeResources(projectName);
-	mMeshFactory->SynchronizeResources(projectName);
 	mModelFactory->SynchronizeResources(projectName);
+	mMeshFactory->SynchronizeResources(projectName);
+	mMaterialFactory->SynchronizeResources(projectName);
+	mShaderFactory->SynchronizeResources(projectName);
 	sm_lock.unlock();
 }
 

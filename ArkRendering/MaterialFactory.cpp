@@ -45,9 +45,22 @@ void MaterialFactory::DesynchronizeResources(ArkString projectName)
 	ArkString fileContents = "";
 	filestream.ReadAll(&fileContents);
 	filestream.CloseFile();
-	ArkStringList materialList = fileContents.split(',');
-	for ( size_t i = 0 ; i < materialList.size() ; i++ )
-		createMaterialFromString(materialList.at(static_cast<unsigned>(i)));
+	if ( fileContents.length() > 0 )
+	{
+		ArkStringList materialList = fileContents.split(',');
+		for ( size_t i = 0 ; i < materialList.size() ; i++ )
+			createMaterialFromString(materialList.at(static_cast<unsigned>(i)));
+	}
+}
+
+void MaterialFactory::clear()
+{
+	while ( mLoadedMaterials.size() > 0 )
+	{
+		MaterialInfo * matInfo = mLoadedMaterials[mLoadedMaterials.size() - 1];
+		delete matInfo;
+		mLoadedMaterials.pop_back();
+	}
 }
 
 void MaterialFactory::createMaterialFromString(ArkString & materialString)

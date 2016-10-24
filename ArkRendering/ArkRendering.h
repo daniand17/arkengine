@@ -100,7 +100,7 @@ namespace ArkRendering
 		GLuint mTextureId;
 	};
 
-	class ShaderProgram
+	struct ShaderProgram : Resource
 	{
 	public:
 		ShaderProgram(ArkString vertexShader, ArkString fragmentShader);
@@ -111,7 +111,17 @@ namespace ArkRendering
 		int numAttributes() const { return mNumAttributes; }
 		int numUniforms() const { return mNumUniforms; }
 
+		ArkString Synchronize() const override;
+
+		void setVertexShader(ArkString vertexShader) { m_vertexShader = vertexShader; }
+		void setFragmentShader(ArkString vertexShader) { m_fragmentShader = m_fragmentShader; }
+
+		ArkString getVertexShader() const { return m_vertexShader; }
+		ArkString getFragmentShader() const { return m_fragmentShader; }
+
 	private:
+		ArkString m_vertexShader;
+		ArkString m_fragmentShader;
 		GLuint mProgramId;
 		int mNumAttributes;
 		int mNumUniforms;

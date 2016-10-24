@@ -12,6 +12,7 @@ public:
 	void SynchronizeResources(ArkString projectName) override;
 	void DesynchronizeResources(ArkString projectName) override;
 	virtual size_t size() const override { return mLoadedMaterials.size(); }
+	virtual void clear() override;
 
 private:
 	typedef std::vector<ArkRendering::MaterialInfo *> MaterialInfoListT;

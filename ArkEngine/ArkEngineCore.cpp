@@ -25,18 +25,19 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
-	ProjectManager::Initialize();
-	ResourceManager::Initialize();
-	RendererModelManager::Initialize();
-
+	
 	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
 	mSystemThread = new ArkThread(new SystemTask());
 
 #ifdef USE_OPENGL
 	mRenderer = new OpenGLRenderer(mWindow);
-
 	mRenderer->InitializeRenderer();
 #endif // USE_OPENGL
+
+	ResourceManager::Initialize();
+	RendererModelManager::Initialize();
+	ProjectManager::Initialize();
+	ProjectManager::Instance()->createNewProjectWithName("DefaultProject");
 }
 
 void ArkEngineCore::startThreads()

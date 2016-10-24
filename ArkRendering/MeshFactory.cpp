@@ -53,15 +53,24 @@ void MeshFactory::DesynchronizeResources(ArkString projectName)
 	ArkString fileContents("");
 	filestream.ReadAll(&fileContents);
 	filestream.CloseFile();
-
+	
 	ArkStringList list = fileContents.split(',');
-
 	for ( unsigned i = 0 ; i < list.size() ; i++ )
 	{
 		ArkString filename = list.at(i).split('\n').at(1).split(':').at(1);
 		LoadMesh(filename);
 	}
 
+}
+
+void MeshFactory::clear()
+{
+	while(mLoadedMeshes.size() > 0 )
+	{
+		LoadedMesh mesh = mLoadedMeshes[mLoadedMeshes.size() - 1];
+		delete mesh.mesh;
+		mLoadedMeshes.pop_back();
+	}
 }
 
 Resource_Id MeshFactory::getIdOfLoadedMesh(ArkString modelName, bool & found) const

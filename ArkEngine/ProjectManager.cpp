@@ -45,6 +45,13 @@ void ProjectManager::openProject(ArkString name)
 	sm_lock.unlock();
 }
 
+void ProjectManager::closeCurrentProject()
+{
+	m_currentProject->closeProject();
+	delete m_currentProject;
+	m_currentProject = NULL;
+}
+
 
 ArkProject::ArkProject(ArkString name)
 	:m_projectName(name)

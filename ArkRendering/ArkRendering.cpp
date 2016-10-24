@@ -51,9 +51,10 @@ void ArkRendering::MaterialInfo::UseShaderProgram() const
 }
 
 
-
 ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fragmentShader)
 {
+	m_vertexShader = vertexShader;
+	m_fragmentShader = fragmentShader;
 	mProgramId = LoadShaders(vertexShader.c_str(), fragmentShader.c_str());
 
 	glGetProgramInterfaceiv(mProgramId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &mNumAttributes);
@@ -63,6 +64,15 @@ ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fra
 }
 
 
+ArkString ArkRendering::ShaderProgram::Synchronize() const
+{
+	ArkString sync("ShaderProgram");
+	sync += "\tid:" + ArkString::Number(id);
+	sync += "\tvertexShader:" + m_vertexShader;
+	sync += "\n\tfragmentShader:" + m_fragmentShader;
+	return sync;
+}
+
 
 ArkString ArkRendering::MeshInfo::Synchronize() const
 {
@@ -70,7 +80,6 @@ ArkString ArkRendering::MeshInfo::Synchronize() const
 	syncString += "\n\tname:" + name;
 	return syncString;
 }
-
 
 
 ArkString ArkRendering::ModelInfo::Synchronize() const
