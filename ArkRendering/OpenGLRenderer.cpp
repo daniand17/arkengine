@@ -81,7 +81,6 @@ void OpenGLRenderer::Run()
 		modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
 		modelInfo->modelMatrix = Mat4::identity();
 	}
-	
 
 	do
 	{
@@ -108,7 +107,7 @@ void OpenGLRenderer::Run()
 			if ( material )
 			{
 				material->UseShaderProgram();
-				GLuint programId = material->GetShaderProgramId();
+				GLuint programId = material->getShaderProgram()->getId();
 
 				GLuint vId = glGetUniformLocation(programId, "V");
 				GLuint mId = glGetUniformLocation(programId, "M");

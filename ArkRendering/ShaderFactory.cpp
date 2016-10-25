@@ -24,7 +24,7 @@ ArkRendering::ShaderProgram * ShaderFactory::GetShaderProgramByResourceId(Resour
 
 void ShaderFactory::DesynchronizeResources(ArkString projectName)
 {
-	Filestream inFile(projectName);
+	Filestream inFile(projectName, "shaders");
 	inFile.OpenFile(Filestream::FileOpenType::Read);
 	ArkString fileContents("");
 	inFile.ReadAll(&fileContents);
@@ -53,7 +53,7 @@ void ShaderFactory::SynchronizeResources(ArkString projectName)
 		syncString += m_loadedShaders[i]->Synchronize();
 
 		if ( i < m_loadedShaders.size() - 1 )
-			syncString += ",";
+			syncString += "\n,";
 	}
 
 	outfile.WriteStringToFile(syncString);
@@ -76,6 +76,16 @@ void ShaderFactory::createShaderFromString(ArkString theString)
 	if ( theString.length() > 0 )
 	{
 		ArkStringList list = theString.split('\n');
-		CreateShader(list.at(1).split(':').at(1), list.at(1).split(':').at(1));
+
+		_ASSERT_EXPR(list.size() == 4, "ShaderFactory.cpp(80)");
+		CreateShader(list.at(2).split(':').at(1), list.at(3).split(':').at(1));
 	}
+}
+
+
+
+void ShaderFactory::compileShaders()
+{
+	for ( size_t i = 0 ; i < m_loadedShaders.size() ; i++ )
+		m_loadedShaders[i]->compileAndLoadShader();
 }

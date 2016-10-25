@@ -39,21 +39,69 @@ namespace ArkRendering
 		virtual ArkString Synchronize() const = 0;
 	};
 
+	class Texture
+	{
+	public:
+		Texture(ArkString filename);
+		~Texture() { glDeleteTextures(1, &mTextureId); }
+
+	private:
+		GLuint mTextureId;
+	};
+
+	struct ShaderProgram : Resource
+	{
+	public:
+		ShaderProgram(ArkString vertexShader, ArkString fragmentShader);
+		~ShaderProgram() {} // TODO (AD) probably not a great place for this 
+		void setTexture(Texture * texture) { mTexture = texture; }
+		GLuint getId() const { return mProgramId; }
+		GLuint getTextureId() const { return mProgramId; }
+		int numAttributes() const { return mNumAttributes; }
+		int numUniforms() const { return mNumUniforms; }
+
+		ArkString Synchronize() const override;
+
+		void setVertexShader(ArkString vertexShader) { m_vertexShader = vertexShader; }
+		void setFragmentShader(ArkString vertexShader) { m_fragmentShader = m_fragmentShader; }
+
+		void compileAndLoadShader();
+		void unloadShader();
+
+		ArkString getVertexShader() const { return m_vertexShader; }
+		ArkString getFragmentShader() const { return m_fragmentShader; }
+
+	private:
+		ArkString m_vertexShader;
+		ArkString m_fragmentShader;
+		GLuint mProgramId;
+		int mNumAttributes;
+		int mNumUniforms;
+		Texture * mTexture;
+	};
+
 	struct MaterialInfo : Resource
 	{
 		Vec3 ambient;
 		Vec3 diffuse;
 		Vec3 specular;
 		float shininess;
-		
-		void setShaderProgram(GLuint shaderProgram, bool bind = true);
+
+		MaterialInfo();
+
+		void setShaderProgramId(Resource_Id shaderProgramId) { m_shaderProgramId = shaderProgramId; }
+		void setShaderProgram(ArkRendering::ShaderProgram * shaderProgram, bool bind = true);
 		void UseShaderProgram() const;
-		GLuint GetShaderProgramId() const { return mShaderProgram; }
+		
+		ArkRendering::ShaderProgram * getShaderProgram() const { return m_shaderProgram; }
+
+		Resource_Id getShaderProgramId() const { return m_shaderProgramId; }
 
 		ArkString Synchronize() const override;
 
 	private:
-		GLuint mShaderProgram;
+		Resource_Id m_shaderProgramId;
+		ArkRendering::ShaderProgram * m_shaderProgram;
 		GLuint shiId;
 		GLuint ambId;
 		GLuint difId;
@@ -78,53 +126,16 @@ namespace ArkRendering
 
 	struct ModelInfo : Resource
 	{
-		ModelInfo() 
+		ModelInfo()
 			: materialId(0)
 			, meshId(0)
-		{}
+		{
+		}
 
 		Resource_Id materialId;
 		Resource_Id meshId;
 		Mat4 modelMatrix = Mat4::identity();
 
 		ArkString Synchronize() const override;
-	};
-
-	class Texture
-	{
-	public:
-		Texture(ArkString filename);
-		~Texture() { glDeleteTextures(1, &mTextureId); }
-
-	private:
-		GLuint mTextureId;
-	};
-
-	struct ShaderProgram : Resource
-	{
-	public:
-		ShaderProgram(ArkString vertexShader, ArkString fragmentShader);
-		~ShaderProgram() { glDeleteProgram(mProgramId); delete mTexture; } // TODO (AD) probably not a great place for this 
-		void setTexture(Texture * texture) { mTexture = texture; }
-		GLuint getId() const { return mProgramId; }
-		GLuint getTextureId() const { return mProgramId; }
-		int numAttributes() const { return mNumAttributes; }
-		int numUniforms() const { return mNumUniforms; }
-
-		ArkString Synchronize() const override;
-
-		void setVertexShader(ArkString vertexShader) { m_vertexShader = vertexShader; }
-		void setFragmentShader(ArkString vertexShader) { m_fragmentShader = m_fragmentShader; }
-
-		ArkString getVertexShader() const { return m_vertexShader; }
-		ArkString getFragmentShader() const { return m_fragmentShader; }
-
-	private:
-		ArkString m_vertexShader;
-		ArkString m_fragmentShader;
-		GLuint mProgramId;
-		int mNumAttributes;
-		int mNumUniforms;
-		Texture * mTexture;
 	};
 }

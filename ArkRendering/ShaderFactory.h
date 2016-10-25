@@ -15,6 +15,8 @@ public:
 	size_t ShaderFactory::size() const override { return m_loadedShaders.size(); }
 	void clear() override;
 
+	void compileShaders();
+
 private:
 	std::vector<ArkRendering::ShaderProgram *> m_loadedShaders;
 

@@ -20,6 +20,7 @@ namespace Test_ArkEngine
 
 		}
 
+
 		TEST_METHOD(CreateProject)
 		{
 			ProjectManager::Initialize();
@@ -30,6 +31,7 @@ namespace Test_ArkEngine
 			Assert::IsTrue(SystemDirectory::directoryExists(pm->getCurrentProject()->getResourcesDirectory()));
 			Assert::AreEqual(ArkString("ProjectManagerTestProject").toStdString(), pm->getCurrentProject()->getProjectName().toStdString());
 		}
+
 
 		TEST_METHOD(OpenProject)
 		{
@@ -47,6 +49,38 @@ namespace Test_ArkEngine
 			delete rm;
 			delete pm;
 		}
+
+		TEST_METHOD(IntegrationTestProject)
+		{
+			ResourceManager::Initialize();
+
+			ProjectManager::Initialize();
+
+			ResourceManager * rm = ResourceManager::Instance();
+			ProjectManager * pm = ProjectManager::Instance();
+
+			pm->openProject("ResourceIntegrationProject");
+
+			MaterialFactory * matFac = rm->GetMaterialFactory();
+			MeshFactory * meshFac = rm->GetMeshFactory();
+			ShaderFactory * shaderFac = rm->GetShaderFactory();
+
+
+			ArkRendering::MaterialInfo * matInfo = matFac->GetMaterialById(0);
+			Assert::IsTrue(matInfo != NULL);
+			Assert::AreEqual(32.0f, matInfo->shininess);
+
+			ArkRendering::ShaderProgram * shaderProgram = shaderFac->GetShaderProgramByResourceId(matInfo->getShaderProgramId());
+
+			Assert::IsTrue(shaderProgram != NULL);
+
+			Assert::AreEqual(ArkString("SimpleVertexShader.vert").toStdString(), shaderProgram->getVertexShader().toStdString());
+			Assert::AreEqual(ArkString("SimpleFragmentShader.frag").toStdString(), shaderProgram->getFragmentShader().toStdString());
+
+
+
+		}
+
 
 	};
 }

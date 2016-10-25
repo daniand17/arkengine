@@ -26,16 +26,34 @@ void ArkRendering::LightInfo::getUniformLocationsFromShader(GLuint shaderProgram
 
 
 
-void ArkRendering::MaterialInfo::setShaderProgram(GLuint shaderProgram, bool bind)
+
+
+ArkRendering::MaterialInfo::MaterialInfo()
+	: ambient(Vec3::one())
+	, diffuse(Vec3::one())
+	, specular(Vec3::one())
+	, shininess(0.0f)
+	, m_shaderProgram(NULL)
+	, m_shaderProgramId(0)
+	, shiId(0)
+	, ambId(0)
+	, difId(0)
+	, spcId(0)
 {
-	mShaderProgram = shaderProgram;
-	if(bind)
+}
+
+void ArkRendering::MaterialInfo::setShaderProgram(ArkRendering::ShaderProgram * shaderProgram, bool bind)
+{
+	m_shaderProgram = shaderProgram;
+
+	if ( bind )
 	{
-		glUseProgram(shaderProgram);
-		ambId = glGetUniformLocation(shaderProgram, "material.ambient");
-		difId = glGetUniformLocation(shaderProgram, "material.diffuse");
-		spcId = glGetUniformLocation(shaderProgram, "material.specular");
-		shiId = glGetUniformLocation(shaderProgram, "material.shininess");
+		GLuint shaderProgramId = shaderProgram->getId();
+		glUseProgram(shaderProgramId);
+		ambId = glGetUniformLocation(shaderProgramId, "material.ambient");
+		difId = glGetUniformLocation(shaderProgramId, "material.diffuse");
+		spcId = glGetUniformLocation(shaderProgramId, "material.specular");
+		shiId = glGetUniformLocation(shaderProgramId, "material.shininess");
 	}
 }
 
@@ -43,7 +61,7 @@ void ArkRendering::MaterialInfo::setShaderProgram(GLuint shaderProgram, bool bin
 
 void ArkRendering::MaterialInfo::UseShaderProgram() const
 {
-	glUseProgram(mShaderProgram);
+	glUseProgram(m_shaderProgram->getId());
 	glUniform3f(ambId, ambient.x, ambient.y, ambient.z);
 	glUniform3f(difId, diffuse.x, diffuse.y, diffuse.z);
 	glUniform3f(spcId, specular.x, specular.y, specular.z);
@@ -52,26 +70,40 @@ void ArkRendering::MaterialInfo::UseShaderProgram() const
 
 
 ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fragmentShader)
+	: m_vertexShader(vertexShader)
+	, m_fragmentShader(fragmentShader)
 {
-	m_vertexShader = vertexShader;
-	m_fragmentShader = fragmentShader;
-	mProgramId = LoadShaders(vertexShader.c_str(), fragmentShader.c_str());
-
-	glGetProgramInterfaceiv(mProgramId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &mNumAttributes);
-	glGetProgramInterfaceiv(mProgramId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &mNumUniforms);
-
-	// TODO (AD) code to get more info http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
 }
+
 
 
 ArkString ArkRendering::ShaderProgram::Synchronize() const
 {
 	ArkString sync("ShaderProgram");
-	sync += "\tid:" + ArkString::Number(id);
-	sync += "\tvertexShader:" + m_vertexShader;
+	sync += "\n\tid:" + ArkString::Number(id);
+	sync += "\n\tvertexShader:" + m_vertexShader;
 	sync += "\n\tfragmentShader:" + m_fragmentShader;
 	return sync;
 }
+
+
+
+void ArkRendering::ShaderProgram::compileAndLoadShader()
+{
+	mProgramId = LoadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
+	glGetProgramInterfaceiv(mProgramId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &mNumAttributes);
+	glGetProgramInterfaceiv(mProgramId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &mNumUniforms);
+	// TODO (AD) code to get more info about a shaders attrs http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+}
+
+
+
+void ArkRendering::ShaderProgram::unloadShader()
+{
+	glDeleteProgram(mProgramId);
+	delete mTexture;
+}
+
 
 
 ArkString ArkRendering::MeshInfo::Synchronize() const
@@ -80,6 +112,7 @@ ArkString ArkRendering::MeshInfo::Synchronize() const
 	syncString += "\n\tname:" + name;
 	return syncString;
 }
+
 
 
 ArkString ArkRendering::ModelInfo::Synchronize() const
@@ -102,7 +135,7 @@ ArkString ArkRendering::MaterialInfo::Synchronize() const
 	syncString += "\n\tdiffuse \t" + diffuse.ToString();
 	syncString += "\n\tspecular \t" + specular.ToString();
 	syncString += "\n\tshininess \t" + ArkString::Number(shininess);
-	syncString += "\n\tshaderId \t" + ArkString::Number(mShaderProgram);
+	syncString += "\n\tshaderId \t" + ArkString::Number(m_shaderProgramId);
 	syncString += "\n}";
 
 	return syncString;

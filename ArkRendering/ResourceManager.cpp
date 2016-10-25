@@ -38,9 +38,11 @@ void ResourceManager::Initialize()
 void ResourceManager::desynchronizeResources(ArkString projectName)
 {
 	sm_lock.lock();
+	mShaderFactory->clear();
 	mMaterialFactory->clear();
 	mMeshFactory->clear();
 	mModelFactory->clear();
+
 	mShaderFactory->DesynchronizeResources(projectName);
 	mMaterialFactory->DesynchronizeResources(projectName);
 	mMeshFactory->DesynchronizeResources(projectName);

@@ -174,5 +174,77 @@ namespace Test_ArkRendering
 
 		}
 	};
-	
+
+	TEST_CLASS(Shader_Synchronization)
+	{
+		TEST_METHOD(Create_Shader)
+		{
+			ArkRendering::ShaderProgram newShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+			newShader.id = 0;
+
+			ArkString val = newShader.Synchronize();
+
+			ArkString expected("ShaderProgram");
+			expected += "\n\tid:" + ArkString::Number(0);
+			expected += "\n\tvertexShader:" + newShader.getVertexShader();
+			expected += "\n\tfragmentShader:" + newShader.getFragmentShader();
+
+			Assert::AreEqual(expected.toStdString(), newShader.Synchronize().toStdString());
+		}
+
+		TEST_METHOD(Synchronize_One_Shader_In_Factory)
+		{
+			ShaderFactory fac;
+
+			fac.CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+			fac.SynchronizeResources("shaderTest");
+
+			Filestream file("shaderTest.shaders");
+			file.OpenFile(Filestream::FileOpenType::Read);
+
+			ArkString contents;
+			file.ReadAll(&contents);
+			file.CloseFile();
+			ArkString expected("ShaderProgram");
+			expected += "\n\tid:" + ArkString::Number(0);
+			expected += "\n\tvertexShader:SimpleVertexShader.vert";
+			expected += "\n\tfragmentShader:SimpleFragmentShader.frag";
+			
+			Assert::AreEqual(expected.toStdString(), contents.toStdString());
+		}
+
+		TEST_METHOD(Synchronize_Multiple_Shaders_In_Factory)
+		{
+			ShaderFactory fac;
+
+			fac.CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+			fac.CreateShader("vertShader.vert", "fragShader.frag");
+			fac.CreateShader("vertShader.vert", "fragShader.frag");
+			fac.SynchronizeResources("multipleShaderTest");
+			
+			Filestream file("multipleShaderTest.shaders");
+			file.OpenFile(Filestream::FileOpenType::Read);
+
+			ArkString contents;
+			file.ReadAll(&contents);
+
+			ArkString expected("ShaderProgram");
+			expected += "\n\tid:" + ArkString::Number(0);
+			expected += "\n\tvertexShader:SimpleVertexShader.vert";
+			expected += "\n\tfragmentShader:SimpleFragmentShader.frag";
+
+			expected += "\n,ShaderProgram";
+			expected += "\n\tid:" + ArkString::Number(1);
+			expected += "\n\tvertexShader:vertShader.vert";
+			expected += "\n\tfragmentShader:fragShader.frag";
+
+			expected += "\n,ShaderProgram";
+			expected += "\n\tid:" + ArkString::Number(2);
+			expected += "\n\tvertexShader:vertShader.vert";
+			expected += "\n\tfragmentShader:fragShader.frag";
+
+			Assert::AreEqual(expected.toStdString(), contents.toStdString());
+
+		}
+	};
 }

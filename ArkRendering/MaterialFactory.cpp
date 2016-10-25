@@ -80,7 +80,7 @@ void MaterialFactory::createMaterialFromString(ArkString & materialString)
 
 	int shaderProgramId = 0;
 	sscanf_s(list.at(6).c_str(), "\tshaderId \t%d", &(shaderProgramId));
-	material->setShaderProgram(shaderProgramId, false);
+	material->setShaderProgramId(shaderProgramId);
 	mLoadedMaterials.push_back(material);
 
 	// TODO (AD) Do asserts that check number of floats found per string or throw an exception to be handled?
