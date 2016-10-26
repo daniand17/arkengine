@@ -53,20 +53,18 @@ namespace Test_ArkEngine
 		TEST_METHOD(IntegrationTestProject)
 		{
 			ResourceManager::Initialize();
-
 			ProjectManager::Initialize();
 
 			ResourceManager * rm = ResourceManager::Instance();
 			ProjectManager * pm = ProjectManager::Instance();
-
 			pm->openProject("ResourceIntegrationProject");
 
 			MaterialFactory * matFac = rm->GetMaterialFactory();
 			MeshFactory * meshFac = rm->GetMeshFactory();
 			ShaderFactory * shaderFac = rm->GetShaderFactory();
 
-
 			ArkRendering::MaterialInfo * matInfo = matFac->GetMaterialById(0);
+
 			Assert::IsTrue(matInfo != NULL);
 			Assert::AreEqual(32.0f, matInfo->shininess);
 
@@ -76,11 +74,6 @@ namespace Test_ArkEngine
 
 			Assert::AreEqual(ArkString("SimpleVertexShader.vert").toStdString(), shaderProgram->getVertexShader().toStdString());
 			Assert::AreEqual(ArkString("SimpleFragmentShader.frag").toStdString(), shaderProgram->getFragmentShader().toStdString());
-
-
-
 		}
-
-
 	};
 }

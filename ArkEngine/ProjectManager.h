@@ -6,20 +6,34 @@
 class ArkProject
 {
 public:
+	enum ResourceType
+	{
+		Mesh,
+		Material,
+		Model,
+		Shader,
+		Num_Types
+
+	};
+
 	ArkProject(ArkString name);
 	ArkString getProjectName() const { return m_projectName; }
 	void setProjectName(ArkString projectName) { m_projectName = projectName; }
 
-	void closeProject() { synchronizeProject(); }
-	void openProject() { desynchronizeProject(); }
+	void closeProject() { serializeProject(); }
+	void openProject();
 
-	ArkString getResourcesDirectory() const { return m_projectName + "/resources/"; }
+	ArkString getMetaDirectory() const { return m_projectName + "/meta/"; }
 	ArkString getProjectDirectory() const { return m_projectName + "/"; }
+	ArkString getResourceDirectory(ResourceType type);
+
 
 private:
 	ArkString m_projectName;
-	void synchronizeProject() const;
-	void desynchronizeProject();
+	void serializeProject() const;
+	void deserializeProject();
+
+	void setResourcesDirectories(); 
 };
 
 class ProjectManager

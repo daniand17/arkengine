@@ -90,11 +90,14 @@ namespace ArkRendering
 		MaterialInfo();
 
 		void setShaderProgramId(Resource_Id shaderProgramId) { m_shaderProgramId = shaderProgramId; }
-		void setShaderProgram(ArkRendering::ShaderProgram * shaderProgram, bool bind = true);
-		void UseShaderProgram() const;
+		void setShaderProgram(ArkRendering::ShaderProgram * shaderProgram);
+		void useShaderProgram() const;
+
+		void pushValuesToRenderer() const;
+		void getVertexBindingsFromShader();
 		
 		ArkRendering::ShaderProgram * getShaderProgram() const { return m_shaderProgram; }
-
+		
 		Resource_Id getShaderProgramId() const { return m_shaderProgramId; }
 
 		ArkString Synchronize() const override;
@@ -102,6 +105,7 @@ namespace ArkRendering
 	private:
 		Resource_Id m_shaderProgramId;
 		ArkRendering::ShaderProgram * m_shaderProgram;
+		bool m_bound;
 		GLuint shiId;
 		GLuint ambId;
 		GLuint difId;

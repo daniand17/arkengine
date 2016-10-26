@@ -1,13 +1,12 @@
 #include "ArkRendering.h"
 #include "ShaderLoader.h"
 #include "ImageLoader.h"
-
+#include "ArkAssert.h"
 ArkRendering::Texture::Texture(ArkString filename)
 	: mTextureId(0)
 {
 	mTextureId = loadBMP_custom(filename.c_str());
 }
-
 
 
 void ArkRendering::LightInfo::bindLightToShader() const
@@ -17,15 +16,11 @@ void ArkRendering::LightInfo::bindLightToShader() const
 }
 
 
-
 void ArkRendering::LightInfo::getUniformLocationsFromShader(GLuint shaderProgramId)
 {
 	eyeId = glGetUniformLocation(shaderProgramId, "lightInfo.eyePosition");
 	colId = glGetUniformLocation(shaderProgramId, "lightInfo.color");
 }
-
-
-
 
 
 ArkRendering::MaterialInfo::MaterialInfo()
@@ -39,33 +34,46 @@ ArkRendering::MaterialInfo::MaterialInfo()
 	, ambId(0)
 	, difId(0)
 	, spcId(0)
+	, m_bound(false)
 {
 }
 
-void ArkRendering::MaterialInfo::setShaderProgram(ArkRendering::ShaderProgram * shaderProgram, bool bind)
+
+void ArkRendering::MaterialInfo::setShaderProgram(ArkRendering::ShaderProgram * shaderProgram)
 {
 	m_shaderProgram = shaderProgram;
+	getVertexBindingsFromShader();
+}
 
-	if ( bind )
+void ArkRendering::MaterialInfo::useShaderProgram() const
+{
+
+	glUseProgram(m_shaderProgram->getId());
+	pushValuesToRenderer();
+}
+
+
+void ArkRendering::MaterialInfo::pushValuesToRenderer() const
+{
+	glUniform3f(ambId, ambient.x, ambient.y, ambient.z);
+	glUniform3f(difId, diffuse.x, diffuse.y, diffuse.z);
+	glUniform3f(spcId, specular.x, specular.y, specular.z);
+	glUniform1f(shiId, shininess);
+
+}
+
+void ArkRendering::MaterialInfo::getVertexBindingsFromShader()
+{
+	if ( !m_bound && m_shaderProgram != NULL )
 	{
-		GLuint shaderProgramId = shaderProgram->getId();
+		m_bound = true;
+		GLuint shaderProgramId = m_shaderProgram->getId();
 		glUseProgram(shaderProgramId);
 		ambId = glGetUniformLocation(shaderProgramId, "material.ambient");
 		difId = glGetUniformLocation(shaderProgramId, "material.diffuse");
 		spcId = glGetUniformLocation(shaderProgramId, "material.specular");
 		shiId = glGetUniformLocation(shaderProgramId, "material.shininess");
 	}
-}
-
-
-
-void ArkRendering::MaterialInfo::UseShaderProgram() const
-{
-	glUseProgram(m_shaderProgram->getId());
-	glUniform3f(ambId, ambient.x, ambient.y, ambient.z);
-	glUniform3f(difId, diffuse.x, diffuse.y, diffuse.z);
-	glUniform3f(spcId, specular.x, specular.y, specular.z);
-	glUniform1f(shiId, shininess);
 }
 
 
@@ -76,7 +84,6 @@ ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fra
 }
 
 
-
 ArkString ArkRendering::ShaderProgram::Synchronize() const
 {
 	ArkString sync("ShaderProgram");
@@ -85,7 +92,6 @@ ArkString ArkRendering::ShaderProgram::Synchronize() const
 	sync += "\n\tfragmentShader:" + m_fragmentShader;
 	return sync;
 }
-
 
 
 void ArkRendering::ShaderProgram::compileAndLoadShader()

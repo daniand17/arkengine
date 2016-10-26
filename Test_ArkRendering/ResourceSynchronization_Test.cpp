@@ -21,7 +21,7 @@ namespace Test_ArkRendering
 			matInfo.specular = Vec3::one();
 			matInfo.ambient = Vec3::one();
 			matInfo.shininess = 1;
-			matInfo.setShaderProgram(0, false);
+			matInfo.setShaderProgram(0);
 
 			ArkString sync = matInfo.Synchronize();
 
@@ -41,8 +41,8 @@ namespace Test_ArkRendering
 		{
 			MaterialFactory * resources = new MaterialFactory();
 
-			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0, false);
-			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0, false);
+			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0);
+			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0);
 			resources->SynchronizeResources("synchronizeManyMaterialsTest");
 
 			Filestream instream("synchronizeManyMaterialsTest", "materials");

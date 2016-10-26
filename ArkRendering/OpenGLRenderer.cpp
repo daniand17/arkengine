@@ -38,12 +38,15 @@ void OpenGLRenderer::DeinitRenderer()
 void OpenGLRenderer::InitializeRenderer()
 {
 	Debug::Log("Initializing Renderer");
+	glGenVertexArrays(1, &mVertexArrayId);
+	glBindVertexArray(mVertexArrayId);
+
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	glGenVertexArrays(1, &mVertexArrayId);
-	glBindVertexArray(mVertexArrayId);
+	
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
@@ -67,20 +70,9 @@ void OpenGLRenderer::Run()
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
 
-	/*Resource_Id shaderId = ResourceManager::Instance()->GetShaderFactory()->CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-	ShaderProgram * program = ResourceManager::Instance()->GetShaderFactory()->GetShaderProgramByResourceId(shaderId);
-	program->setTexture(new Texture("./rock_texture.bmp"));
-	material->setShaderProgram(program->getId());*/
-
-	MaterialFactory * matFac = ResourceManager::Instance()->GetMaterialFactory();
-	MaterialInfo * material = matFac->GetMaterialById(0);
-	if ( material )
-	{
-		ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
-		modelInfo->materialId = material->id;
-		modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
-		modelInfo->modelMatrix = Mat4::identity();
-	}
+	ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
+	modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
+	modelInfo->modelMatrix = Mat4::identity();
 
 	do
 	{
@@ -103,10 +95,9 @@ void OpenGLRenderer::Run()
 		for ( RenderState * renderState : mRenderStateList )
 		{
 			MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->GetMaterialById(renderState->GetMaterialId());
-
 			if ( material )
 			{
-				material->UseShaderProgram();
+				material->useShaderProgram();
 				GLuint programId = material->getShaderProgram()->getId();
 
 				GLuint vId = glGetUniformLocation(programId, "V");

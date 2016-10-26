@@ -180,6 +180,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ArkAssert.h" />
     <ClInclude Include="ArkDebug.h" />
     <ClInclude Include="ArkGlobals.h" />
     <ClInclude Include="ArkSize.h" />

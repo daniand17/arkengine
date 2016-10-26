@@ -4,5 +4,5 @@ MaterialInfo {
 	diffuse 	Vec3(1.000000 1.000000 1.000000)
 	specular 	Vec3(1.000000 1.000000 1.000000)
 	shininess 	32.000000
-	shaderId 	3
+	shaderId 	0
 }

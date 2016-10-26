@@ -25,7 +25,7 @@ void ProjectManager::createNewProjectWithName(ArkString name)
 	m_currentProject = new ArkProject(name); /* nothing to open so don't open project */
 
 	SystemDirectory::createDirectory(name);
-	SystemDirectory::createDirectory(name + "/resources");
+	SystemDirectory::createDirectory(name + "/meta");
 	m_currentProject->openProject();
 	sm_lock.unlock();
 }
@@ -41,9 +41,9 @@ void ProjectManager::openProject(ArkString name)
 	}
 	else
 		Debug::Err("project " + name + " does not exist");
-
 	sm_lock.unlock();
 }
+
 
 void ProjectManager::closeCurrentProject()
 {
@@ -59,16 +59,46 @@ ArkProject::ArkProject(ArkString name)
 }
 
 
-void ArkProject::synchronizeProject() const
+void ArkProject::openProject()
 {
-	// TODO (AD) synchronize project settings
-	ResourceManager::Instance()->synchronizeResources(getResourcesDirectory());
+	setResourcesDirectories(); 
+	deserializeProject();
+}
+
+ArkString ArkProject::getResourceDirectory(ResourceType type)
+{
+	ArkString path = getProjectDirectory();
+	switch ( type )
+	{
+	case Mesh:		path += "meshes/"; break;
+	case Material:	path += "materials/"; break;
+	case Model:		path += "models/"; break;
+	case Shader:	path += "shaders/"; break;
+	}
+	return path;
 }
 
 
-void ArkProject::desynchronizeProject()
+void ArkProject::serializeProject() const
+{
+	// TODO (AD) synchronize project settings
+	ResourceManager::Instance()->serializeResources(getMetaDirectory());
+}
+
+
+void ArkProject::deserializeProject()
 {
 	// TODO (AD) desynchronize project settings
 	if ( ResourceManager::Instance() )
-		ResourceManager::Instance()->desynchronizeResources(getResourcesDirectory());
+	{
+		ResourceManager::Instance()->deserializeResources(getMetaDirectory());
+	}
+}
+
+void ArkProject::setResourcesDirectories()
+{
+	ResourceManager::Instance()->GetMaterialFactory()->setPathToResourceDirectory(getResourceDirectory(Material));
+	ResourceManager::Instance()->GetShaderFactory()->setPathToResourceDirectory(getResourceDirectory(Shader));
+	ResourceManager::Instance()->GetMeshFactory()->setPathToResourceDirectory(getResourceDirectory(Mesh));
+	ResourceManager::Instance()->GetModelFactory()->setPathToResourceDirectory(getResourceDirectory(Model));
 }
