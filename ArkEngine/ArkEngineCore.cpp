@@ -25,14 +25,15 @@ void ArkEngineCore::InitEngine()
 
 void ArkEngineCore::initMemory()
 {
-	
-	mWindow = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
+	m_window = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
 	mSystemThread = new ArkThread(new SystemTask());
 
 #ifdef USE_OPENGL
-	mRenderer = new OpenGLRenderer(mWindow);
-	mRenderer->InitializeRenderer();
+	m_renderer = new OpenGLRenderer(m_window);
+	m_renderer->InitializeRenderer();
 #endif // USE_OPENGL
+
+	m_sceneManager = new SceneManager();
 
 	ResourceManager::Initialize();
 	RendererModelManager::Initialize();
@@ -48,18 +49,19 @@ void ArkEngineCore::startThreads()
 
 void ArkEngineCore::runMainLoop()
 {
-	mRenderer->Run();
+	m_renderer->Run();
 }
 
 void ArkEngineCore::stopThreads()
 {
-	mRenderer->Stop();
+	m_renderer->Stop();
 }
 
 void ArkEngineCore::deinitMemory()
 {
 	ProjectManager::Instance()->closeCurrentProject();
 
-	delete mRenderer;
-	delete mWindow;
+	delete m_renderer;
+	delete m_window;
+	delete m_sceneManager;
 }

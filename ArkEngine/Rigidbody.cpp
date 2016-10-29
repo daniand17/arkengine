@@ -1,14 +1,15 @@
 #include "Rigidbody.h"
 
 
-Rigidbody::Rigidbody() :
-	mass(1.0f),
-	drag(1.0f),
-	angularDrag(1.0f),
-	gravityScale(1.0f),
-	velocity(Vec3::zero()),
-	angularVelocity(Vec3::zero()),
-	mUnresolvedForce(Vec3::zero())
+Rigidbody::Rigidbody(GameObject * gameObject)
+	: Component(gameObject)
+	, mass(1.0f)
+	, drag(1.0f)
+	, angularDrag(1.0f)
+	, gravityScale(1.0f)
+	, velocity(Vec3::zero())
+	, angularVelocity(Vec3::zero())
+	, mUnresolvedForce(Vec3::zero())
 {
 }
 

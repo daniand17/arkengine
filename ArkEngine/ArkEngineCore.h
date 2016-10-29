@@ -28,7 +28,9 @@ public:
 		return 0;
 	}
 
-	ArkWindow const * GetMainWindowHandle() const { return mWindow; }
+	ArkWindow const * GetMainWindowHandle() const { return m_window; }
+
+	SceneManager * getSceneManager() const { return m_sceneManager; }
 
 
 private:
@@ -44,10 +46,12 @@ private:
 	void deinitMemory();
 
 private:
-	ArkWindow * mWindow;	
+	ArkWindow * m_window;	
 	ArkThreading::ArkThread * mSystemThread;
 
+	SceneManager * m_sceneManager;
+
 #ifdef USE_OPENGL
-	OpenGLRenderer * mRenderer;
+	OpenGLRenderer * m_renderer;
 #endif // USE_OPENGL
 };

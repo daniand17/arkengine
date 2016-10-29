@@ -9,9 +9,6 @@ using namespace ArkRendering;
 void SystemTask::init()
 {
 	Debug::Log("Initializing System task");
-	ResourceManager * resourceManager	= ResourceManager::Instance();
-	MaterialFactory * materialFactory	= resourceManager->GetMaterialFactory();
-	ShaderFactory	* shaderFactory		= resourceManager->GetShaderFactory();
 }
 
 void SystemTask::run()
