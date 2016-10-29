@@ -3,6 +3,11 @@
 #include <thread>
 #include <mutex>
 
+#include "ArkString.h"
+
+#define SCOPE_LOCKER ArkThreading::ScopeLock
+
+
 namespace ArkThreading
 {
 	class WorkerTask
@@ -42,7 +47,25 @@ namespace ArkThreading
 
 	class ArkMutex : public std::mutex
 	{
+	};
 
+	class ScopeLock
+	{
+	public:
+		ScopeLock(ArkMutex * mutex, ArkString reason)
+			: m_lock(mutex)
+			, m_reason(reason)
+		{
+			m_lock->lock();
+		}
+
+		~ScopeLock()
+		{
+			m_lock->unlock();
+		}
+	private:
+		ArkMutex * m_lock;
+		ArkString m_reason;
 	};
 }
 

@@ -218,6 +218,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProjectManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SystemTasks.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
@@ -226,18 +227,13 @@
     <ClInclude Include="ArkEngineCore.h" />
     <ClInclude Include="CameraControls.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="ProjectManager.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SystemTasks.h" />
     <ClInclude Include="Transform.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SimpleFragmentShader.frag" />
-    <None Include="SimpleVertexShader.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="tiles.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

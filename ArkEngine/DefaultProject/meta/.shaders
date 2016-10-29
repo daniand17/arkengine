@@ -1,4 +1,0 @@
-ShaderProgram
-	id:0
-	vertexShader:SimpleVertexShader.vert
-	fragmentShader:SimpleFragmentShader.frag

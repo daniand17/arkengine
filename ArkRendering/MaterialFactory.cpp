@@ -1,50 +1,54 @@
 #include "MaterialFactory.h"
+#include "MaterialFactory.h"
 
 #include "Filestream.h"
 
 using namespace ArkRendering;
 
-Resource_Id MaterialFactory::CreateMaterial()
+void MaterialFactory::CreateMaterial(ArkString name, ArkString shaderName)
 {
-	MaterialInfo * material = new MaterialInfo();
-	material->id = mLoadedMaterials.size();
-	material->ambient = Vec3(1, 1, 1);
-	material->diffuse = Vec3(1, 1, 1);
-	material->specular = Vec3(1, 1, 1);
-	material->shininess = 32;
-
-	mLoadedMaterials.push_back(material);
-
-	return material->id;
+	MaterialInfo newMat;
+	newMat.m_name = name;
+	newMat.ambient = Vec3(1, 1, 1);
+	newMat.diffuse = Vec3(1, 1, 1);
+	newMat.specular = Vec3(1, 1, 1);
+	newMat.shininess = 32;
+	newMat.setShader(shaderName);
+	m_loadedMaterials.insert(MaterialNamePair(name, newMat));
 }
 
-void MaterialFactory::SynchronizeResources(ArkString projectName)
+
+void MaterialFactory::serializeResources()
 {
-	Filestream filestream(projectName, "materials");
-	filestream.OpenFile(Filestream::FileOpenType::Write);
+	if ( !m_directory ) return;
 
 	ArkString syncString = "";
-
-	for ( MaterialInfoListT::const_iterator iter = mLoadedMaterials.begin() ; iter < mLoadedMaterials.end() ; iter++ )
+	for ( auto iter = m_loadedMaterials.begin() ; iter != m_loadedMaterials.end() ; iter++ )
 	{
-		syncString += (*iter)->Synchronize();
-		if ( (iter + 1) != mLoadedMaterials.end() )
-			syncString += ",";
+		if ( iter != m_loadedMaterials.begin() )
+			syncString += "\n,";
+	
+		syncString += iter->second.serialize();
 	}
 
-	filestream.WriteStringToFile(syncString);
-	filestream.CloseFile();
+	ArkFile * metafile;
+	if ( m_directory->fileExists("materials.meta") )
+		metafile = m_directory->getFileByFilename("materials.meta");
+	else
+		metafile = m_directory->createFile("materials", "meta");
+
+	metafile->writeToFile(syncString);
 }
 
-void MaterialFactory::DesynchronizeResources(ArkString projectName)
-{
-	Filestream filestream(projectName, "materials");
-	try { filestream.OpenFile(Filestream::FileOpenType::Read); }
-	catch ( std::exception & e ) { e.what(); }
 
-	ArkString fileContents = "";
-	filestream.ReadAll(&fileContents);
-	filestream.CloseFile();
+void MaterialFactory::deserializeResources()
+{
+	if ( !m_directory ) return;
+	if ( !m_directory->fileExists("materials.meta") ) return;
+	// TODO maybe eventually read from file list?
+	ArkFile * infile = m_directory->getFileByFilename("materials.meta");
+	ArkString fileContents = infile->getFileContents();
+
 	if ( fileContents.length() > 0 )
 	{
 		ArkStringList materialList = fileContents.split(',');
@@ -53,35 +57,37 @@ void MaterialFactory::DesynchronizeResources(ArkString projectName)
 	}
 }
 
-void MaterialFactory::clear()
+
+ArkRendering::MaterialInfo * MaterialFactory::getResourceByName(ArkString name)
 {
-	while ( mLoadedMaterials.size() > 0 )
-	{
-		MaterialInfo * matInfo = mLoadedMaterials[mLoadedMaterials.size() - 1];
-		delete matInfo;
-		mLoadedMaterials.pop_back();
-	}
+	auto iter = m_loadedMaterials.find(name);
+	return iter != m_loadedMaterials.end() ? &(iter->second) : NULL;
 }
+
+
+void MaterialFactory::getAllMaterials(std::vector<ArkRendering::MaterialInfo*>& out)
+{
+	for ( auto i = m_loadedMaterials.begin() ; i != m_loadedMaterials.end() ; i++ )
+		out.push_back(&(i->second));
+}
+
 
 void MaterialFactory::createMaterialFromString(ArkString & materialString)
 {
 	if ( materialString.length() == 0 ) return;
 	ArkStringList list = materialString.split('\n');
-	MaterialInfo * material = new MaterialInfo();
+	MaterialInfo material;
+	// TODO (AD) make sure that a material with this name doesn't already exist
+	
+	material.m_name = list.at(1).split(':').getLast();
+	sscanf_s(list.at(2).c_str(), "\tambient:Vec3(%f %f %f)", &(material.ambient.x), &(material.ambient.y), &(material.ambient.z));
+	sscanf_s(list.at(3).c_str(), "\tdiffuse:Vec3(%f %f %f)", &(material.diffuse.x), &(material.diffuse.y), &(material.diffuse.z));
+	sscanf_s(list.at(4).c_str(), "\tspecular:Vec3(%f %f %f)", &(material.specular.x), &(material.specular.y), &(material.specular.z));
+	sscanf_s(list.at(5).c_str(), "\tshininess:%f", &(material.shininess));
 
-	int matId = 0;
-	sscanf_s(list.at(1).c_str(), "\tresourceId\t%d", &matId);
-	material->id = static_cast<Resource_Id>(matId);
+	material.setShader(list.at(6).split(':').getLast());
 
-	sscanf_s(list.at(2).c_str(), "\tambient \tVec3(%f %f %f)", &(material->ambient.x), &(material->ambient.y), &(material->ambient.z));
-	sscanf_s(list.at(3).c_str(), "\tdiffuse \tVec3(%f %f %f)", &(material->diffuse.x), &(material->diffuse.y), &(material->diffuse.z));
-	sscanf_s(list.at(4).c_str(), "\tspecular \tVec3(%f %f %f)", &(material->specular.x), &(material->specular.y), &(material->specular.z));
-	sscanf_s(list.at(5).c_str(), "\tshininess \t%f", &(material->shininess));
-
-	int shaderProgramId = 0;
-	sscanf_s(list.at(6).c_str(), "\tshaderId \t%d", &(shaderProgramId));
-	material->setShaderProgramId(shaderProgramId);
-	mLoadedMaterials.push_back(material);
+	m_loadedMaterials.insert(MaterialNamePair(material.m_name, material));
 
 	// TODO (AD) Do asserts that check number of floats found per string or throw an exception to be handled?
 	// this exception would be something along the lines of "corrupted materials file exception"

@@ -5,16 +5,16 @@
 class RenderState
 {
 public:
-	RenderState(Resource_Id materialId, BufferSet const * bufferSet) : mBufferSet(bufferSet), mMaterialId(materialId) {}
+	RenderState(ArkRendering::MaterialInfo const * material, BufferSet const * bufferSet) : mBufferSet(bufferSet), m_material(material) {}
 
-	Resource_Id GetMaterialId() const { return mMaterialId; }
 	size_t Size() const { return mBufferSet->Size(); }
 	void BindBuffersForDrawing() const { mBufferSet->BindBuffersForDrawing(); }
 	void DisableBuffers() const { mBufferSet->DisableBuffers(); }
 
 	void SetBufferSet(BufferSet const * bufferSet) { mBufferSet = bufferSet; }
+	ArkRendering::MaterialInfo const * getMaterial() const { return m_material; }
 
 private:
 	BufferSet const * mBufferSet;
-	Resource_Id mMaterialId;
+	ArkRendering::MaterialInfo const * m_material;
 };

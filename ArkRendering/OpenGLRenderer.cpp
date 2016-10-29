@@ -12,9 +12,9 @@
 using namespace ArkRendering;
 using namespace ArkMath;
 using namespace std;
-#define DEBUG_MATERIAL_ID 0
 
 OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
+
 
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: mWindow(windowHandle)
@@ -23,17 +23,18 @@ OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 		mInstance = this;
 }
 
+
 OpenGLRenderer::OpenGLRenderer()
 	: mShouldRun(true)
 {
 }
 
-OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
 
 void OpenGLRenderer::DeinitRenderer()
 {
 	glDeleteVertexArrays(1, &mVertexArrayId);
 }
+
 
 void OpenGLRenderer::InitializeRenderer()
 {
@@ -46,13 +47,12 @@ void OpenGLRenderer::InitializeRenderer()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
 }
+
 
 void OpenGLRenderer::Run()
 {
@@ -71,7 +71,8 @@ void OpenGLRenderer::Run()
 	light.color = Vec3(0.5, 0.5, 0.5);
 
 	ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
-	modelInfo->meshId = ResourceManager::Instance()->GetMeshFactory()->LoadMesh("rock.obj");
+	modelInfo->m_material = "DefaultMaterial";
+	modelInfo->m_mesh = "rock.obj";
 	modelInfo->modelMatrix = Mat4::identity();
 
 	do
@@ -84,7 +85,7 @@ void OpenGLRenderer::Run()
 		nbFrames++;
 		if ( currentTime - lastTime >= 1.0 )
 		{
-			printf("%f ms/frame", 1000.0 / double(nbFrames));
+			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
@@ -94,7 +95,7 @@ void OpenGLRenderer::Run()
 		// Render all the render states
 		for ( RenderState * renderState : mRenderStateList )
 		{
-			MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->GetMaterialById(renderState->GetMaterialId());
+			MaterialInfo const * material = renderState->getMaterial();
 			if ( material )
 			{
 				material->useShaderProgram();
@@ -143,6 +144,7 @@ void OpenGLRenderer::Run()
 	while ( mShouldRun && !glfwWindowShouldClose(win) );
 }
 
+
 void OpenGLRenderer::updateBufferSets()
 {
 	RendererModelManager * rendererModelManager = RendererModelManager::Instance();
@@ -150,27 +152,28 @@ void OpenGLRenderer::updateBufferSets()
 	if ( !rendererModelManager || !rendererModelManager->IsDirty() )
 		return;
 
+	SCOPE_LOCKER resourceManagerLock(ResourceManager::Instance()->getLock(), "Update Buffer Sets");
 	MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
-	if ( !meshFactory ) return;
+	MaterialFactory * materialFactory = ResourceManager::Instance()->GetMaterialFactory();
+	std::set<ArkString> usedMaterials;
+	rendererModelManager->getUsedMaterials(usedMaterials);
 
-	std::vector<Resource_Id> usedMaterialIds;
-	rendererModelManager->GetUsedMaterialIds(usedMaterialIds);
-
-	for ( vector<Resource_Id>::const_iterator resIdIter = usedMaterialIds.begin() ; resIdIter < usedMaterialIds.end() ; resIdIter++ )
+	for ( std::set<ArkString>::const_iterator resIdIter = usedMaterials.begin() ; resIdIter != usedMaterials.end() ; resIdIter++ )
 	{
-		Resource_Id resourceId = (*resIdIter);
 		std::vector<ModelInfo> modelInfoList;
-		rendererModelManager->GetModelsWithMaterialId((*resIdIter), modelInfoList);
+		MaterialInfo * material = materialFactory->getResourceByName(*resIdIter);
+		rendererModelManager->getModelsUsingMaterial(material->m_name, modelInfoList);
 
+		auto pos = mBufferSetMap.find(material->m_name);
 		BufferSet * currBufferSet = NULL;
-		if ( mBufferSetMap.find(resourceId) == mBufferSetMap.end() )
+		if ( pos == mBufferSetMap.end() )
 		{
 			currBufferSet = new BufferSet();
-			mBufferSetMap[resourceId] = currBufferSet;
-			mRenderStateList.push_back(new RenderState(resourceId, currBufferSet));
+			mBufferSetMap.insert(BufferMaterialNamePair(material->m_name, currBufferSet));
+			mRenderStateList.push_back(new RenderState(material, currBufferSet));
 		}
 		else
-			currBufferSet = mBufferSetMap[resourceId];
+			currBufferSet = pos->second;
 
 		std::vector<Vec3> newVertBuffer;
 		std::vector<Vec3> newNormalBuffer;
@@ -180,7 +183,7 @@ void OpenGLRenderer::updateBufferSets()
 		size_t uvCount = 0;
 		for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
 		{
-			MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+			MeshInfo * meshInfo = meshFactory->getResourceByName(modelInfoList[i].m_mesh);
 			if ( meshInfo )
 			{
 				vertCount += meshInfo->vertices.size();
@@ -196,7 +199,7 @@ void OpenGLRenderer::updateBufferSets()
 			newUvBuffer.reserve(uvCount);
 			for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
 			{
-				MeshInfo * meshInfo = meshFactory->GetMeshById(modelInfoList[i].meshId);
+				MeshInfo * meshInfo = meshFactory->getResourceByName(modelInfoList[i].m_mesh);
 				newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
 				newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
 				newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());

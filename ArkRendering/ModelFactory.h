@@ -1,21 +1,23 @@
 #pragma once
-#include <vector>
-
+#include <map>
+#include <string>
 #include "ArkRendering.h"
 #include "AbstractResourceFactory.h"
 
 class ModelFactory : public ResourceFactory
 {
 public:
-	Resource_Id createModelFromMaterialAndMeshId(Resource_Id materialId, Resource_Id meshId);
-	ArkRendering::ModelInfo * GetModelById(Resource_Id id) { return id < mLoadedModels.size() ? &mLoadedModels[id] : NULL; }
-	void GetUsedMaterialIds(std::vector<Resource_Id> & out) const;
+	void createModelFromMaterialAndMesh(ArkString modelName, ArkString materialName, ArkString meshName);
+	void GetUsedMaterials(ArkStringList list) const;
 
-	void SynchronizeResources(ArkString projectName) override;
-	void DesynchronizeResources(ArkString projectName) override;
-	virtual size_t size() const override { return mLoadedModels.size(); }
+	void serializeResources() override;
+	void deserializeResources() override;
+	virtual size_t size() const override { return m_loadedModels.size(); }
 	virtual void clear() override;
+	virtual ArkRendering::ModelInfo * getResourceByName(ArkString name) override;
 
 private:
-	std::vector<ArkRendering::ModelInfo> mLoadedModels;
+	typedef std::map<ArkString, ArkRendering::ModelInfo> ModelCollection;
+	typedef std::pair<ArkString, ArkRendering::ModelInfo> ModelNamePair;
+	ModelCollection m_loadedModels;
 };

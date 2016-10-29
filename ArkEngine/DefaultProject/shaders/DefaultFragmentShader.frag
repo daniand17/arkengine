@@ -19,7 +19,6 @@ in vec3 normal_eyespace;
 in vec3 position_eyespace;
 
 uniform vec3 viewPosition_eyespace;
-uniform sampler2D myTextureSampler;
 uniform LightInfo lightInfo;
 uniform MaterialInfo material;
 
@@ -34,12 +33,10 @@ void main()
 	float diff = max(dot(norm, lightDir), 0.0);
 	vec3 diffuse = lightInfo.color * (diff * material.diffuse);
 
-	vec3 result = (ambient + diffuse) * texture(myTextureSampler, UV).rgb;
-
 	vec3 viewDir = normalize(-position_eyespace);
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = lightInfo.color * (spec * material.specular);
 	
-	frag_color = vec4(result + specular, 1.0);
+	frag_color = vec4(ambient + diffuse + specular, 1.0);
 }

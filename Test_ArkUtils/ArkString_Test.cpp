@@ -85,5 +85,13 @@ namespace Test_ArkUtils
 			Assert::AreEqual(ArkString("hello world!").toStdString(), list.at(0).toStdString());
 		}
 
+		TEST_METHOD(ArkString_LessThan)
+		{
+			ArkString andy("Andy");
+			ArkString dandy("Pandy");
+
+			Assert::IsTrue(andy < dandy);
+		}
+
 	};
 }

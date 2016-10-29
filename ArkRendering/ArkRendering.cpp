@@ -29,7 +29,7 @@ ArkRendering::MaterialInfo::MaterialInfo()
 	, specular(Vec3::one())
 	, shininess(0.0f)
 	, m_shaderProgram(NULL)
-	, m_shaderProgramId(0)
+	, m_shaderName("")
 	, shiId(0)
 	, ambId(0)
 	, difId(0)
@@ -44,6 +44,7 @@ void ArkRendering::MaterialInfo::setShaderProgram(ArkRendering::ShaderProgram * 
 	m_shaderProgram = shaderProgram;
 	getVertexBindingsFromShader();
 }
+
 
 void ArkRendering::MaterialInfo::useShaderProgram() const
 {
@@ -62,6 +63,7 @@ void ArkRendering::MaterialInfo::pushValuesToRenderer() const
 
 }
 
+
 void ArkRendering::MaterialInfo::getVertexBindingsFromShader()
 {
 	if ( !m_bound && m_shaderProgram != NULL )
@@ -77,42 +79,45 @@ void ArkRendering::MaterialInfo::getVertexBindingsFromShader()
 }
 
 
-ArkRendering::ShaderProgram::ShaderProgram(ArkString vertexShader, ArkString fragmentShader)
+ArkRendering::ShaderProgram::ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader)
 	: m_vertexShader(vertexShader)
 	, m_fragmentShader(fragmentShader)
+	, m_numAttributes(0)
+	, m_numUniforms(0)
+	, m_programId(0)
+	, m_texture(NULL)
 {
+	m_name = name;
 }
 
 
-ArkString ArkRendering::ShaderProgram::Synchronize() const
+ArkString ArkRendering::ShaderProgram::serialize() const
 {
 	ArkString sync("ShaderProgram");
-	sync += "\n\tid:" + ArkString::Number(id);
-	sync += "\n\tvertexShader:" + m_vertexShader;
-	sync += "\n\tfragmentShader:" + m_fragmentShader;
+	sync += "\n\tname:" + m_name;
+	sync += "\n\tvertexShader:" + getVertexShaderName();
+	sync += "\n\tfragmentShader:" + getFragmentShaderName();
 	return sync;
 }
 
 
 void ArkRendering::ShaderProgram::compileAndLoadShader()
 {
-	mProgramId = LoadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
-	glGetProgramInterfaceiv(mProgramId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &mNumAttributes);
-	glGetProgramInterfaceiv(mProgramId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &mNumUniforms);
+	m_programId = LoadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
+	glGetProgramInterfaceiv(m_programId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &m_numAttributes);
+	glGetProgramInterfaceiv(m_programId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &m_numUniforms);
 	// TODO (AD) code to get more info about a shaders attrs http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
 }
 
 
-
 void ArkRendering::ShaderProgram::unloadShader()
 {
-	glDeleteProgram(mProgramId);
-	delete mTexture;
+	glDeleteProgram(m_programId);
+	delete m_texture;
 }
 
 
-
-ArkString ArkRendering::MeshInfo::Synchronize() const
+ArkString ArkRendering::MeshInfo::serialize() const
 {
 	ArkString syncString = "MeshInfo";
 	syncString += "\n\tname:" + name;
@@ -120,29 +125,25 @@ ArkString ArkRendering::MeshInfo::Synchronize() const
 }
 
 
-
-ArkString ArkRendering::ModelInfo::Synchronize() const
+ArkString ArkRendering::ModelInfo::serialize() const
 {
-	ArkString syncString = "ModelInfo {";
-	syncString += "\n\tmaterialId : " + ArkString::Number(materialId);
-	syncString += "\n\t,meshId : " + ArkString::Number(meshId);
-	syncString += "\n\t,modelMatrix : "; // TODO (AD) Add model matrix sync
-	syncString += "\n}";
+	ArkString syncString = "ModelInfo";
+	syncString += "\n\tname:" + m_name;
+	syncString += "\n\tmesh:" + m_mesh;
+	syncString += "\n\tmaterial:" + m_material;
 	return syncString;
 }
 
 
-
-ArkString ArkRendering::MaterialInfo::Synchronize() const
+ArkString ArkRendering::MaterialInfo::serialize() const
 {
-	ArkString syncString = "MaterialInfo {";
-	syncString += "\n\tresourceId\t" + ArkString::Number(id);
-	syncString += "\n\tambient \t" + ambient.ToString();
-	syncString += "\n\tdiffuse \t" + diffuse.ToString();
-	syncString += "\n\tspecular \t" + specular.ToString();
-	syncString += "\n\tshininess \t" + ArkString::Number(shininess);
-	syncString += "\n\tshaderId \t" + ArkString::Number(m_shaderProgramId);
-	syncString += "\n}";
+	ArkString syncString = "MaterialInfo";
+	syncString += "\n\tname:" + m_name;
+	syncString += "\n\tambient:" + ambient.ToString();
+	syncString += "\n\tdiffuse:" + diffuse.ToString();
+	syncString += "\n\tspecular:" + specular.ToString();
+	syncString += "\n\tshininess:" + ArkString::Number(shininess);
+	syncString += "\n\tshader:" + m_shaderName;
 
 	return syncString;
 }

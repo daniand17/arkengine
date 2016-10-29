@@ -1,14 +1,21 @@
 #pragma once
-
 #include "ArkString.h"
+#include "Filesystem.h"
+#include "ArkRendering.h"
+
 class ResourceFactory
 {
 public:
-	void setPathToResourceDirectory(ArkString path) { m_pathToResourceDirectory = path; }
-	virtual void DesynchronizeResources(ArkString projectName) = 0;
-	virtual void SynchronizeResources(ArkString projectName) = 0;
+	ArkDirectory * getDirectory() const { return m_directory; }
+	void setDirectory(ArkDirectory * directory) { m_directory = directory; }
+	
 	virtual size_t size() const = 0;
+	virtual ArkRendering::Resource * getResourceByName(ArkString name) = 0;
+	
+	virtual void deserializeResources() = 0;
+	virtual void serializeResources() = 0;
 	virtual void clear() = 0;
 
-	ArkString m_pathToResourceDirectory;
+protected:
+	ArkDirectory * m_directory;
 };

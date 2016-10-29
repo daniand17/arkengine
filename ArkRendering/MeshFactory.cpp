@@ -4,88 +4,48 @@
 
 using namespace ArkRendering;
 
-Resource_Id MeshFactory::LoadMesh(ArkString modelName)
+void MeshFactory::LoadMesh(ArkString modelName)
 {
-	if ( modelName.length() == 0 ) return -1;
-	bool loaded = false;
-	Resource_Id index = getIdOfLoadedMesh(modelName, loaded);
+	if ( modelName.length() == 0 || m_loadedMeshes.find(modelName) != m_loadedMeshes.end() ) return;
 
-	if ( loaded )
-		return index;
-	else
+	MeshInfo * meshInfo = new MeshInfo();
+
+	if ( ModelLoading::loadOBJ(m_directory->getAbsolutePath() + modelName, meshInfo->vertices, meshInfo->uvs, meshInfo->normals) )
 	{
-		MeshInfo * meshInfo = new MeshInfo();
 		meshInfo->name = modelName;
-		meshInfo->id = mLoadedMeshes.size();
-
-		ModelLoading::loadOBJ(modelName, meshInfo->vertices, meshInfo->uvs, meshInfo->normals);
-
-		LoadedMesh loadedMesh;
-		loadedMesh.mesh = meshInfo;
-		loadedMesh.name = modelName;
-		mLoadedMeshes.push_back(loadedMesh);
-		return meshInfo->id;
+		m_loadedMeshes.insert(MeshNamePair(modelName, meshInfo));
 	}
+	else
+		delete meshInfo;
 }
 
-void MeshFactory::SynchronizeResources(ArkString projectName)
+
+void MeshFactory::serializeResources()
 {
-	Filestream filestream(projectName, "meshes");
-	filestream.OpenFile(Filestream::FileOpenType::Write);
-	ArkString syncString("");
-
-	for ( std::vector<LoadedMesh>::const_iterator iter = mLoadedMeshes.begin() ; iter < mLoadedMeshes.end() ; iter++ )
-	{
-		syncString += iter->mesh->Synchronize();
-
-		if ( (iter + 1) < mLoadedMeshes.end() )
-			syncString += "\n,";
-	}
-	filestream.WriteStringToFile(syncString);
-	filestream.CloseFile();
+	// TODO (AD) Might not need to serialize meshes because we are only reading from whats in the directory
 }
 
-void MeshFactory::DesynchronizeResources(ArkString projectName)
-{
-	Filestream filestream(projectName, "meshes");
-	filestream.OpenFile(Filestream::FileOpenType::Read);
 
-	ArkString fileContents("");
-	filestream.ReadAll(&fileContents);
-	filestream.CloseFile();
-	
-	ArkStringList list = fileContents.split(',');
-	for ( unsigned i = 0 ; i < list.size() ; i++ )
-	{
-		ArkString filename = list.at(i).split('\n').at(1).split(':').at(1);
-		LoadMesh(filename);
-	}
+void MeshFactory::deserializeResources()
+{
+	std::vector<ArkFile> const * fileList = m_directory->getFileList();
+	for ( size_t i = 0 ; i < fileList->size() ; i++ )
+		LoadMesh(fileList->at(i).getFilename());
+}
+
+
+ArkRendering::MeshInfo * MeshFactory::getResourceByName(ArkString name)
+{
+	auto iter = m_loadedMeshes.find(name);
+	if ( iter != m_loadedMeshes.end() )
+		return iter->second;
+	return NULL;
 
 }
 
 void MeshFactory::clear()
 {
-	while(mLoadedMeshes.size() > 0 )
-	{
-		LoadedMesh mesh = mLoadedMeshes[mLoadedMeshes.size() - 1];
-		delete mesh.mesh;
-		mLoadedMeshes.pop_back();
-	}
-}
-
-Resource_Id MeshFactory::getIdOfLoadedMesh(ArkString modelName, bool & found) const
-{
-	found = false;
-	int index = DATA_NONE;
-	for ( int i = 0 ; i < mLoadedMeshes.size() ; i++ )
-	{
-		if ( mLoadedMeshes[i].name == modelName )
-		{
-			index = i;
-			found = true;
-			break;
-		}
-	}
-
-	return index;
+	for ( auto iter = m_loadedMeshes.begin() ; iter != m_loadedMeshes.end() ; iter++ )
+		delete iter->second;
+	m_loadedMeshes.clear();
 }

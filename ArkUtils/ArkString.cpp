@@ -28,6 +28,11 @@ ArkString operator+(ArkString const & lhs, ArkString const & rhs)
 	return l;
 }
 
+bool operator<(ArkString const & lhs, ArkString const & rhs)
+{
+	return lhs.toStdString() < rhs.toStdString();
+}
+
 
 std::ostream & operator<<(std::ostream & outStream, ArkString const & theString)
 {
@@ -71,10 +76,10 @@ ArkStringList ArkString::split(char delim) const
 ArkString ArkStringList::join(ArkString delim) const
 {
 	ArkString joinedString;
-	size_t siz = mStringList.size();
+	size_t siz = m_stringList.size();
 	for ( unsigned i = 0 ; i < siz; i++ )
 	{
-		joinedString += mStringList[i];
+		joinedString += m_stringList[i];
 		if ( i + 1 != siz )
 			joinedString += delim;
 	}
@@ -84,7 +89,7 @@ ArkString ArkStringList::join(ArkString delim) const
 
 ArkString ArkStringList::pop_back()
 {
-	ArkString retVal = mStringList[mStringList.size() - 1];
-	mStringList.pop_back();
+	ArkString retVal = m_stringList[m_stringList.size() - 1];
+	m_stringList.pop_back();
 	return retVal;
 }

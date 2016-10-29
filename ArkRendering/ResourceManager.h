@@ -1,7 +1,5 @@
 #pragma once
 
-#include <mutex>
-
 #include "MaterialFactory.h"
 #include "MeshFactory.h"
 #include "ModelFactory.h"
@@ -23,9 +21,11 @@ public:
 	static ResourceManager * Instance() { return mInstance; }
 	static void Initialize();
 
-	void serializeResources(ArkString projectName);
-	void deserializeResources(ArkString projectName);
-	ArkRendering::Resource * GetResourceByIdAndType(Resource_Id id, ResourceType type) const;
+	void setProjectDirectory(ArkString directory) { m_projectDirectory = directory; }
+
+	void serializeResources();
+	void deserializeResources();
+	ArkRendering::Resource * GetResourceByNameAndType(ArkString name, ResourceType type) const;
 	MeshFactory * GetMeshFactory() const { return m_meshFactory; }
 	MaterialFactory * GetMaterialFactory() const { return m_materialFactory; }
 	ModelFactory * GetModelFactory() const { return m_modelFactory; }
@@ -33,9 +33,13 @@ public:
 
 	void bindMaterialsToShaders();
 
+	ArkThreading::ArkMutex * getLock() const { return m_lock; }
+
 private:
 	static ResourceManager * mInstance;
-	static ArkThreading::ArkMutex sm_lock;
+	ArkThreading::ArkMutex * m_lock;
+
+	ArkString m_projectDirectory;
 
 	MeshFactory *		m_meshFactory;
 	MaterialFactory *	m_materialFactory;

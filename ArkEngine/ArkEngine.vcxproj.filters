@@ -36,6 +36,9 @@
     <ClCompile Include="ProjectManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArkEngineCore.h">
@@ -65,18 +68,11 @@
     <ClInclude Include="ProjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SimpleFragmentShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="SimpleVertexShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="tiles.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

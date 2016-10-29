@@ -5,6 +5,7 @@
 #include "OpenGLRenderer.h"
 #include "ArkThread.h"
 #include "ResourceManager.h"
+#include "SceneManager.h"
 
 class ArkEngineCore
 {
@@ -49,5 +50,4 @@ private:
 #ifdef USE_OPENGL
 	OpenGLRenderer * mRenderer;
 #endif // USE_OPENGL
-
 };

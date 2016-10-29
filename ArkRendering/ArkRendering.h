@@ -11,6 +11,13 @@ typedef size_t Resource_Id;
 
 namespace ArkRendering
 {
+	struct CameraInfo
+	{
+		Mat4 projectionMatrix;
+		Mat4 viewMatrix;
+	};
+
+
 	enum LightType
 	{
 		Point,
@@ -33,12 +40,6 @@ namespace ArkRendering
 		GLuint colId;
 	};
 
-	struct Resource
-	{
-		Resource_Id id;
-		virtual ArkString Synchronize() const = 0;
-	};
-
 	class Texture
 	{
 	public:
@@ -49,36 +50,47 @@ namespace ArkRendering
 		GLuint mTextureId;
 	};
 
+	struct Resource
+	{
+		ArkString m_name;
+		virtual ArkString serialize() const = 0;
+	};
+
+	////////////////////////////////////////
+
 	struct ShaderProgram : Resource
 	{
 	public:
-		ShaderProgram(ArkString vertexShader, ArkString fragmentShader);
+		ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader);
 		~ShaderProgram() {} // TODO (AD) probably not a great place for this 
-		void setTexture(Texture * texture) { mTexture = texture; }
-		GLuint getId() const { return mProgramId; }
-		GLuint getTextureId() const { return mProgramId; }
-		int numAttributes() const { return mNumAttributes; }
-		int numUniforms() const { return mNumUniforms; }
+		void setTexture(Texture * texture) { m_texture = texture; }
+		GLuint getId() const { return m_programId; }
+		GLuint getTextureId() const { return m_programId; }
+		int numAttributes() const { return m_numAttributes; }
+		int numUniforms() const { return m_numUniforms; }
 
-		ArkString Synchronize() const override;
+		ArkString serialize() const override;
 
 		void setVertexShader(ArkString vertexShader) { m_vertexShader = vertexShader; }
 		void setFragmentShader(ArkString vertexShader) { m_fragmentShader = m_fragmentShader; }
-
 		void compileAndLoadShader();
 		void unloadShader();
 
-		ArkString getVertexShader() const { return m_vertexShader; }
-		ArkString getFragmentShader() const { return m_fragmentShader; }
+		ArkString getVertexShaderPath() const { return m_vertexShader; }
+		ArkString getFragmentShaderPath() const { return m_fragmentShader; }
+		ArkString getVertexShaderName() const { return m_vertexShader.split('\\').getLast(); }
+		ArkString getFragmentShaderName() const { return m_fragmentShader.split('\\').getLast(); }
 
 	private:
 		ArkString m_vertexShader;
 		ArkString m_fragmentShader;
-		GLuint mProgramId;
-		int mNumAttributes;
-		int mNumUniforms;
-		Texture * mTexture;
+		GLuint m_programId;
+		int m_numAttributes;
+		int m_numUniforms;
+		Texture * m_texture;
 	};
+
+	////////////////////////////////////////
 
 	struct MaterialInfo : Resource
 	{
@@ -89,21 +101,21 @@ namespace ArkRendering
 
 		MaterialInfo();
 
-		void setShaderProgramId(Resource_Id shaderProgramId) { m_shaderProgramId = shaderProgramId; }
+		void setShader(ArkString shader) { m_shaderName = shader; }
 		void setShaderProgram(ArkRendering::ShaderProgram * shaderProgram);
 		void useShaderProgram() const;
 
 		void pushValuesToRenderer() const;
 		void getVertexBindingsFromShader();
-		
-		ArkRendering::ShaderProgram * getShaderProgram() const { return m_shaderProgram; }
-		
-		Resource_Id getShaderProgramId() const { return m_shaderProgramId; }
 
-		ArkString Synchronize() const override;
+		ArkRendering::ShaderProgram * getShaderProgram() const { return m_shaderProgram; }
+
+		ArkString getShaderName() const { return m_shaderName; }
+
+		ArkString serialize() const override;
 
 	private:
-		Resource_Id m_shaderProgramId;
+		ArkString m_shaderName;
 		ArkRendering::ShaderProgram * m_shaderProgram;
 		bool m_bound;
 		GLuint shiId;
@@ -112,11 +124,7 @@ namespace ArkRendering
 		GLuint spcId;
 	};
 
-	struct CameraInfo
-	{
-		Mat4 projectionMatrix;
-		Mat4 viewMatrix;
-	};
+	////////////////////////////////////////
 
 	struct MeshInfo : Resource
 	{
@@ -125,21 +133,24 @@ namespace ArkRendering
 		std::vector<Vec3> normals;
 		std::vector<Vec2> uvs;
 
-		ArkString Synchronize() const override;
+		ArkString serialize() const override;
 	};
+
+	////////////////////////////////////////
 
 	struct ModelInfo : Resource
 	{
 		ModelInfo()
-			: materialId(0)
-			, meshId(0)
+			: m_material("")
+			, m_mesh("")
+			, modelMatrix(Mat4::identity())
 		{
 		}
 
-		Resource_Id materialId;
-		Resource_Id meshId;
-		Mat4 modelMatrix = Mat4::identity();
+		ArkString m_material;
+		ArkString m_mesh;
+		Mat4 modelMatrix;
 
-		ArkString Synchronize() const override;
+		ArkString serialize() const override;
 	};
 }

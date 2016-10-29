@@ -2,6 +2,7 @@
 #include "ArkThread.h"
 #include "ResourceManager.h"
 #include "ArkString.h"
+#include "Filesystem.h"
 
 class ArkProject
 {
@@ -12,20 +13,20 @@ public:
 		Material,
 		Model,
 		Shader,
+		Meta,
 		Num_Types
 
 	};
 
 	ArkProject(ArkString name);
-	ArkString getProjectName() const { return m_projectName; }
 	void setProjectName(ArkString projectName) { m_projectName = projectName; }
 
 	void closeProject() { serializeProject(); }
 	void openProject();
 
-	ArkString getMetaDirectory() const { return m_projectName + "/meta/"; }
+	ArkString getProjectName() const { return m_projectName; }
 	ArkString getProjectDirectory() const { return m_projectName + "/"; }
-	ArkString getResourceDirectory(ResourceType type);
+	ArkDirectory * getResourceDirectory(ResourceType type) const;
 
 
 private:
@@ -34,6 +35,11 @@ private:
 	void deserializeProject();
 
 	void setResourcesDirectories(); 
+
+	ArkDirectory m_projectDirectory;
+	ArkString getResourceFolderName(ResourceType type) const;
+
+	std::vector<ArkDirectory *> m_resourceDirectories;
 };
 
 class ProjectManager
@@ -41,6 +47,8 @@ class ProjectManager
 public:
 	static void Initialize();
 	static ProjectManager * ProjectManager::Instance() { return sm_instance; }
+
+	ProjectManager();
 	void createNewProjectWithName(ArkString name);
 	void openProject(ArkString name);
 	void closeCurrentProject();
@@ -48,6 +56,6 @@ public:
 
 private:
 	static ProjectManager * sm_instance;
-	static ArkThreading::ArkMutex sm_lock;
+	ArkThreading::ArkMutex * m_lock;
 	ArkProject * m_currentProject;
 };

@@ -1,73 +1,67 @@
 #include "ShaderFactory.h"
 #include "Filestream.h"
+#include "ArkAssert.h"
 
 using namespace ArkRendering;
 
-Resource_Id ShaderFactory::CreateShader(ArkString vertexShaderName, ArkString fragmentShaderName)
+void ShaderFactory::CreateShader(ArkString shaderName, ArkString vertexShaderName, ArkString fragmentShaderName)
 {
-	ShaderProgram * shader = new ShaderProgram(vertexShaderName, fragmentShaderName);
-	shader->id = m_loadedShaders.size();
+	ShaderProgram * shader = new ShaderProgram(shaderName, vertexShaderName, fragmentShaderName);
 	shader->setVertexShader(vertexShaderName);
 	shader->setFragmentShader(fragmentShaderName);
-	m_loadedShaders.push_back(shader);
-	return shader->id;
+	m_loadedShaders.insert(ShaderNamePair(shader->m_name, shader));
 }
 
 
-ArkRendering::ShaderProgram * ShaderFactory::GetShaderProgramByResourceId(Resource_Id programId) const
+void ShaderFactory::deserializeResources()
 {
-	return programId >= 0 && programId < m_loadedShaders.size()
-		? m_loadedShaders[programId]
-		: NULL;
-}
-
-
-void ShaderFactory::DesynchronizeResources(ArkString projectName)
-{
-	Filestream inFile(projectName, "shaders");
-	inFile.OpenFile(Filestream::FileOpenType::Read);
-	ArkString fileContents("");
-	inFile.ReadAll(&fileContents);
+	ArkString fileContents;
+	if ( m_directory->fileExists("shaders.meta") )
+	{
+		ArkFile * file = m_directory->getFileByFilename("shaders.meta");
+		fileContents = file->getFileContents();
+	}
 
 	if ( fileContents.length() > 0 )
 	{
 		ArkStringList list = fileContents.split(',');
-
 		for ( unsigned i = 0 ; i < list.size() ; i++ )
-		{
 			createShaderFromString(list.at(i));
-		}
 	}
 }
 
 
-void ShaderFactory::SynchronizeResources(ArkString projectName)
-{
-	Filestream outfile(projectName, "shaders");
-	try { outfile.OpenFile(Filestream::FileOpenType::Write); }
-	catch ( std::exception & e ) { e.what(); }
-
+void ShaderFactory::serializeResources()
+{	
 	ArkString syncString("");
-	for ( size_t i = 0 ; i < m_loadedShaders.size() ; i++ )
+	for ( auto iter = m_loadedShaders.begin() ; iter != m_loadedShaders.end() ; iter++ )
 	{
-		syncString += m_loadedShaders[i]->Synchronize();
-
-		if ( i < m_loadedShaders.size() - 1 )
+		if ( iter != m_loadedShaders.begin() )
 			syncString += "\n,";
+		syncString += iter->second->serialize();
 	}
 
-	outfile.WriteStringToFile(syncString);
-	outfile.CloseFile();
+	ArkFile * file = 
+		m_directory->fileExists("shaders.meta") 
+		? m_directory->getFileByFilename("shaders.meta") 
+		: m_directory->createFile("shaders", "meta");
+
+	file->writeToFile(syncString);
 }
 
 
 void ShaderFactory::clear()
 {
-	while ( m_loadedShaders.size() > 0 )
-	{
-		delete m_loadedShaders.at(m_loadedShaders.size() - 1);
-		m_loadedShaders.pop_back();
-	}
+	for ( auto iter = m_loadedShaders.begin() ; iter != m_loadedShaders.end() ; iter++ )
+		delete iter->second;
+
+	m_loadedShaders.clear();
+}
+
+ArkRendering::ShaderProgram * ShaderFactory::getResourceByName(ArkString name)
+{
+	auto iter = m_loadedShaders.find(name);
+	return iter != m_loadedShaders.end() ? iter->second : NULL;
 }
 
 
@@ -77,15 +71,19 @@ void ShaderFactory::createShaderFromString(ArkString theString)
 	{
 		ArkStringList list = theString.split('\n');
 
-		_ASSERT_EXPR(list.size() == 4, "ShaderFactory.cpp(80)");
-		CreateShader(list.at(2).split(':').at(1), list.at(3).split(':').at(1));
+		// Need to get the project here
+		ARK_ASSERT(list.size() >= 4, "Expected at least 3 lines in a shader");
+		ArkString shaderName = list.at(1).split(':').at(1);
+		ArkString vertShaderName = m_directory->getAbsolutePath() + list.at(2).split(':').at(1);
+		ArkString fragShaderName = m_directory->getAbsolutePath() + list.at(3).split(':').at(1);
+
+		CreateShader(shaderName, vertShaderName, fragShaderName);
 	}
 }
 
 
-
 void ShaderFactory::compileShaders()
 {
-	for ( size_t i = 0 ; i < m_loadedShaders.size() ; i++ )
-		m_loadedShaders[i]->compileAndLoadShader();
+	for ( auto iter = m_loadedShaders.begin() ; iter != m_loadedShaders.end() ; iter++ )
+		iter->second->compileAndLoadShader();
 }

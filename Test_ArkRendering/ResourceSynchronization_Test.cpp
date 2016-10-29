@@ -7,154 +7,109 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 #include "ResourceManager.h"
 #include "Filestream.h"
 
+#define MATERIAL_DIR "material_test"
+#define MATERIAL_NAME ArkString("NewMaterial")
+#define SHADER_DIR	"shader_test"
 namespace Test_ArkRendering
 {
 	TEST_CLASS(Material_Synchronization)
 	{
 	public:
 
-		TEST_METHOD(Synchronize_MaterialInfo)
+		TEST_METHOD(MaterialInfo_Serialize)
 		{
+			ArkString testMaterialName("NewMaterial");
+
+
 			ArkRendering::MaterialInfo matInfo;
-			matInfo.id = 0;
+			matInfo.m_name = testMaterialName;
 			matInfo.diffuse = Vec3::one();
 			matInfo.specular = Vec3::one();
 			matInfo.ambient = Vec3::one();
 			matInfo.shininess = 1;
 			matInfo.setShaderProgram(0);
 
-			ArkString sync = matInfo.Synchronize();
+			ArkString sync = matInfo.serialize();
 
-			ArkString expected = "MaterialInfo {";
-			expected += "\n\tresourceId\t" + ArkString::Number(0);
-			expected += "\n\tambient \t" + Vec3::one().ToString();
-			expected += "\n\tdiffuse \t" + Vec3::one().ToString();
-			expected += "\n\tspecular \t" + Vec3::one().ToString();
-			expected += "\n\tshininess \t" + ArkString::Number(1.0f);
-			expected += "\n\tshaderId \t" + ArkString::Number(0);
-			expected += "\n}";
+			ArkString expected = "MaterialInfo";
+			expected += "\n\tname:" + matInfo.m_name;
+			expected += "\n\tambient:" + Vec3::one().ToString();
+			expected += "\n\tdiffuse:" + Vec3::one().ToString();
+			expected += "\n\tspecular:" + Vec3::one().ToString();
+			expected += "\n\tshininess:" + ArkString::Number(1.0f);
+			expected += "\n\tshader:";
 
 			Assert::AreEqual(expected.toStdString(), sync.toStdString());
 		}
 
-		TEST_METHOD(Synchronize_Many_Materials)
+		TEST_METHOD(MaterialFactory_SerializeMaterials)
 		{
-			MaterialFactory * resources = new MaterialFactory();
+			ArkString testMaterialName(MATERIAL_NAME);
+			MaterialFactory resources;
+			ArkDirectory dir(MATERIAL_DIR);
+			if ( !dir.exists() )
+				dir.createDirectory();
 
-			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0);
-			resources->GetMaterialById(resources->CreateMaterial())->setShaderProgram(0);
-			resources->SynchronizeResources("synchronizeManyMaterialsTest");
+			resources.setDirectory(&dir);
+			resources.CreateMaterial(testMaterialName, "DefaultShader");
+			resources.CreateMaterial(testMaterialName + testMaterialName, "DefaultShader");
+			resources.serializeResources();
 
-			Filestream instream("synchronizeManyMaterialsTest", "materials");
-			instream.OpenFile(Filestream::FileOpenType::Read);
-			ArkString fileContents = "";
-			instream.ReadAll(&fileContents);
-
-			ArkStringList materialContents = fileContents.split(',');
+			ArkFile * file = dir.getFileByFilename("materials.meta");
+			ArkStringList materialContents = file->getFileContents().split(',');
 			Assert::AreEqual(static_cast<size_t>(2), materialContents.size());
 
-			Assert::AreEqual(resources->GetMaterialById(0)->Synchronize().toStdString(), materialContents.at(0).toStdString());
-			Assert::AreEqual(resources->GetMaterialById(1)->Synchronize().toStdString(), materialContents.at(1).toStdString());
-			delete resources;
+			// TODO More code coverage needed here
 		}
 
-		TEST_METHOD(Desynchronize_Many_Materials)
+		TEST_METHOD(MaterialFactory_DeserializeMaterials)
 		{
-			MaterialFactory * resources = new MaterialFactory();
-			resources->DesynchronizeResources("desyncMaterialsTest");
+			MaterialFactory resources;
+			ArkDirectory dir(MATERIAL_DIR);
 
-			ArkRendering::MaterialInfo * mat0 = resources->GetMaterialById(0);
-			ArkRendering::MaterialInfo * mat1 = resources->GetMaterialById(1);
+			Assert::IsTrue(dir.exists());
+			Assert::AreEqual(static_cast<size_t>(1), dir.getFileCount());
+			resources.setDirectory(&dir);
+			resources.deserializeResources();
 
+			ArkRendering::MaterialInfo * mat0 = resources.getResourceByName(MATERIAL_NAME);
+			ArkRendering::MaterialInfo * mat1 = resources.getResourceByName(MATERIAL_NAME + MATERIAL_NAME);
+
+			Assert::AreEqual(MATERIAL_NAME.toStdString(), mat0->m_name.toStdString());
 			Assert::IsTrue(mat0->ambient == Vec3(1, 1, 1));
 			Assert::IsTrue(mat0->diffuse == Vec3(1, 1, 1));
 			Assert::IsTrue(mat0->specular == Vec3(1, 1, 1));
 			Assert::IsTrue(mat0->shininess == 32.0);
+			Assert::AreEqual(ArkString("DefaultShader").toStdString(), mat0->getShaderName().toStdString());
 
-			Assert::IsTrue(mat1->ambient == Vec3(2, 2, 2));
+
+			Assert::AreEqual((MATERIAL_NAME + MATERIAL_NAME).toStdString(), mat1->m_name.toStdString());
+			Assert::IsTrue(mat1->ambient == Vec3(1, 1, 1));
 			Assert::IsTrue(mat1->diffuse == Vec3(1, 1, 1));
-			Assert::IsTrue(mat1->specular == Vec3(1.234f, 1.567f, 1.0f));
-			Assert::IsTrue(mat1->shininess == 0.0);
-
-			delete resources;
+			Assert::IsTrue(mat1->specular == Vec3(1, 1, 1));
+			Assert::IsTrue(mat1->shininess == 32.0);
+			Assert::AreEqual(ArkString("DefaultShader").toStdString(), mat1->getShaderName().toStdString());
 		}
 	};
 
 	TEST_CLASS(Mesh_Synchronization)
 	{
-		TEST_METHOD(Synchronize_MeshInfo)
+		TEST_METHOD(MeshFactory_LoadMeshesFromFolder)
 		{
-			ArkRendering::MeshInfo meshInfo;
-			meshInfo.name = "cube.obj";
+			ArkDirectory dir("mesh_test");
+			Assert::IsTrue(dir.exists());
 
-			ArkString sync = meshInfo.Synchronize();
+			Assert::IsTrue(dir.fileExists("cube.obj"));
+			Assert::IsTrue(dir.fileExists("rock.obj"));
+			Assert::IsTrue(dir.fileExists("sphere.obj"));
+			Assert::IsTrue(dir.fileExists("Suzanne.obj"));
 
-			ArkString expected = "MeshInfo\n";
-			expected += "\tname:cube.obj";
+			MeshFactory fac;
+			fac.setDirectory(&dir);
+			fac.deserializeResources();
 
-			Assert::AreEqual(expected.toStdString(), sync.toStdString());
+			Assert::AreEqual(static_cast<size_t>(4), fac.size());
 		}
-
-		TEST_METHOD(Synchronize_Many_Meshes)
-		{
-			MeshFactory * meshFactory = new MeshFactory();
-			meshFactory->LoadMesh("cube.obj");
-			meshFactory->LoadMesh("suzanne.obj");
-			meshFactory->LoadMesh("rock.obj");
-
-			meshFactory->SynchronizeResources("synchronizeManyMeshesTest");
-
-			Filestream instream("synchronizeManyMeshesTest", "meshes");
-			instream.OpenFile(Filestream::FileOpenType::Read);
-			ArkString contents("");
-			instream.ReadAll(&contents);
-
-			ArkStringList meshes = contents.split(',');
-			Assert::AreEqual(static_cast<size_t>(3), meshes.size());
-
-			Assert::AreEqual(ArkString("cube.obj").toStdString(), meshes.at(0).split('\n').at(1).split(':').at(1).toStdString());
-			Assert::AreEqual(ArkString("suzanne.obj").toStdString(), meshes.at(1).split('\n').at(1).split(':').at(1).toStdString());
-			Assert::AreEqual(ArkString("rock.obj").toStdString(), meshes.at(2).split('\n').at(1).split(':').at(1).toStdString());
-
-			delete meshFactory;
-		}
-
-		TEST_METHOD(Desynchronize_Many_Meshes)
-		{
-			MeshFactory * meshFactory = new MeshFactory();
-			meshFactory->DesynchronizeResources("desyncManyMeshesTest");
-
-
-			Assert::AreEqual(static_cast<size_t>(2), meshFactory->size());
-			
-			ArkRendering::MeshInfo * cubeMesh = meshFactory->GetMeshById(0);
-			ArkRendering::MeshInfo * suzanneMesh = meshFactory->GetMeshById(1);
-
-			Assert::AreEqual(ArkString("cube.obj").toStdString(), cubeMesh->name.toStdString());
-			Assert::AreEqual(ArkString("suzanne.obj").toStdString(), suzanneMesh->name.toStdString());
-			Assert::AreEqual(static_cast<size_t>(36), cubeMesh->vertices.size());
-			Assert::AreEqual(static_cast<size_t>(2904), suzanneMesh->vertices.size());
-
-			delete meshFactory;
-		}
-
-		TEST_METHOD(CreateMeshesSyncAndDesync)
-		{
-			ArkString testName = "CreateMeshesSyncAndDesync";
-			MeshFactory * fac0 = new MeshFactory();
-			fac0->LoadMesh("cube.obj");
-			size_t vertSize = fac0->GetMeshById(0)->vertices.size();
-			Assert::AreEqual(static_cast<size_t>(36), vertSize);
-			fac0->SynchronizeResources(testName);
-			delete fac0;
-
-			MeshFactory * fac1 = new MeshFactory();
-			fac1->DesynchronizeResources(testName);
-			Assert::AreEqual(static_cast<size_t>(1), fac1->size());
-			Assert::AreEqual(vertSize, fac1->GetMeshById(0)->vertices.size());
-			delete fac1;
-		}
-
 	};
 
 	TEST_CLASS(Model_Synchronization)
@@ -179,25 +134,25 @@ namespace Test_ArkRendering
 	{
 		TEST_METHOD(Create_Shader)
 		{
-			ArkRendering::ShaderProgram newShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-			newShader.id = 0;
+			ArkRendering::ShaderProgram newShader("SimpleShader", "SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 
-			ArkString val = newShader.Synchronize();
+			ArkString val = newShader.serialize();
 
 			ArkString expected("ShaderProgram");
-			expected += "\n\tid:" + ArkString::Number(0);
-			expected += "\n\tvertexShader:" + newShader.getVertexShader();
-			expected += "\n\tfragmentShader:" + newShader.getFragmentShader();
+			expected += "\n\tname:SimpleShader";
+			expected += "\n\tvertexShader:" + newShader.getVertexShaderPath();
+			expected += "\n\tfragmentShader:" + newShader.getFragmentShaderPath();
 
-			Assert::AreEqual(expected.toStdString(), newShader.Synchronize().toStdString());
+			Assert::AreEqual(expected.toStdString(), newShader.serialize().toStdString());
 		}
 
 		TEST_METHOD(Synchronize_One_Shader_In_Factory)
 		{
 			ShaderFactory fac;
-
-			fac.CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-			fac.SynchronizeResources("shaderTest");
+			ArkDirectory * dir = new ArkDirectory("shader_test");
+			fac.setDirectory(dir);
+			fac.CreateShader("SimpleShader", "SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+			fac.serializeResources();
 
 			Filestream file("shaderTest.shaders");
 			file.OpenFile(Filestream::FileOpenType::Read);
@@ -216,35 +171,36 @@ namespace Test_ArkRendering
 		TEST_METHOD(Synchronize_Multiple_Shaders_In_Factory)
 		{
 			ShaderFactory fac;
+			ArkDirectory * dir = new ArkDirectory("shader_test");
+			if ( !dir->exists() ) dir->createDirectory();
+			fac.setDirectory(dir);
 
-			fac.CreateShader("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-			fac.CreateShader("vertShader.vert", "fragShader.frag");
-			fac.CreateShader("vertShader.vert", "fragShader.frag");
-			fac.SynchronizeResources("multipleShaderTest");
+			fac.CreateShader("SimpleShader", "SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+			fac.CreateShader("Shader", "vertShader.vert", "fragShader.frag");
+			fac.CreateShader("AnotherShader", "vertShader.vert", "fragShader.frag");
+			fac.serializeResources();
 			
-			Filestream file("multipleShaderTest.shaders");
-			file.OpenFile(Filestream::FileOpenType::Read);
+			fac.clear();
+			fac.deserializeResources();
 
-			ArkString contents;
-			file.ReadAll(&contents);
+			ArkRendering::ShaderProgram * simpleShader = fac.getResourceByName("SimpleShader");
+			ArkRendering::ShaderProgram * shader = fac.getResourceByName("Shader");
+			ArkRendering::ShaderProgram * anotherShader = fac.getResourceByName("AnotherShader");
 
-			ArkString expected("ShaderProgram");
-			expected += "\n\tid:" + ArkString::Number(0);
-			expected += "\n\tvertexShader:SimpleVertexShader.vert";
-			expected += "\n\tfragmentShader:SimpleFragmentShader.frag";
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "SimpleVertexShader.vert").toStdString(),
+				simpleShader->getVertexShaderPath().toStdString());
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "SimpleFragmentShader.frag").toStdString(),
+				simpleShader->getFragmentShaderPath().toStdString());
 
-			expected += "\n,ShaderProgram";
-			expected += "\n\tid:" + ArkString::Number(1);
-			expected += "\n\tvertexShader:vertShader.vert";
-			expected += "\n\tfragmentShader:fragShader.frag";
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "vertShader.vert").toStdString(),
+				shader->getVertexShaderPath().toStdString());
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "fragShader.frag").toStdString(),
+				shader->getFragmentShaderPath().toStdString());
 
-			expected += "\n,ShaderProgram";
-			expected += "\n\tid:" + ArkString::Number(2);
-			expected += "\n\tvertexShader:vertShader.vert";
-			expected += "\n\tfragmentShader:fragShader.frag";
-
-			Assert::AreEqual(expected.toStdString(), contents.toStdString());
-
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "vertShader.vert").toStdString(),
+				anotherShader->getVertexShaderPath().toStdString());
+			Assert::AreEqual(ArkString(dir->getAbsolutePath() + "fragShader.frag").toStdString(),
+				anotherShader->getFragmentShaderPath().toStdString());
 		}
 	};
 }

@@ -1,8 +1,8 @@
 #include <vector>
 #include <mutex>
-
+#include <set>
 #include "ArkRendering.h"
-
+#include "ArkThread.h"
 #pragma once
 
 class RendererModelManager
@@ -16,12 +16,14 @@ public:
 
 	void ReleaseModelInfoById(Resource_Id modelId);
 	ArkRendering::ModelInfo * GetNextModelInfoForPopulate();
-	void GetModelsWithMaterialId(Resource_Id materialId, std::vector<ArkRendering::ModelInfo> & out);
 	size_t GetNumModels() const { return mModels.size(); }
-	void GetUsedMaterialIds(std::vector<Resource_Id> &out) const;
+	void getUsedMaterials(std::set<ArkString> &out) const;
+	void getModelsUsingMaterial(ArkString material, std::vector<ArkRendering::ModelInfo> & out);
 
 	bool IsDirty() const { return mModelsDirty; }
 	void SetModelsUpdated() { mModelsDirty = false; }
+	ArkThreading::ArkMutex * getLock() const { return m_lock; }
+
 
 private:
 	struct ModelAllocation
@@ -33,7 +35,7 @@ private:
 	std::vector<Resource_Id> mAvailableModelIds;
 	std::vector<ModelAllocation> mModels;
 
-	std::mutex mLock;
+	ArkThreading::ArkMutex * m_lock;
 	static RendererModelManager * smInstance;
 
 	bool mModelsDirty;

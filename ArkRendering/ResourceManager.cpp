@@ -1,16 +1,19 @@
 #include "ResourceManager.h"
-#include "ResourceManager.h"
 #include "ArkDebug.h"
 #include "ArkAssert.h"
 
+using namespace ArkThreading;
+using namespace ArkRendering;
 ResourceManager * ResourceManager::mInstance = NULL;
-ArkThreading::ArkMutex ResourceManager::sm_lock;
 
 ResourceManager::ResourceManager()
 	: m_modelFactory(NULL)
 	, m_materialFactory(NULL)
 	, m_meshFactory(NULL)
+	, m_lock(NULL)
 {
+	m_lock = new ArkMutex();
+
 	m_meshFactory = new MeshFactory();
 	m_materialFactory = new MaterialFactory();
 	m_modelFactory = new ModelFactory();
@@ -21,6 +24,7 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
+	delete m_lock;
 	delete m_meshFactory;
 	delete m_materialFactory;
 	delete m_modelFactory;
@@ -37,45 +41,39 @@ void ResourceManager::Initialize()
 	mInstance = new ResourceManager();
 }
 
-void ResourceManager::deserializeResources(ArkString projectName)
+
+void ResourceManager::deserializeResources()
 {
-	Debug::Log("Deserializing resources");
-	sm_lock.lock();
+	SCOPE_LOCKER lock(getLock(), "Deserialize ResourceManager");
 	m_shaderFactory->clear();
 	m_materialFactory->clear();
 	m_meshFactory->clear();
 	m_modelFactory->clear();
 
-	m_shaderFactory->DesynchronizeResources(projectName);
-	m_materialFactory->DesynchronizeResources(projectName);
-	m_meshFactory->DesynchronizeResources(projectName);
-	m_modelFactory->DesynchronizeResources(projectName);
+	m_shaderFactory->deserializeResources();
+	m_materialFactory->deserializeResources();
+	m_meshFactory->deserializeResources();
+	m_modelFactory->deserializeResources();
 
 	bindMaterialsToShaders();
-
-	sm_lock.unlock();
 }
 
-void ResourceManager::serializeResources(ArkString projectName)
+void ResourceManager::serializeResources()
 {
-	sm_lock.lock();
-	m_modelFactory->SynchronizeResources(projectName);
-	m_meshFactory->SynchronizeResources(projectName);
-	m_materialFactory->SynchronizeResources(projectName);
-	m_shaderFactory->SynchronizeResources(projectName);
-	sm_lock.unlock();
+	SCOPE_LOCKER lock(getLock(), "Serialize ResourceManager");
+	m_modelFactory->serializeResources();
+	m_meshFactory->serializeResources();
+	m_materialFactory->serializeResources();
+	m_shaderFactory->serializeResources();
 }
 
-ArkRendering::Resource * ResourceManager::GetResourceByIdAndType(Resource_Id id, ResourceType type) const
+ArkRendering::Resource * ResourceManager::GetResourceByNameAndType(ArkString name, ResourceType type) const
 {
 	switch ( type )
 	{
-	case Mesh:
-		return m_meshFactory->GetMeshById(id);
-	case Model:
-		return m_modelFactory->GetModelById(id);
-	case Material:
-		return m_materialFactory->GetMaterialById(id);
+	case Mesh: return m_meshFactory->getResourceByName(name);
+	case Model: return m_modelFactory->getResourceByName(name);
+	case Material: return m_materialFactory->getResourceByName(name);
 	}
 	return NULL;
 }
@@ -84,13 +82,13 @@ void ResourceManager::bindMaterialsToShaders()
 {
 	m_shaderFactory->compileShaders();
 
-	for ( unsigned i = 0 ; i < m_materialFactory->size() ; i++ )
-	{
-		ArkRendering::MaterialInfo * mat = m_materialFactory->GetMaterialById(i);
-		ArkRendering::ShaderProgram * shaderProgram = mat ? m_shaderFactory->GetShaderProgramByResourceId(mat->getShaderProgramId()) : NULL;
+	std::vector<ArkRendering::MaterialInfo *> mats;
+	m_materialFactory->getAllMaterials(mats);
 
-		ARK_ASSERT(shaderProgram != NULL, "Shader program should not be null");
-		if ( shaderProgram )
-			mat->setShaderProgram(shaderProgram);
+	for ( size_t i = 0 ; i < mats.size() ; i++ )
+	{
+		MaterialInfo * matInfo = mats.at(i);
+		ShaderProgram * shader = m_shaderFactory->getResourceByName(matInfo->getShaderName());
+		matInfo->setShaderProgram(shader);
 	}
 }

@@ -18,8 +18,10 @@ public:
 	static OpenGLRenderer const * Instance() { return mInstance; }
 	ArkWindow const * GetWindowHandle() const { return mWindow; }
 	OpenGLRenderer(ArkWindow * windowHandle);
+	OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
+
 	OpenGLRenderer();
-	~OpenGLRenderer();
+
 	void Stop() { mShouldRun = false; }
 	void DeinitRenderer();
 	void InitializeRenderer();
@@ -32,7 +34,10 @@ private:
 	GLuint	mVertexArrayId;
 
 	std::vector<RenderState *> mRenderStateList;
-	std::map<Resource_Id, BufferSet *> mBufferSetMap;
+
+	typedef std::map<ArkString, BufferSet *> BufferCollection;
+	typedef std::pair<ArkString, BufferSet *> BufferMaterialNamePair;
+	BufferCollection mBufferSetMap;
 
 	void updateBufferSets();
 };

@@ -36,10 +36,10 @@
     <ClInclude Include="Filestream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SystemDirectory.h">
+    <ClInclude Include="ArkAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ArkAssert.h">
+    <ClInclude Include="Filesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClCompile Include="Filestream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SystemDirectory.cpp">
+    <ClCompile Include="Filesystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
