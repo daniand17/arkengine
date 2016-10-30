@@ -1,6 +1,7 @@
 #include "ProjectManager.h"
 #include "ArkDebug.h"
-
+#include "SceneManager.h"
+#include "ArkEngineCore.h"
 ProjectManager * ProjectManager::sm_instance = NULL;
 
 void ProjectManager::Initialize()
@@ -109,11 +110,13 @@ void ArkProject::setResourcesDirectories()
 	ResourceManager * rm = ResourceManager::Instance();
 	if ( !rm ) return;
 	rm->setProjectDirectory(getProjectDirectory());
+	rm->GetMaterialFactory()->setDirectory(getResourceDirectory(ResourceType::Material));
+	rm->GetShaderFactory()->setDirectory(getResourceDirectory(ResourceType::Shader));
+	rm->GetMeshFactory()->setDirectory(getResourceDirectory(ResourceType::Mesh));
+	rm->GetModelFactory()->setDirectory(getResourceDirectory(ResourceType::Model));
 
-	rm->GetMaterialFactory()->setDirectory(getResourceDirectory(Material));
-	rm->GetShaderFactory()->setDirectory(getResourceDirectory(Shader));
-	rm->GetMeshFactory()->setDirectory(getResourceDirectory(Mesh));
-	rm->GetModelFactory()->setDirectory(getResourceDirectory(Model));
+	ArkEngineCore * engine = ArkEngineCore::Instance();
+	engine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
 }
 
 ArkString ArkProject::getResourceFolderName(ResourceType type) const

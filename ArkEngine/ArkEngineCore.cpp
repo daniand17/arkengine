@@ -1,12 +1,12 @@
 #include "ArkEngineCore.h"
-#include "RendererModelManager.h"
+#include "RendererContext.h"
 #include "ArkString.h"
 #include "ArkSize.h"
 #include "SystemTasks.h"
 #include "ProjectManager.h"
 
 using namespace ArkThreading;
-ArkEngineCore * ArkEngineCore::mInstance = NULL;
+ArkEngineCore * ArkEngineCore::sm_instance = NULL;
 
 ArkEngineCore::ArkEngineCore()
 {
@@ -15,12 +15,12 @@ ArkEngineCore::ArkEngineCore()
 
 ArkEngineCore * ArkEngineCore::Instance()
 {
-	return mInstance;
+	return sm_instance;
 }
 
 void ArkEngineCore::InitEngine()
 {
-	mInstance = new ArkEngineCore();
+	sm_instance = new ArkEngineCore();
 }
 
 void ArkEngineCore::initMemory()
@@ -36,13 +36,15 @@ void ArkEngineCore::initMemory()
 	m_sceneManager = new SceneManager();
 
 	ResourceManager::Initialize();
-	RendererModelManager::Initialize();
+	RendererContext::Initialize();
 	ProjectManager::Initialize();
-	ProjectManager::Instance()->createNewProjectWithName("DefaultProject");
 }
 
 void ArkEngineCore::startThreads()
 {
+	ProjectManager::Instance()->createNewProjectWithName("DefaultProject");
+	m_sceneManager->openSceneByName("New Scene");	// TODO (AD) eventually open last scene open
+
 	mSystemThread->init();
 	// PhysicsThread?
 }

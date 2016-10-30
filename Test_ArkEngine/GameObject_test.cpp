@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
+#include "ResourceManager.h"
 #include "GameObject.h"
 #include "Rigidbody.h"
 

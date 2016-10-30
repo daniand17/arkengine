@@ -34,7 +34,7 @@ public:
 
 
 private:
-	static ArkEngineCore * mInstance;
+	static ArkEngineCore * sm_instance;
 
 	ArkEngineCore();
 

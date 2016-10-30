@@ -23,10 +23,14 @@ GameObject::GameObject(GameObject const * gameObject)
 void GameObject::instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const
 {
 	SceneManager * sceneManager = ArkEngineCore::Instance()->getSceneManager();
-
 	if ( sceneManager )
-		sceneManager->getCurrentScene()->instantiateGameObject(obj);
-
+	{
+		Scene * scene = sceneManager->getCurrentScene();
+		if ( scene )
+		{
+			scene->instantiateGameObject(obj);
+		}
+	}
 }
 
 

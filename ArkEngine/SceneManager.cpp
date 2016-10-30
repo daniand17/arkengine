@@ -8,6 +8,24 @@ void SceneManager::Initialize()
 		sm_instance = new SceneManager();
 }
 
+void SceneManager::openSceneByName(ArkString sceneName)
+{
+	Scene * scene = new Scene();
+	if ( m_sceneDirectory->fileExists(sceneName + ".scene") )
+	{
+		scene->deserializeScene(m_sceneDirectory->getFileByFilename(sceneName + ".scene"));
+	}
+
+	if ( m_currentScene )
+		closeCurrentOpenScene();
+
+	m_currentScene = scene;
+}
+
+void SceneManager::closeCurrentOpenScene()
+{
+}
+
 SceneManager::SceneManager()
 	:m_currentScene(NULL)
 	, m_sceneDirectory(NULL)

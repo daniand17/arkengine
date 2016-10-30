@@ -5,14 +5,14 @@
 #include "ArkThread.h"
 #pragma once
 
-class RendererModelManager
+class RendererContext
 {
 public:
-	static void Initialize() { smInstance = new RendererModelManager();}
-	static RendererModelManager * Instance() { return smInstance; }
+	static void Initialize() { smInstance = new RendererContext();}
+	static RendererContext * Instance() { return smInstance; }
 
-	RendererModelManager();
-	~RendererModelManager();
+	RendererContext();
+	~RendererContext();
 
 	void ReleaseModelInfoById(Resource_Id modelId);
 	ArkRendering::ModelInfo * GetNextModelInfoForPopulate();
@@ -36,7 +36,7 @@ private:
 	std::vector<ModelAllocation> mModels;
 
 	ArkThreading::ArkMutex * m_lock;
-	static RendererModelManager * smInstance;
+	static RendererContext * smInstance;
 
 	bool mModelsDirty;
 };

@@ -217,6 +217,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentIntegration_Test.cpp" />
     <ClCompile Include="GameObject_test.cpp" />
     <ClCompile Include="Rigidbody_Test.cpp" />
     <ClCompile Include="stdafx.cpp">

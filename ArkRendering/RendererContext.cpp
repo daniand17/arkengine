@@ -1,14 +1,14 @@
-#include "RendererModelManager.h"
+#include "RendererContext.h"
 #include "ArkDebug.h"
 
-RendererModelManager * RendererModelManager::smInstance = NULL;
+RendererContext * RendererContext::smInstance = NULL;
 
 using namespace ArkRendering;
 using namespace std;
 
 
 
-RendererModelManager::RendererModelManager()
+RendererContext::RendererContext()
 	: mModelsDirty(true)
 	, m_lock(NULL)
 {
@@ -18,7 +18,7 @@ RendererModelManager::RendererModelManager()
 
 
 
-RendererModelManager::~RendererModelManager()
+RendererContext::~RendererContext()
 {
 	delete m_lock;
 	m_lock = 0;
@@ -26,7 +26,7 @@ RendererModelManager::~RendererModelManager()
 
 
 
-void RendererModelManager::ReleaseModelInfoById(Resource_Id modelId)
+void RendererContext::ReleaseModelInfoById(Resource_Id modelId)
 {
 	if ( modelId < mModels.size() )
 	{
@@ -38,7 +38,7 @@ void RendererModelManager::ReleaseModelInfoById(Resource_Id modelId)
 
 
 
-ArkRendering::ModelInfo * RendererModelManager::GetNextModelInfoForPopulate()
+ArkRendering::ModelInfo * RendererContext::GetNextModelInfoForPopulate()
 {
 	SCOPE_LOCKER lock(m_lock, "Get Next Model Info For Populate");
 	ModelInfo * modelInfo;
@@ -69,7 +69,7 @@ ArkRendering::ModelInfo * RendererModelManager::GetNextModelInfoForPopulate()
 }
 
 
-void RendererModelManager::getUsedMaterials(std::set<ArkString> & out) const
+void RendererContext::getUsedMaterials(std::set<ArkString> & out) const
 {
 	out.clear();
 	SCOPE_LOCKER lock(m_lock, "Get used materials");
@@ -82,7 +82,7 @@ void RendererModelManager::getUsedMaterials(std::set<ArkString> & out) const
 	}
 }
 
-void RendererModelManager::getModelsUsingMaterial(ArkString material, std::vector<ArkRendering::ModelInfo> & out)
+void RendererContext::getModelsUsingMaterial(ArkString material, std::vector<ArkRendering::ModelInfo> & out)
 {
 	SCOPE_LOCKER lock(m_lock, "Get used models with material");
 	for ( size_t i = 0 ; i < mModels.size() ; i++ )

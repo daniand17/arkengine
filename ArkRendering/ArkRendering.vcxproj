@@ -199,7 +199,7 @@
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="ArkRendering.h" />
-    <ClInclude Include="RendererModelManager.h" />
+    <ClInclude Include="RendererContext.h" />
     <ClInclude Include="RenderState.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderFactory.h" />
@@ -216,7 +216,7 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="ArkRendering.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
-    <ClCompile Include="RendererModelManager.cpp" />
+    <ClCompile Include="RendererContext.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ShaderFactory.cpp" />
     <ClCompile Include="Window_glfw.cpp" />

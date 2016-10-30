@@ -5,7 +5,7 @@
 #include "ArkMath.h"
 #include "Camera.h"
 #include "ModelLoader.h"
-#include "RendererModelManager.h"
+#include "RendererContext.h"
 #include "ArkDebug.h"
 #include "ResourceManager.h"
 
@@ -69,11 +69,6 @@ void OpenGLRenderer::Run()
 	LightInfo light;
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
-
-	ModelInfo * modelInfo = RendererModelManager::Instance()->GetNextModelInfoForPopulate();
-	modelInfo->m_material = "DefaultMaterial";
-	modelInfo->m_mesh = "rock.obj";
-	modelInfo->modelMatrix = Mat4::identity();
 
 	do
 	{
@@ -147,22 +142,22 @@ void OpenGLRenderer::Run()
 
 void OpenGLRenderer::updateBufferSets()
 {
-	RendererModelManager * rendererModelManager = RendererModelManager::Instance();
+	RendererContext * renderContext = RendererContext::Instance();
 
-	if ( !rendererModelManager || !rendererModelManager->IsDirty() )
+	if ( !renderContext || !renderContext->IsDirty() )
 		return;
 
 	SCOPE_LOCKER resourceManagerLock(ResourceManager::Instance()->getLock(), "Update Buffer Sets");
 	MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
 	MaterialFactory * materialFactory = ResourceManager::Instance()->GetMaterialFactory();
 	std::set<ArkString> usedMaterials;
-	rendererModelManager->getUsedMaterials(usedMaterials);
+	renderContext->getUsedMaterials(usedMaterials);
 
 	for ( std::set<ArkString>::const_iterator resIdIter = usedMaterials.begin() ; resIdIter != usedMaterials.end() ; resIdIter++ )
 	{
 		std::vector<ModelInfo> modelInfoList;
 		MaterialInfo * material = materialFactory->getResourceByName(*resIdIter);
-		rendererModelManager->getModelsUsingMaterial(material->m_name, modelInfoList);
+		renderContext->getModelsUsingMaterial(material->m_name, modelInfoList);
 
 		auto pos = mBufferSetMap.find(material->m_name);
 		BufferSet * currBufferSet = NULL;
@@ -210,6 +205,6 @@ void OpenGLRenderer::updateBufferSets()
 			currBufferSet->GetUVBuffer()->SetBufferData(newUvBuffer);
 		}
 
-		rendererModelManager->SetModelsUpdated();
+		renderContext->SetModelsUpdated();
 	}
 }

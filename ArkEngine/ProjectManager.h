@@ -14,6 +14,7 @@ public:
 		Model,
 		Shader,
 		Meta,
+		Scene,
 		Num_Types
 
 	};

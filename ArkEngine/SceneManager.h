@@ -23,12 +23,14 @@ class SceneManager
 public:
 	static void Initialize();
 	static SceneManager * Instance() { return sm_instance; }
-	Scene * getCurrentScene() const { return m_currentScene; }
+
+	SceneManager();
 	void setSceneDirectory(ArkDirectory * directory) { m_sceneDirectory = directory; }
 	void openSceneByName(ArkString sceneName);
 	void closeCurrentOpenScene();
-
-	SceneManager();
+	
+	ArkDirectory * getSceneDirectory() const { return m_sceneDirectory; }
+	Scene * getCurrentScene() const { return m_currentScene; }
 
 private:
 	static SceneManager * sm_instance;
