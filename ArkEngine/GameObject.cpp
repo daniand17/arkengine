@@ -25,4 +25,10 @@ void GameObject::instantiate(GameObject const * obj, Vec3 position, Quaternion r
 
 void GameObject::destroy(GameObject * object)
 {
+
+}
+
+ArkString GameObject::toString()
+{
+	return m_name + ArkString(" (GameObject)");
 }
