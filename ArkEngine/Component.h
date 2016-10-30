@@ -13,6 +13,8 @@ public:
 
 	virtual ArkString toString() const = 0;
 
+	virtual void copyFrom(Component const * component) = 0;
+
 protected:
 	Transform * m_transform;
 	GameObject * m_gameObject;

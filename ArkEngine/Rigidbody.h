@@ -27,7 +27,8 @@ public:
 	void addTorque(Vec3 torque, Physics::ForceType forceType = Physics::ForceType::Force);
 
 	ArkString toString() const override { return ArkString("Rigidbody"); }
+	void copyFrom(Component const * component) override;
 
 private:
-	Vec3 mUnresolvedForce;
+	Vec3 unresolvedForce;
 };

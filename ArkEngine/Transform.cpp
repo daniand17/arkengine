@@ -1,12 +1,17 @@
 #include "Transform.h"
 
-Transform::Transform(Transform const * other)
+Transform::Transform(GameObject * gameObject) 
+	: Component(m_gameObject)
+	, m_position(Vec3(0, 0, 0))
 {
-	m_position = other->m_position;
-	m_rotation = other->m_rotation;
+	
+	// TODO default initializer for rotation
 }
 
-Transform::Transform() : m_position(Vec3(0, 0, 0))
+
+void Transform::copyFrom(Component const * component)
 {
-	// TODO default initializer for rotation
+	Transform const * trans = dynamic_cast<Transform const *>(component);
+	m_position = trans->m_position;
+	m_rotation = trans->m_rotation;
 }

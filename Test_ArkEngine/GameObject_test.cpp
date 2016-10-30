@@ -62,5 +62,20 @@ namespace Test_ArkEngine
 
 			Assert::AreEqual(SIZE_T(0), theObj.numComponents());
 		}
+
+		TEST_METHOD(GameObject_CopyGameObjectFromPointer)
+		{
+			GameObject * gameObject = new GameObject();
+			gameObject->addComponent<Rigidbody>();
+			gameObject->addComponent<MeshRenderer>();
+
+			GameObject * copy = new GameObject(gameObject);
+
+			Assert::AreEqual(SIZE_T(2), copy->numComponents());
+			
+			Assert::IsNotNull(copy->getComponent<Rigidbody>());
+			Assert::IsNotNull(copy->getComponent<MeshRenderer>());
+
+		}
 	};
 }

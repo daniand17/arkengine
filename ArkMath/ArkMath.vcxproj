@@ -199,6 +199,7 @@
   <ItemGroup>
     <ClCompile Include="ArkMath.cpp" />
     <ClCompile Include="Mat4.cpp" />
+    <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Vec4.cpp" />

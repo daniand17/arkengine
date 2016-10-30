@@ -30,6 +30,8 @@ public:
 
 	ArkString toString() const override { return ArkString("MeshRenderer"); }
 
+	void copyFrom(Component const * component) override;
+
 private:
 	ArkRendering::MeshInfo * m_mesh;
 };

@@ -6,7 +6,4 @@ Component::Component(GameObject * gameObject)
 {
 }
 
-Transform * Component::getTransform() const
-{
-	return m_gameObject->getTransform();
-}
+Transform * Component::getTransform() const { return m_gameObject ? m_gameObject->getTransform() : NULL; }

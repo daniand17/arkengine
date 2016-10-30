@@ -9,7 +9,7 @@ Rigidbody::Rigidbody(GameObject * gameObject)
 	, gravityScale(1.0f)
 	, velocity(Vec3::zero())
 	, angularVelocity(Vec3::zero())
-	, mUnresolvedForce(Vec3::zero())
+	, unresolvedForce(Vec3::zero())
 {
 }
 
@@ -27,11 +27,26 @@ void Rigidbody::addForce(Vec3 force, Physics::ForceType forceType)
 		break;
 	}
 
-	mUnresolvedForce += force;// TODO not quite right
+	unresolvedForce += force;// TODO not quite right
 }
 
 void Rigidbody::addTorque(Vec3 torque, Physics::ForceType forceType)
 {
 	// TODO Rigidbody::addTorque method stub
+}
+
+void Rigidbody::copyFrom(Component const * component)
+{
+	Rigidbody const * rb = dynamic_cast<Rigidbody const *>(component);
+	
+	mass = rb->mass;
+	drag = rb->drag;
+	angularDrag = rb->angularDrag;
+	gravityScale = rb->gravityScale;
+
+	velocity = rb->velocity;
+	unresolvedForce = rb->unresolvedForce;
+	angularVelocity = rb->angularVelocity;
+	rotation = rb->rotation;
 }
 

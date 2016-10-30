@@ -14,19 +14,23 @@ public:
 	GameObject(GameObject const * gameObject);
 	~GameObject() {}
 
-	void instantiate(GameObject const * obj, Vec3 position, Quaternion rotation);
-	void destroy(GameObject * object);
+	void instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const;
+	void destroy(GameObject * object) const;
 	Transform * getTransform() const { return m_transform; }
-	
+
 	size_t numComponents() const { return m_components.size(); }
-	
+
 	template <typename T> void addComponent();
 	template <typename T> T * getComponent();
 	template <typename T> void removeComponent();
+	template <typename T> std::vector<T *> getComponents() const;
+
+	void copyFrom(GameObject const * gameObject);
 
 	ArkString toString();
 
 private:
+	void clearComponents();
 	typedef std::list<Component *> ComponentCollection;
 	Transform * m_transform;
 	ArkString m_name;
@@ -57,11 +61,11 @@ inline T * GameObject::getComponent()
 template<typename T>
 inline void GameObject::removeComponent()
 {
-	
+
 	// TODO (AD) Also should deregister the component from updates
-	for ( ComponentCollection::iterator iter = m_components.begin() 
-		; iter != m_components.end() 
-		; iter++)
+	for ( ComponentCollection::iterator iter = m_components.begin()
+		; iter != m_components.end()
+		; iter++ )
 	{
 
 		if ( dynamic_cast<T*>(*iter) != NULL )
@@ -72,4 +76,20 @@ inline void GameObject::removeComponent()
 			return;
 		}
 	}
+}
+
+template<typename T>
+inline std::vector<T*> GameObject::getComponents() const
+{
+	std::vector<T *> out;
+	for ( ComponentCollection::const_iterator iter = m_components.begin()
+		; iter != m_components.end()
+		; iter++ )
+	{
+		T * casted = dynamic_cast<T *>(*iter);
+		if ( casted != NULL )
+			out.push_back(casted);
+	}
+
+	return out;
 }
