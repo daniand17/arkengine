@@ -2,6 +2,7 @@
 #include "ArkDebug.h"
 #include "SceneManager.h"
 #include "ArkEngineCore.h"
+#include "SceneToRendererSynchronizer.h"
 ProjectManager * ProjectManager::sm_instance = NULL;
 
 void ProjectManager::Initialize()

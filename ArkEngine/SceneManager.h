@@ -3,10 +3,10 @@
 #include "Filesystem.h"
 #include "GameObject.h"
 #include "Renderer.h"
-
 class Scene
 {
 public:
+	typedef std::vector<MeshRenderer *>::const_iterator SceneRendererIterator;
 	Scene() : m_sceneChanged(false) {}
 	void instantiateGameObject(GameObject const * gameObject);
 	void destroyGameObject(GameObject * gameObject);
@@ -14,11 +14,15 @@ public:
 	void deserializeScene(ArkFile * file);
 	void serializeScene(ArkFile * file);
 
-	bool getSceneChanged() const { m_sceneChanged; }
+	bool getSceneChanged() const { return m_sceneChanged; }
+	void setSceneChanged(bool set) { m_sceneChanged = set; }
+
+	size_t getNumRenderers() const { return m_renderers.size(); }
+	std::vector<MeshRenderer *>::const_iterator getRendererIterator() const { return m_renderers.begin(); }
 
 private:
 	std::vector<GameObject *> m_gameObjects;
-	std::vector<Renderer *> m_renderers;
+	std::vector<MeshRenderer *> m_renderers;
 
 	bool m_sceneChanged;
 };
@@ -26,9 +30,6 @@ private:
 class SceneManager
 {
 public:
-	static void Initialize();
-	static SceneManager * Instance() { return sm_instance; }
-
 	SceneManager();
 	void setSceneDirectory(ArkDirectory * directory) { m_sceneDirectory = directory; }
 	void openSceneByName(ArkString sceneName);
@@ -38,8 +39,6 @@ public:
 	Scene * getCurrentScene() const { return m_currentScene; }
 
 private:
-	static SceneManager * sm_instance;
 	Scene * m_currentScene;
-
 	ArkDirectory * m_sceneDirectory;
 };

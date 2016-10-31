@@ -222,6 +222,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneToRendererSynchronizer.cpp" />
     <ClCompile Include="SystemTasks.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
@@ -236,6 +237,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneToRendererSynchronizer.h" />
     <ClInclude Include="SystemTasks.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>

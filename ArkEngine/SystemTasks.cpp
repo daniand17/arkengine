@@ -15,29 +15,31 @@ void SystemTask::run()
 {
 	bool done = false;
 	Debug::Log("Running System Task");
+	SceneManager * sceneManager = ArkEngineCore::Instance()->getSceneManager();
 
-	MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->getResourceByName("DefaultMaterial");
-	MeshInfo * mesh = ResourceManager::Instance()->GetMeshFactory()->getResourceByName("rock.obj");
+	if ( sceneManager )
+		m_currentScene = sceneManager->getCurrentScene();
 
 	GameObject * object = new GameObject();
 	object->addComponent<MeshRenderer>();
 	MeshRenderer * ren = object->getComponent<MeshRenderer>();
+
+	MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->getResourceByName("DefaultMaterial");
+	MeshInfo * mesh = ResourceManager::Instance()->GetMeshFactory()->getResourceByName("rock.obj");
+
 	ren->setMaterial(material);
 	ren->setMesh(mesh);
 
 	object->instantiate(object, Vec3(0, 0, 0), Quaternion(0, 0, 0, 0));
-
-	if ( SceneManager::Instance() )
-		m_currentScene = SceneManager::Instance()->getCurrentScene();
 	
 	SystemNotificationBus * bus = ArkEngineCore::Instance()->getNotificationBus();
 
 	do
 	{
-
 		if ( m_currentScene->getSceneChanged() )
 		{
 			bus->fireNotify(SystemNotifications::ServiceTypes::OnSceneChanged);
+			m_currentScene->setSceneChanged(false);
 		}
 		glfwPollEvents();
 	}

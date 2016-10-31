@@ -155,7 +155,7 @@ void OpenGLRenderer::updateBufferSets()
 
 	for ( std::set<ArkString>::const_iterator resIdIter = usedMaterials.begin() ; resIdIter != usedMaterials.end() ; resIdIter++ )
 	{
-		std::vector<ModelInfo> modelInfoList;
+		std::vector<RendererContext::AllocatedModel> modelInfoList;
 		MaterialInfo * material = materialFactory->getResourceByName(*resIdIter);
 		renderContext->getModelsUsingMaterial(material->m_name, modelInfoList);
 
@@ -178,7 +178,7 @@ void OpenGLRenderer::updateBufferSets()
 		size_t uvCount = 0;
 		for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
 		{
-			MeshInfo * meshInfo = meshFactory->getResourceByName(modelInfoList[i].m_mesh);
+			MeshInfo * meshInfo = modelInfoList[i].mesh;
 			if ( meshInfo )
 			{
 				vertCount += meshInfo->vertices.size();
@@ -194,7 +194,7 @@ void OpenGLRenderer::updateBufferSets()
 			newUvBuffer.reserve(uvCount);
 			for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
 			{
-				MeshInfo * meshInfo = meshFactory->getResourceByName(modelInfoList[i].m_mesh);
+				MeshInfo * meshInfo = modelInfoList[i].mesh;
 				newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
 				newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
 				newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());

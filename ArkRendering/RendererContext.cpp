@@ -9,13 +9,12 @@ using namespace std;
 
 
 RendererContext::RendererContext()
-	: mModelsDirty(true)
+	: m_isDirty(true)
 	, m_lock(NULL)
 {
 	m_lock = new ArkThreading::ArkMutex();
 	Debug::Log("Initialized RendererModelManager");
 }
-
 
 
 RendererContext::~RendererContext()
@@ -25,69 +24,57 @@ RendererContext::~RendererContext()
 }
 
 
-
-void RendererContext::ReleaseModelInfoById(Resource_Id modelId)
-{
-	if ( modelId < mModels.size() )
-	{
-		mAvailableModelIds.push_back(modelId);
-		mModels[modelId].isFree = true;
-		mModelsDirty = true;
-	}
-}
-
-
-
-ArkRendering::ModelInfo * RendererContext::GetNextModelInfoForPopulate()
-{
-	SCOPE_LOCKER lock(m_lock, "Get Next Model Info For Populate");
-	ModelInfo * modelInfo;
-
-	size_t siz = mAvailableModelIds.size();
-	// There is already a free block
-	if ( siz > 0 )
-	{
-		Resource_Id index = mAvailableModelIds[siz - 1];
- 		ModelAllocation & alloc = mModels[index];
-		alloc.isFree = false;
-		mAvailableModelIds.pop_back();
-		modelInfo = &mModels[index].modelInfo;
-	}
-	// Need to create a new block
-	else
-	{
-		Resource_Id newBlockId = static_cast<Resource_Id>(mModels.size());
-		ModelAllocation modelAlloc;
-		modelAlloc.isFree = false;
-		mModels.push_back(modelAlloc);
-		modelInfo = &(mModels[newBlockId].modelInfo);
-	}
-
-	mModelsDirty = true;
-
-	return modelInfo;
-}
-
-
 void RendererContext::getUsedMaterials(std::set<ArkString> & out) const
 {
 	out.clear();
 	SCOPE_LOCKER lock(m_lock, "Get used materials");
-	for ( vector<ModelAllocation>::const_iterator iter = mModels.begin() ; iter < mModels.end() ; iter++ )
+	for ( vector<AllocatedModel>::const_iterator iter = m_models.begin() ; iter < m_models.end() ; iter++ )
 	{
-		bool alreadyPushed = false;
-		ArkString materialName = iter->modelInfo.m_material;
-		if ( out.find(materialName) == out.end() )
-			out.insert(materialName);
+		if ( out.find(iter->material->m_name) == out.end() ) 
+			out.insert(iter->material->m_name);
 	}
 }
 
-void RendererContext::getModelsUsingMaterial(ArkString material, std::vector<ArkRendering::ModelInfo> & out)
+
+void RendererContext::getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel> & out)
 {
 	SCOPE_LOCKER lock(m_lock, "Get used models with material");
-	for ( size_t i = 0 ; i < mModels.size() ; i++ )
+	for ( size_t i = 0 ; i < m_models.size() ; i++ )
 	{
-		if ( mModels[i].modelInfo.m_material == material )
-			out.push_back(mModels[i].modelInfo);
+		if ( m_models[i].material->m_name == material )
+			out.push_back(m_models[i]);
 	}
+}
+
+
+bool RendererContext::materialAlreadyInContext(ArkRendering::MaterialInfo * material) const
+{
+	ArkString matName = material->m_name;
+
+	for ( size_t i = 0 ; i < m_usedMaterials.size() ; i++ )
+		if ( matName == m_usedMaterials[i].m_name )
+			return true;
+		
+	return false;
+}
+
+
+void RendererContext::addMaterial(ArkRendering::MaterialInfo const * materialInfo)
+{
+	m_usedMaterials.push_back(*materialInfo);
+}
+
+
+void RendererContext::addModelToContext(AllocatedModel model)
+{
+	AllocatedModel newModel;
+	newModel.material = model.material;
+	newModel.mesh = model.mesh;
+	m_models.push_back(model);
+}
+
+
+void RendererContext::clearUnusedMaterials()
+{
+	// TODO Iterate through the list of models and clear any material that isn't being used
 }

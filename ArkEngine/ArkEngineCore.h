@@ -7,6 +7,9 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 #include "SystemNotifications.h"
+#include "SceneToRendererSynchronizer.h"
+
+class SceneToRendererSynchronizer;
 
 class ArkEngineCore
 {
@@ -15,6 +18,7 @@ public:
 	static void InitEngine();
 	int Run()
 	{
+		initMemory();
 		startThreads();
 
 		runMainLoop();
@@ -53,6 +57,7 @@ private:
 
 	SceneManager * m_sceneManager;
 	SystemNotificationBus * m_notificationBus;
+	SceneToRendererSynchronizer * m_sceneToRendererSynchronizer;
 
 #ifdef USE_OPENGL
 	OpenGLRenderer * m_renderer;

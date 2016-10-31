@@ -1,14 +1,6 @@
 #include "SceneManager.h"
 #include "ArkEngineCore.h"
 
-SceneManager * SceneManager::sm_instance = 0;
-
-void SceneManager::Initialize()
-{
-	if ( !sm_instance )
-		sm_instance = new SceneManager();
-}
-
 void SceneManager::openSceneByName(ArkString sceneName)
 {
 	Scene * scene = new Scene();
@@ -43,13 +35,14 @@ void Scene::instantiateGameObject(GameObject const * gameObject)
 
 	if ( ren )
 	{
-		m_renderers.push_back((Renderer *) ren);
+		m_renderers.push_back((MeshRenderer *) ren);
 		m_gameObjects.push_back(newGameObject);
 		sceneChanged = true;
 	}
 
 	if ( sceneChanged )
 	{
+		m_sceneChanged = true;
 		ArkEngineCore * engine = ArkEngineCore::Instance();
 		SystemNotificationBus * bus = engine ? engine->getNotificationBus() : NULL;
 

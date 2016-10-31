@@ -54,6 +54,9 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneToRendererSynchronizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArkEngineCore.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files\SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneToRendererSynchronizer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,10 +8,7 @@
 using namespace ArkThreading;
 ArkEngineCore * ArkEngineCore::sm_instance = NULL;
 
-ArkEngineCore::ArkEngineCore()
-{
-	initMemory();
-}
+ArkEngineCore::ArkEngineCore() {}
 
 ArkEngineCore * ArkEngineCore::Instance()
 {
@@ -39,6 +36,9 @@ void ArkEngineCore::initMemory()
 	ResourceManager::Initialize();
 	RendererContext::Initialize();
 	ProjectManager::Initialize();
+
+	m_sceneToRendererSynchronizer = new SceneToRendererSynchronizer();
+
 }
 
 void ArkEngineCore::startThreads()
@@ -64,6 +64,8 @@ void ArkEngineCore::stopThreads()
 void ArkEngineCore::deinitMemory()
 {
 	ProjectManager::Instance()->closeCurrentProject();
+
+	delete m_sceneToRendererSynchronizer;
 
 	delete m_notificationBus;
 	delete m_sceneManager;
