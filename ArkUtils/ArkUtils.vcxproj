@@ -188,12 +188,14 @@
     <ClInclude Include="ArkString.h" />
     <ClInclude Include="ArkThread.h" />
     <ClInclude Include="Filestream.h" />
+    <ClInclude Include="SystemNotifications.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp" />
     <ClCompile Include="Filesystem.cpp" />
     <ClCompile Include="Filestream.cpp" />
+    <ClCompile Include="SystemNotifications.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

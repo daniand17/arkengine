@@ -1,4 +1,5 @@
 #include "SceneManager.h"
+#include "ArkEngineCore.h"
 
 SceneManager * SceneManager::sm_instance = 0;
 
@@ -36,13 +37,25 @@ void Scene::instantiateGameObject(GameObject const * gameObject)
 {
 	GameObject * newGameObject = new GameObject(gameObject);
 
-	MeshRenderer * goComponent = newGameObject->getComponent<MeshRenderer>(); // TODO (AD) Should maybe be a template function
-	if ( goComponent )
+	MeshRenderer * ren = newGameObject->getComponent<MeshRenderer>(); // TODO (AD) Should maybe be a template function
+
+	bool sceneChanged = false;
+
+	if ( ren )
 	{
-		m_renderers.push_back((Renderer *) goComponent);
+		m_renderers.push_back((Renderer *) ren);
 		m_gameObjects.push_back(newGameObject);
+		sceneChanged = true;
 	}
-	// TODO (AD) Add notifier service here
+
+	if ( sceneChanged )
+	{
+		ArkEngineCore * engine = ArkEngineCore::Instance();
+		SystemNotificationBus * bus = engine ? engine->getNotificationBus() : NULL;
+
+		if ( bus )
+			bus->fireNotify(SystemNotifications::ServiceTypes::OnSceneChanged);
+	}
 }
 
 void Scene::destroyGameObject(GameObject * gameObject)

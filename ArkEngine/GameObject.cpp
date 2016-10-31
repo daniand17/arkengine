@@ -1,22 +1,23 @@
 #include "GameObject.h"
 #include "ArkEngineCore.h"
 #include "Rigidbody.h"
+#include "Renderer.h"
 
 using namespace std;
 
-GameObject::GameObject()
-	:m_name("New Game Object")
-{
-	m_transform = new Transform(this);
-}
-
-
 GameObject::GameObject(GameObject const * gameObject)
-	: m_name(gameObject->m_name)
+	: m_name(gameObject ? gameObject->m_name : "New Game Object")
 {
+	ArkEngineCore * core = ArkEngineCore::Instance();
+	SystemNotificationBus * notifier = core ? core->getNotificationBus() : NULL;
+	if(notifier)
+	{
+		notifier->attachSubscriber(this, SystemNotifications::OnUpdate);
+		notifier->attachSubscriber(this, SystemNotifications::OnFixedUpdate);
+	}
+
 	m_transform = new Transform(this);
 	copyFrom(gameObject);
-	// TODO Move to a component factory
 }
 
 
@@ -42,6 +43,7 @@ void GameObject::destroy(GameObject * object) const
 
 void GameObject::copyFrom(GameObject const * gameObject)
 {
+	if ( !gameObject ) return;
 	clearComponents();
 
 	m_transform->copyFrom(gameObject->m_transform);
@@ -57,7 +59,7 @@ void GameObject::copyFrom(GameObject const * gameObject)
 
 	std::vector<MeshRenderer *> meshRenderers = gameObject->getComponents<MeshRenderer>();
 
-	for ( size_t i = 0 ; i < meshRenderers.size() ; i++)
+	for ( size_t i = 0 ; i < meshRenderers.size() ; i++ )
 	{
 		MeshRenderer * renderer = new MeshRenderer(this);
 		renderer->copyFrom(meshRenderers[i]);
@@ -70,6 +72,7 @@ ArkString GameObject::toString()
 {
 	return m_name + ArkString(" (GameObject)");
 }
+
 
 void GameObject::clearComponents()
 {

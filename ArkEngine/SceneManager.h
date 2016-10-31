@@ -7,15 +7,20 @@
 class Scene
 {
 public:
+	Scene() : m_sceneChanged(false) {}
 	void instantiateGameObject(GameObject const * gameObject);
 	void destroyGameObject(GameObject * gameObject);
 
 	void deserializeScene(ArkFile * file);
 	void serializeScene(ArkFile * file);
 
+	bool getSceneChanged() const { m_sceneChanged; }
+
 private:
 	std::vector<GameObject *> m_gameObjects;
 	std::vector<Renderer *> m_renderers;
+
+	bool m_sceneChanged;
 };
 
 class SceneManager

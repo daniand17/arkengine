@@ -22,7 +22,7 @@ public:
 
 	OpenGLRenderer();
 
-	void Stop() { mShouldRun = false; }
+	void Stop() { m_shouldRun = false; }
 	void DeinitRenderer();
 	void InitializeRenderer();
 	void Run();
@@ -30,7 +30,7 @@ public:
 private:
 	static OpenGLRenderer * mInstance;
 	ArkWindow *	mWindow;
-	bool	mShouldRun;
+	bool	m_shouldRun;
 	GLuint	mVertexArrayId;
 
 	std::vector<RenderState *> mRenderStateList;

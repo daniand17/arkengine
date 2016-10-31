@@ -63,7 +63,7 @@ ArkProject::ArkProject(ArkString name)
 	if ( !existedBefore )
 	{
 		m_projectDirectory.createDirectory();
-		
+
 	}
 
 	for ( unsigned i = 0 ; i < ResourceType::Num_Types ; i++ )
@@ -116,7 +116,8 @@ void ArkProject::setResourcesDirectories()
 	rm->GetModelFactory()->setDirectory(getResourceDirectory(ResourceType::Model));
 
 	ArkEngineCore * engine = ArkEngineCore::Instance();
-	engine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
+	if ( engine )
+		engine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
 }
 
 ArkString ArkProject::getResourceFolderName(ResourceType type) const
@@ -128,6 +129,7 @@ ArkString ArkProject::getResourceFolderName(ResourceType type) const
 	case Model:		return "models/";
 	case Shader:	return "shaders/";
 	case Meta:		return "meta/";
+	case Scene:		return "scenes/";
 	default:		return "meta/";
 	}
 }

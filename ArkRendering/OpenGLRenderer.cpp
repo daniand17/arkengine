@@ -25,7 +25,7 @@ OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 
 
 OpenGLRenderer::OpenGLRenderer()
-	: mShouldRun(true)
+	: m_shouldRun(true)
 {
 }
 
@@ -134,9 +134,9 @@ void OpenGLRenderer::Run()
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-		mShouldRun = glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
+		m_shouldRun = glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
 	}
-	while ( mShouldRun && !glfwWindowShouldClose(win) );
+	while ( m_shouldRun && !glfwWindowShouldClose(win) );
 }
 
 

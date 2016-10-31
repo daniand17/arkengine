@@ -2,16 +2,14 @@
 #include "ArkString.h"
 #include "Transform.h"
 #include "Component.h"
-#include "Renderer.h"
-
+#include "SystemNotifications.h"
 #include <list>
 #include <typeinfo>
 
-class GameObject
+class GameObject : public NotificationSubscriber
 {
 public:
-	GameObject();
-	GameObject(GameObject const * gameObject);
+	GameObject(GameObject const * gameObject = NULL);
 	~GameObject() {}
 
 	void instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const;
@@ -27,7 +25,19 @@ public:
 
 	void copyFrom(GameObject const * gameObject);
 
+	void onNotify(SystemNotifications::ServiceTypes notifyService) override
+	{
+		switch ( notifyService )
+		{
+		case SystemNotifications::OnUpdate: update(); break;
+		case SystemNotifications::OnFixedUpdate: fixedUpdate(); break;
+		}
+	}
+
 	ArkString toString();
+protected:
+	virtual void update() {}
+	virtual void fixedUpdate() {}
 
 private:
 	void clearComponents();
@@ -37,12 +47,14 @@ private:
 	std::list<Component *> m_components;
 };
 
+
 template<typename T>
 inline void GameObject::addComponent()
 {
 	m_components.push_back(new T(this));
 	// TODO (AD) Should register the component for updates
 }
+
 
 template<typename T>
 inline T * GameObject::getComponent()
@@ -57,6 +69,7 @@ inline T * GameObject::getComponent()
 	}
 	return NULL;
 }
+
 
 template<typename T>
 inline void GameObject::removeComponent()
@@ -77,6 +90,7 @@ inline void GameObject::removeComponent()
 		}
 	}
 }
+
 
 template<typename T>
 inline std::vector<T*> GameObject::getComponents() const

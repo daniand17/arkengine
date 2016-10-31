@@ -26,7 +26,7 @@ void ArkEngineCore::InitEngine()
 void ArkEngineCore::initMemory()
 {
 	m_window = new ArkWindow(ArkSize(1024, 768), "Ark Engine");
-	mSystemThread = new ArkThread(new SystemTask());
+	m_systemThread = new ArkThread(new SystemTask());
 
 #ifdef USE_OPENGL
 	m_renderer = new OpenGLRenderer(m_window);
@@ -34,6 +34,7 @@ void ArkEngineCore::initMemory()
 #endif // USE_OPENGL
 
 	m_sceneManager = new SceneManager();
+	m_notificationBus = new SystemNotificationBus();
 
 	ResourceManager::Initialize();
 	RendererContext::Initialize();
@@ -45,7 +46,7 @@ void ArkEngineCore::startThreads()
 	ProjectManager::Instance()->createNewProjectWithName("DefaultProject");
 	m_sceneManager->openSceneByName("New Scene");	// TODO (AD) eventually open last scene open
 
-	mSystemThread->init();
+	m_systemThread->init();
 	// PhysicsThread?
 }
 
@@ -56,6 +57,7 @@ void ArkEngineCore::runMainLoop()
 
 void ArkEngineCore::stopThreads()
 {
+	m_systemThread->join();
 	m_renderer->Stop();
 }
 
@@ -63,7 +65,10 @@ void ArkEngineCore::deinitMemory()
 {
 	ProjectManager::Instance()->closeCurrentProject();
 
-	delete m_renderer;
-	delete m_window;
+	delete m_notificationBus;
 	delete m_sceneManager;
+
+	delete m_renderer;
+	delete m_systemThread;
+	delete m_window;
 }

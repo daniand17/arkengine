@@ -27,8 +27,18 @@ void SystemTask::run()
 
 	object->instantiate(object, Vec3(0, 0, 0), Quaternion(0, 0, 0, 0));
 
+	if ( SceneManager::Instance() )
+		m_currentScene = SceneManager::Instance()->getCurrentScene();
+	
+	SystemNotificationBus * bus = ArkEngineCore::Instance()->getNotificationBus();
+
 	do
 	{
+
+		if ( m_currentScene->getSceneChanged() )
+		{
+			bus->fireNotify(SystemNotifications::ServiceTypes::OnSceneChanged);
+		}
 		glfwPollEvents();
 	}
 	while ( !done );

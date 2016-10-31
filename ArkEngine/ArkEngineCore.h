@@ -6,6 +6,7 @@
 #include "ArkThread.h"
 #include "ResourceManager.h"
 #include "SceneManager.h"
+#include "SystemNotifications.h"
 
 class ArkEngineCore
 {
@@ -31,6 +32,7 @@ public:
 	ArkWindow const * GetMainWindowHandle() const { return m_window; }
 
 	SceneManager * getSceneManager() const { return m_sceneManager; }
+	SystemNotificationBus * getNotificationBus() const { return m_notificationBus; }
 
 
 private:
@@ -47,9 +49,10 @@ private:
 
 private:
 	ArkWindow * m_window;	
-	ArkThreading::ArkThread * mSystemThread;
+	ArkThreading::ArkThread * m_systemThread;
 
 	SceneManager * m_sceneManager;
+	SystemNotificationBus * m_notificationBus;
 
 #ifdef USE_OPENGL
 	OpenGLRenderer * m_renderer;
