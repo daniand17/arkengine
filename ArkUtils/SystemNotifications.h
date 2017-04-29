@@ -30,7 +30,7 @@ public:
 	void attachSubscriber(NotificationSubscriber * subscriber, SystemNotifications::ServiceTypes serviceType);
 	void detachSubscriber(NotificationSubscriber * subscriber, SystemNotifications::ServiceTypes serviceType);
 
-	unsigned int numSubscribers(SystemNotifications::ServiceTypes service)
+	size_t numSubscribers(SystemNotifications::ServiceTypes service)
 	{
 		return
 			service > SystemNotifications::ServiceTypes::UndefinedService

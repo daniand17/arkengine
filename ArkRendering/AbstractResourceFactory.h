@@ -9,7 +9,7 @@ public:
 	ArkDirectory * getDirectory() const { return m_directory; }
 	void setDirectory(ArkDirectory * directory) { m_directory = directory; }
 	
-	virtual unsigned int size() const = 0;
+	virtual size_t size() const = 0;
 	virtual ArkRendering::Resource * getResourceByName(ArkString name) = 0;
 	
 	virtual void deserializeResources() = 0;

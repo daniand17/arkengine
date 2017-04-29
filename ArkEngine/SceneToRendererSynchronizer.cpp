@@ -30,7 +30,7 @@ void SceneToRendererSynchronizer::onNotify(SystemNotifications::ServiceTypes not
 void SceneToRendererSynchronizer::doSynchronizationToRenderer()
 {
 	Scene * currentScene = ArkEngineCore::Instance()->getSceneManager()->getCurrentScene();
-	unsigned int siz = currentScene->getNumRenderers();
+	size_t siz = currentScene->getNumRenderers();
 
 	Scene::MeshRendererIterator iter = currentScene->getRendererIterator();
 

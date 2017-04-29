@@ -17,7 +17,7 @@ public:
 	bool getSceneChanged() const { return m_sceneChanged; }
 	void setSceneChanged(bool set) { m_sceneChanged = set; }
 
-	unsigned int getNumRenderers() const { return m_renderers.size(); }
+	size_t getNumRenderers() const { return m_renderers.size(); }
 	std::vector<MeshRenderer *>::const_iterator getRendererIterator() const { return m_renderers.begin(); }
 	std::vector<MeshRenderer *>::const_iterator getEnd() const { return m_renderers.end(); }
 

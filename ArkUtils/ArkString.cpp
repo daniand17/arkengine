@@ -2,7 +2,7 @@
 
 bool operator == (ArkString const & lhs, ArkString const & rhs)
 {
-	unsigned int len = lhs.length();
+	size_t len = lhs.length();
 
 	if ( len != rhs.length() )
 		return false;
@@ -53,10 +53,10 @@ ArkStringList ArkString::split(char delim) const
 	if ( m_string.length() == 0 )
 		return list;
 
-	unsigned int i = 0;
-	unsigned int pos = m_string.find(delim);
+	size_t i = 0;
+	size_t pos = m_string.find(delim);
 
-	unsigned int siz = m_string.length();
+	size_t siz = m_string.length();
 	while ( pos < siz )
 	{
 		list.push_back(ArkString(m_string.substr(i, pos - i)));
@@ -76,7 +76,7 @@ ArkStringList ArkString::split(char delim) const
 ArkString ArkStringList::join(ArkString delim) const
 {
 	ArkString joinedString;
-	unsigned int siz = m_stringList.size();
+	size_t siz(m_stringList.size());
 	for ( unsigned i = 0 ; i < siz; i++ )
 	{
 		joinedString += m_stringList[i];

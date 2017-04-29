@@ -174,9 +174,9 @@ void OpenGLRenderer::updateBufferSets()
 		std::vector<Vec3> newVertBuffer;
 		std::vector<Vec3> newNormalBuffer;
 		std::vector<Vec2> newUvBuffer;
-		unsigned int vertCount = 0;
-		unsigned int normalCount = 0;
-		unsigned int uvCount = 0;
+		size_t vertCount = 0;
+		size_t normalCount = 0;
+		size_t uvCount = 0;
 		for ( unsigned int i = 0 ; i < modelInfoList.size() ; i++ )
 		{
 			MeshInfo * meshInfo = modelInfoList[i]->mesh;

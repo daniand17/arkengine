@@ -11,7 +11,7 @@ public:
 	void serializeResources() override;
 	void deserializeResources() override;
 	void MaterialFactory::clear() override	{ m_loadedMaterials.clear(); }
-	virtual unsigned int size() const override	{ return m_loadedMaterials.size(); }
+	virtual size_t size() const override	{ return m_loadedMaterials.size(); }
 
 	ArkRendering::MaterialInfo * getResourceByName(ArkString name) override;
 	void getAllMaterials(std::vector<ArkRendering::MaterialInfo *> & out);

@@ -9,7 +9,7 @@ class ShaderFactory : public ResourceFactory
 public:
 	void deserializeResources() override;
 	void serializeResources() override;
-	unsigned int ShaderFactory::size() const override { return m_loadedShaders.size(); }
+	size_t ShaderFactory::size() const override { return m_loadedShaders.size(); }
 	void clear() override;
 	ArkRendering::ShaderProgram * getResourceByName(ArkString name) override;
 

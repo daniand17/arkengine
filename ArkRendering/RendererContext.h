@@ -25,7 +25,7 @@ public:
 	RendererContext();
 	~RendererContext();
 
-	unsigned int GetNumModels() const { return m_models.size(); }
+	size_t GetNumModels() const { return m_models.size(); }
 	void getUsedMaterials(std::set<ArkString> &out) const;
 	void getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel *> & out);
 
