@@ -27,7 +27,7 @@ namespace Test_ArkUtils
 		{
 			ArkDirectory dir("FileSystemTest");
 			if ( !dir.exists() )
-				dir.createDirectory();
+				dir.mkdir();
 
 			Assert::IsTrue(dir.exists());
 
@@ -45,7 +45,7 @@ namespace Test_ArkUtils
 			ArkDirectory dir("DeleteDirectoryTest");
 
 			if ( !dir.exists() )
-				dir.createDirectory();
+				dir.mkdir();
 
 			Assert::IsTrue(dir.exists());
 

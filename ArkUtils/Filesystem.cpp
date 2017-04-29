@@ -16,7 +16,7 @@ ArkFile::ArkFile(ArkString directory, ArkString name)
 ArkString ArkFile::getFileContents() const
 {
 	Filestream filestream(m_path + m_filename);
-	filestream.OpenFile(Filestream::FileOpenType::Read);
+	filestream.OpenFile(Filestream::Read);
 
 	ArkString fileContents("");
 	filestream.ReadAll(&fileContents);
@@ -76,7 +76,7 @@ bool ArkDirectory::fileExists(ArkString filename) const
 }
 
 
-void ArkDirectory::createDirectory() const
+void ArkDirectory::mkdir() const
 {
 	if ( exists() || m_path.length() == 0 ) return;
 	CreateDirectory(m_path.c_str(), NULL);
@@ -123,7 +123,7 @@ void ArkDirectory::populateFileList()
 	else
 		firstFile += "*";
 
-	handle = FindFirstFile	(firstFile.c_str(), &findFileData);
+	handle = FindFirstFile(firstFile.c_str(), &findFileData);
 
 	do
 	{

@@ -18,12 +18,11 @@ void MaterialFactory::CreateMaterial(ArkString name, ArkString shaderName)
 }
 
 
+
 void MaterialFactory::serializeResources()
 {
-	if ( !m_directory ) return;
-
 	ArkString syncString = "";
-	for ( auto iter = m_loadedMaterials.begin() ; iter != m_loadedMaterials.end() ; iter++ )
+	for ( MaterialCollection::iterator iter = m_loadedMaterials.begin() ; iter != m_loadedMaterials.end() ; iter++ )
 	{
 		if ( iter != m_loadedMaterials.begin() )
 			syncString += "\n,";
@@ -32,21 +31,27 @@ void MaterialFactory::serializeResources()
 	}
 
 	ArkFile * metafile;
-	if ( m_directory->fileExists("materials.meta") )
-		metafile = m_directory->getFileByFilename("materials.meta");
+	ArkDirectory dir(m_resourcePath);
+	if ( dir.fileExists("materials.meta") )
+	{
+		metafile = dir.getFileByFilename("materials.meta");
+	}
 	else
-		metafile = m_directory->createFile("materials", "meta");
+	{
+		metafile = dir.createFile("materials", "meta");
+	}
 
 	metafile->writeToFile(syncString);
 }
 
 
+
 void MaterialFactory::deserializeResources()
 {
-	if ( !m_directory ) return;
-	if ( !m_directory->fileExists("materials.meta") ) return;
+	ArkDirectory dir(m_resourcePath);
+	if ( !dir.fileExists("materials.meta") ) return;
 	// TODO maybe eventually read from file list?
-	ArkFile * infile = m_directory->getFileByFilename("materials.meta");
+	ArkFile * infile = dir.getFileByFilename("materials.meta");
 	ArkString fileContents = infile->getFileContents();
 
 	if ( fileContents.length() > 0 )
@@ -58,6 +63,7 @@ void MaterialFactory::deserializeResources()
 }
 
 
+
 ArkRendering::MaterialInfo * MaterialFactory::getResourceByName(ArkString name)
 {
 	auto iter = m_loadedMaterials.find(name);
@@ -65,11 +71,13 @@ ArkRendering::MaterialInfo * MaterialFactory::getResourceByName(ArkString name)
 }
 
 
+
 void MaterialFactory::getAllMaterials(std::vector<ArkRendering::MaterialInfo*>& out)
 {
 	for ( auto i = m_loadedMaterials.begin() ; i != m_loadedMaterials.end() ; i++ )
 		out.push_back(&(i->second));
 }
+
 
 
 void MaterialFactory::createMaterialFromString(ArkString & materialString)

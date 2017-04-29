@@ -48,9 +48,9 @@ namespace Test_ArkRendering
 			MaterialFactory resources;
 			ArkDirectory dir(MATERIAL_DIR);
 			if ( !dir.exists() )
-				dir.createDirectory();
+				dir.mkdir();
 
-			resources.setDirectory(&dir);
+			resources.setResourcePath(&dir);
 			resources.CreateMaterial(testMaterialName, "DefaultShader");
 			resources.CreateMaterial(testMaterialName + testMaterialName, "DefaultShader");
 			resources.serializeResources();
@@ -69,7 +69,7 @@ namespace Test_ArkRendering
 
 			Assert::IsTrue(dir.exists());
 			Assert::AreEqual(static_cast<unsigned int>(1), dir.getFileCount());
-			resources.setDirectory(&dir);
+			resources.setResourcePath(&dir);
 			resources.deserializeResources();
 
 			ArkRendering::MaterialInfo * mat0 = resources.getResourceByName(MATERIAL_NAME);
@@ -105,7 +105,7 @@ namespace Test_ArkRendering
 			Assert::IsTrue(dir.fileExists("Suzanne.obj"));
 
 			MeshFactory fac;
-			fac.setDirectory(&dir);
+			fac.setResourcePath(&dir);
 			fac.deserializeResources();
 
 			Assert::AreEqual(static_cast<unsigned int>(4), fac.size());
@@ -150,7 +150,7 @@ namespace Test_ArkRendering
 		{
 			ShaderFactory fac;
 			ArkDirectory * dir = new ArkDirectory("shader_test");
-			fac.setDirectory(dir);
+			fac.setResourcePath(dir);
 			fac.CreateShader("SimpleShader", "SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 			fac.serializeResources();
 
@@ -172,8 +172,8 @@ namespace Test_ArkRendering
 		{
 			ShaderFactory fac;
 			ArkDirectory * dir = new ArkDirectory("shader_test");
-			if ( !dir->exists() ) dir->createDirectory();
-			fac.setDirectory(dir);
+			if ( !dir->exists() ) dir->mkdir();
+			fac.setResourcePath(dir);
 
 			fac.CreateShader("SimpleShader", "SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 			fac.CreateShader("Shader", "vertShader.vert", "fragShader.frag");

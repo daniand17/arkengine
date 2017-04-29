@@ -18,9 +18,7 @@ public:
 
 	ResourceManager();
 	~ResourceManager();
-	static ResourceManager * Instance() { return mInstance; }
-	static void Initialize();
-
+	
 	void setProjectDirectory(ArkString directory) { m_projectDirectory = directory; }
 
 	void serializeResources();
@@ -36,7 +34,6 @@ public:
 	ArkThreading::ArkMutex * getLock() const { return m_lock; }
 
 private:
-	static ResourceManager * mInstance;
 	ArkThreading::ArkMutex * m_lock;
 
 	ArkString m_projectDirectory;

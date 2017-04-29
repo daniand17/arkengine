@@ -25,12 +25,12 @@ public:
 
 	void copyFrom(GameObject const * gameObject);
 
-	void onNotify(SystemNotifications::ServiceTypes notifyService) override
+	void onNotify(NotificationEvent const * notifyService) override
 	{
-		switch ( notifyService )
+		switch ( notifyService->getType() )
 		{
-		case SystemNotifications::OnUpdate: update(); break;
-		case SystemNotifications::OnFixedUpdate: fixedUpdate(); break;
+		case NotificationEvent::Tick_Update: update(); break;
+		case NotificationEvent::Tick_FixedUpdate: fixedUpdate(); break;
 		}
 	}
 

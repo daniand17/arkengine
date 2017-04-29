@@ -4,7 +4,6 @@
 
 using namespace ArkThreading;
 using namespace ArkRendering;
-ResourceManager * ResourceManager::mInstance = NULL;
 
 ResourceManager::ResourceManager()
 	: m_modelFactory(NULL)
@@ -36,10 +35,6 @@ ResourceManager::~ResourceManager()
 	m_shaderFactory = 0;
 }
 
-void ResourceManager::Initialize()
-{
-	mInstance = new ResourceManager();
-}
 
 
 void ResourceManager::deserializeResources()

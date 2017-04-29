@@ -1,50 +1,66 @@
 #pragma once
 #include <list>
 
-namespace SystemNotifications
+class NotificationEvent
 {
-	enum ServiceTypes
+public:
+	enum EventType
 	{
 		UndefinedService = -1,
-		OnUpdate,
-		OnFixedUpdate,
-		OnSceneChanged,
+		Tick_Update,
+		Tick_FixedUpdate,
+		System_SceneChanged,
 		OnRenderContextChanged,
+
+		System_Startup,
+		System_Shutdown,
+		System_ProjectLoaded,
+
 		Num_Services
 	};
-}
 
+	NotificationEvent(EventType type) : m_type(type) {}
+	EventType getType() const { return m_type; }
 
+private:
+	EventType m_type;
+};
+
+////////////////////////////////////////////////////////////////////////
 
 class NotificationSubscriber
 {
 public:
-	virtual void onNotify(SystemNotifications::ServiceTypes type) = 0;
+	NotificationSubscriber();
+	void subscribeToEvent(NotificationEvent::EventType eventType) const;
+	virtual void onNotify(NotificationEvent const * type) = 0;
 };
 
+////////////////////////////////////////////////////////////////////////
 
+#define eventSystem SystemNotificationBus::Instance()
 
 class SystemNotificationBus
 {
 public:
-	void attachSubscriber(NotificationSubscriber * subscriber, SystemNotifications::ServiceTypes serviceType);
-	void detachSubscriber(NotificationSubscriber * subscriber, SystemNotifications::ServiceTypes serviceType);
+	static SystemNotificationBus * Instance() { return sm_instance; }
+	static void Initialize();
+	void subscribeToEvent(NotificationSubscriber * subscriber, NotificationEvent::EventType serviceType);
+	void unsubscribeFromEvent(NotificationSubscriber * subscriber, NotificationEvent::EventType serviceType);
 
-	size_t numSubscribers(SystemNotifications::ServiceTypes service)
+	size_t numSubscribers(NotificationEvent::EventType service)
 	{
-		return
-			service > SystemNotifications::ServiceTypes::UndefinedService
-			&& service < SystemNotifications::ServiceTypes::Num_Services
+		return service > NotificationEvent::UndefinedService
+			&& service < NotificationEvent::Num_Services
 			? m_subscribers[service].size()
 			: 0;
 	}
-
-	void fireNotify(SystemNotifications::ServiceTypes serviceType);
+	void fireEvent(NotificationEvent::EventType serviceType);
 
 private:
 	typedef std::list<NotificationSubscriber *> SubscriberList;
-	SubscriberList m_subscribers[SystemNotifications::ServiceTypes::Num_Services];
+	SubscriberList m_subscribers[NotificationEvent::Num_Services];
+
+	static SystemNotificationBus * sm_instance;
+
 };
-
-
-

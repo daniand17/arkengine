@@ -5,9 +5,11 @@
 void SceneManager::openSceneByName(ArkString sceneName)
 {
 	Scene * scene = new Scene();
-	if ( m_sceneDirectory->fileExists(sceneName + ".scene") )
+
+	ArkDirectory dir(m_scenePath);
+	if ( dir.fileExists(sceneName + ".scene") )
 	{
-		scene->deserializeScene(m_sceneDirectory->getFileByFilename(sceneName + ".scene"));
+		scene->deserializeScene(dir.getFileByFilename(sceneName + ".scene"));
 	}
 
 	if ( m_currentScene )
@@ -22,12 +24,18 @@ void SceneManager::closeCurrentOpenScene()
 {
 }
 
+void SceneManager::onNotify(NotificationEvent const * type)
+{
+	openSceneByName("New Scene");	// TODO (AD) eventually open last scene open
+}
+
 
 
 SceneManager::SceneManager()
-	:m_currentScene(NULL)
-	, m_sceneDirectory(NULL)
+	: m_currentScene(NULL)
+	, m_scenePath("")
 {
+	subscribeToEvent(NotificationEvent::System_ProjectLoaded);
 }
 
 
@@ -51,10 +59,7 @@ void Scene::instantiateGameObject(GameObject const * gameObject)
 	{
 		m_sceneChanged = true;
 		ArkEngineCore * engine = ArkEngineCore::Instance();
-		SystemNotificationBus * bus = engine ? engine->getNotificationBus() : NULL;
-
-		if ( bus )
-			bus->fireNotify(SystemNotifications::ServiceTypes::OnSceneChanged);
+		eventSystem->fireEvent(NotificationEvent::System_SceneChanged);
 	}
 }
 

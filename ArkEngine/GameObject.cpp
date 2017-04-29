@@ -8,14 +8,10 @@ using namespace std;
 GameObject::GameObject(GameObject const * gameObject)
 	: m_name(gameObject ? gameObject->m_name : "New Game Object")
 {
-	ArkEngineCore * core = ArkEngineCore::Instance();
-	SystemNotificationBus * notifier = core ? core->getNotificationBus() : NULL;
-	if(notifier)
-	{
-		notifier->attachSubscriber(this, SystemNotifications::OnUpdate);
-		notifier->attachSubscriber(this, SystemNotifications::OnFixedUpdate);
-	}
 
+	subscribeToEvent(NotificationEvent::Tick_Update);
+	subscribeToEvent(NotificationEvent::Tick_FixedUpdate);
+	
 	m_transform = new Transform(this);
 	copyFrom(gameObject);
 }

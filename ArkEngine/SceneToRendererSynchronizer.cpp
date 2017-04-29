@@ -6,25 +6,23 @@
 #include <set>
 
 
-SceneToRendererSynchronizer::SceneToRendererSynchronizer()
+SceneToRendererSynchronizer::SceneToRendererSynchronizer(RendererContext * context)
+	: m_rendererContext(context)
 {
 	ArkEngineCore * core = ArkEngineCore::Instance();
-	SystemNotificationBus * bus = core ? core->getNotificationBus() : NULL;
 
-	ARK_ASSERT(bus != NULL, "No notification bus or engine core");
-	core->getNotificationBus()->attachSubscriber(this, SystemNotifications::OnSceneChanged);
-
-	m_rendererContext = RendererContext::Instance();
-
+	subscribeToEvent(NotificationEvent::System_SceneChanged);
 	ARK_ASSERT(m_rendererContext != NULL, "No renderer context");
 }
 
 
-void SceneToRendererSynchronizer::onNotify(SystemNotifications::ServiceTypes notifiedBy)
+
+void SceneToRendererSynchronizer::onNotify(NotificationEvent const * notifyEvent)
 {
 	SCOPE_LOCKER(m_rendererContext->getLock(), "Synchronization to renderer");
 	doSynchronizationToRenderer();
 }
+
 
 
 void SceneToRendererSynchronizer::doSynchronizationToRenderer()

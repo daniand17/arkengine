@@ -28,18 +28,21 @@ private:
 	bool m_sceneChanged;
 };
 
-class SceneManager
+class SceneManager : public NotificationSubscriber
 {
 public:
 	SceneManager();
-	void setSceneDirectory(ArkDirectory * directory) { m_sceneDirectory = directory; }
+	void setSceneDirectory(ArkString path ) { m_scenePath = path; }
 	void openSceneByName(ArkString sceneName);
 	void closeCurrentOpenScene();
 	
-	ArkDirectory * getSceneDirectory() const { return m_sceneDirectory; }
+	ArkString getSceneDirectory() const { return m_scenePath; }
 	Scene * getCurrentScene() const { return m_currentScene; }
 
 private:
 	Scene * m_currentScene;
-	ArkDirectory * m_sceneDirectory;
+	ArkString m_scenePath;
+
+	// Inherited via NotificationSubscriber
+	virtual void onNotify(NotificationEvent const * type) override;
 };

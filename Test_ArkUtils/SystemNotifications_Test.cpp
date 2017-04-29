@@ -12,9 +12,9 @@ namespace Test_ArkUtils
 	class MockSubscriber : public NotificationSubscriber
 	{
 	public:
-		MockSubscriber() { for ( int i = 0 ; i < SystemNotifications::ServiceTypes::Num_Services ; i++ ) m_set[i] = false; }
-		void onNotify(SystemNotifications::ServiceTypes notifyService) override { m_set[notifyService] = true; }
-		bool m_set[SystemNotifications::ServiceTypes::Num_Services];
+		MockSubscriber() { for ( int i = 0 ; i < SystemNotifications::EventType::Num_Services ; i++ ) m_set[i] = false; }
+		void onNotify(SystemNotifications::EventType notifyService) override { m_set[notifyService] = true; }
+		bool m_set[SystemNotifications::EventType::Num_Services];
 	};
 
 	TEST_CLASS(SystemNotifiations_Test)
@@ -23,8 +23,8 @@ namespace Test_ArkUtils
 		TEST_METHOD(SystemNotifierBus_Creation)
 		{
 			SystemNotificationBus bus;
-			for ( unsigned int i = 0 ; i < SystemNotifications::ServiceTypes::Num_Services ; i++ )
-				Assert::AreEqual(SIZE_T(0), bus.numSubscribers(static_cast<SystemNotifications::ServiceTypes>(i)));
+			for ( unsigned int i = 0 ; i < SystemNotifications::EventType::Num_Services ; i++ )
+				Assert::AreEqual(SIZE_T(0), bus.numSubscribers(static_cast<SystemNotifications::EventType>(i)));
 		}
 
 		TEST_METHOD(MockSubscriber_ShouldBeFalse)
@@ -37,7 +37,7 @@ namespace Test_ArkUtils
 		{
 			SystemNotificationBus bus;
 			NotificationSubscriber * sub = new MockSubscriber();
-			bus.attachSubscriber(sub, SystemNotifications::OnFixedUpdate);
+			bus.subscribeToEvent(sub, SystemNotifications::OnFixedUpdate);
 
 			Assert::AreEqual(SIZE_T(1), bus.numSubscribers(SystemNotifications::OnFixedUpdate));
 		}
@@ -47,9 +47,9 @@ namespace Test_ArkUtils
 			SystemNotificationBus bus;
 
 			NotificationSubscriber * sub = new MockSubscriber();
-			bus.attachSubscriber(sub, SystemNotifications::OnFixedUpdate);
+			bus.subscribeToEvent(sub, SystemNotifications::OnFixedUpdate);
 			Assert::AreEqual(SIZE_T(1), bus.numSubscribers(SystemNotifications::OnFixedUpdate));
-			bus.detachSubscriber(sub, SystemNotifications::OnFixedUpdate);
+			bus.unsubscribeFromEvent(sub, SystemNotifications::OnFixedUpdate);
 			Assert::AreEqual(SIZE_T(0), bus.numSubscribers(SystemNotifications::OnFixedUpdate));
 		}
 
@@ -58,17 +58,17 @@ namespace Test_ArkUtils
 			SystemNotificationBus bus;
 			MockSubscriber * subscriber = new MockSubscriber();
 
-			bus.attachSubscriber(subscriber, SystemNotifications::OnFixedUpdate);
-			bus.attachSubscriber(subscriber, SystemNotifications::OnSceneChanged);
-			bus.attachSubscriber(subscriber, SystemNotifications::OnUpdate);
+			bus.subscribeToEvent(subscriber, SystemNotifications::OnFixedUpdate);
+			bus.subscribeToEvent(subscriber, SystemNotifications::OnSceneChanged);
+			bus.subscribeToEvent(subscriber, SystemNotifications::OnUpdate);
 
-			bus.fireNotify(SystemNotifications::OnFixedUpdate);
+			bus.fireEvent(SystemNotifications::OnFixedUpdate);
 			Assert::IsTrue(subscriber->m_set[SystemNotifications::OnFixedUpdate]);
 
-			bus.fireNotify(SystemNotifications::OnUpdate);
+			bus.fireEvent(SystemNotifications::OnUpdate);
 			Assert::IsTrue(subscriber->m_set[SystemNotifications::OnUpdate]);
 
-			bus.fireNotify(SystemNotifications::OnSceneChanged);
+			bus.fireEvent(SystemNotifications::OnSceneChanged);
 			Assert::IsTrue(subscriber->m_set[SystemNotifications::OnSceneChanged]);
 		}
 	};

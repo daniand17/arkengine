@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 #include "ArkString.h"
 #include "Filesystem.h"
+#include "SystemNotifications.h"
 
 class ArkProject
 {
@@ -27,7 +28,7 @@ public:
 
 	ArkString getProjectName() const { return m_projectName; }
 	ArkString getProjectDirectory() const { return m_projectName + "/"; }
-	ArkDirectory * getResourceDirectory(ResourceType type) const;
+	ArkString getResourceDirectory(ResourceType type) const;
 
 
 private:
@@ -37,18 +38,14 @@ private:
 
 	void setResourcesDirectories(); 
 
-	ArkDirectory m_projectDirectory;
 	ArkString getResourceFolderName(ResourceType type) const;
 
-	std::vector<ArkDirectory *> m_resourceDirectories;
+	std::vector<ArkString> m_resourceDirectories;
 };
 
-class ProjectManager
+class ProjectManager : public NotificationSubscriber
 {
 public:
-	static void Initialize();
-	static ProjectManager * ProjectManager::Instance() { return sm_instance; }
-
 	ProjectManager();
 	void createNewProjectWithName(ArkString name);
 	void openProject(ArkString name);
@@ -56,7 +53,9 @@ public:
 	ArkProject * getCurrentProject() const { return m_currentProject; }
 
 private:
-	static ProjectManager * sm_instance;
 	ArkThreading::ArkMutex * m_lock;
 	ArkProject * m_currentProject;
+
+	// Inherited via NotificationSubscriber
+	virtual void onNotify(NotificationEvent const * type) override;
 };

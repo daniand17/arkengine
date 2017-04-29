@@ -30,7 +30,7 @@ public:
 	bool exists() const;
 	bool fileExists(ArkString filename) const;
 	
-	void createDirectory() const;
+	void mkdir() const;
 	void deleteDirectory() const;
 	
 	ArkFile * getFileByFilename(ArkString filename);

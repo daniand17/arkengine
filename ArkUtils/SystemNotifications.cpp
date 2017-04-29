@@ -1,9 +1,20 @@
 #include "SystemNotifications.h"
-using namespace SystemNotifications;
 
-void SystemNotificationBus::attachSubscriber(NotificationSubscriber * subscriber, ServiceTypes serviceType)
+SystemNotificationBus * SystemNotificationBus::sm_instance = NULL;
+
+void SystemNotificationBus::Initialize()
 {
-	if ( subscriber && serviceType > ServiceTypes::UndefinedService && serviceType < ServiceTypes::Num_Services )
+	if ( !sm_instance )
+	{
+		sm_instance = new SystemNotificationBus();
+	}
+}
+
+
+
+void SystemNotificationBus::subscribeToEvent(NotificationSubscriber * subscriber, NotificationEvent::EventType serviceType)
+{
+	if ( subscriber && serviceType > NotificationEvent::EventType::UndefinedService && serviceType < NotificationEvent::EventType::Num_Services )
 	{
 		for ( SubscriberList::iterator iter = m_subscribers[serviceType].begin() ; iter != m_subscribers[serviceType].end() ; iter++ )
 		{
@@ -15,9 +26,11 @@ void SystemNotificationBus::attachSubscriber(NotificationSubscriber * subscriber
 	}
 }
 
-void SystemNotificationBus::detachSubscriber(NotificationSubscriber * subscriber, ServiceTypes serviceType)
+
+
+void SystemNotificationBus::unsubscribeFromEvent(NotificationSubscriber * subscriber, NotificationEvent::EventType serviceType)
 {
-	if ( subscriber && serviceType > ServiceTypes::UndefinedService && serviceType < ServiceTypes::Num_Services )
+	if ( subscriber && serviceType > NotificationEvent::EventType::UndefinedService && serviceType < NotificationEvent::EventType::Num_Services )
 	{
 		for ( SubscriberList::iterator iter = m_subscribers[serviceType].begin() ; iter != m_subscribers[serviceType].end() ; iter++ )
 		{
@@ -30,13 +43,29 @@ void SystemNotificationBus::detachSubscriber(NotificationSubscriber * subscriber
 	}
 }
 
-void SystemNotificationBus::fireNotify(ServiceTypes serviceType)
+
+
+void SystemNotificationBus::fireEvent(NotificationEvent::EventType notifyType)
 {
-	if ( serviceType > ServiceTypes::UndefinedService && serviceType < ServiceTypes::Num_Services )
+	if ( notifyType > NotificationEvent::EventType::UndefinedService && notifyType < NotificationEvent::EventType::Num_Services )
 	{
-		for ( SubscriberList::iterator iter = m_subscribers[serviceType].begin() ; iter != m_subscribers[serviceType].end() ; iter++ )
+		for ( SubscriberList::iterator iter = m_subscribers[notifyType].begin() ; iter != m_subscribers[notifyType].end() ; iter++ )
 		{
-			(*iter)->onNotify(serviceType);
+			NotificationEvent * notificationEvent = new NotificationEvent(notifyType);
+			(*iter)->onNotify(notificationEvent);
+			delete notificationEvent;
 		}
 	}
+}
+
+
+
+NotificationSubscriber::NotificationSubscriber()
+{
+}
+
+
+
+void NotificationSubscriber::subscribeToEvent(NotificationEvent::EventType eventType) const
+{
 }

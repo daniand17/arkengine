@@ -2,7 +2,7 @@
 #include "ArkMath.h"
 #include "OpenGLRenderer.h"
 
-Camera::Camera(CameraTypes cameraType, float fov, float nearPlane, float farPlane, Vec2 screenOrigin, Vec2 percScreenDim)
+Camera::Camera(ArkWindow * window, CameraTypes cameraType, float fov, float nearPlane, float farPlane, Vec2 screenOrigin, Vec2 percScreenDim)
 	: mProjectionType(cameraType)
 	, mFov(fov)
 	, mNearPlane(nearPlane)
@@ -11,9 +11,12 @@ Camera::Camera(CameraTypes cameraType, float fov, float nearPlane, float farPlan
 	, mScreenDim(percScreenDim)
 	, mProjectionDirty(true)
 	, mViewDirty(true)
+	, m_window(window)
 {
 	refreshCamera();
 }
+
+
 
 void Camera::refreshCamera()
 {
@@ -24,17 +27,17 @@ void Camera::refreshCamera()
 		 recalculateViewMatrix();
 }
 
+
+
 void Camera::recalculateProjectionMatrix()
 {
-	OpenGLRenderer const * renderer = OpenGLRenderer::Instance();
-
-	ArkWindow const * win = renderer->GetWindowHandle();
-
 	if(mProjectionType == Perspective )
-		mProjection = ArkMath::perspective(ArkMath::toRadians(mFov), win->aspectRatio(), mNearPlane, mFarPlane);
+		mProjection = ArkMath::perspective(ArkMath::toRadians(mFov), m_window->aspectRatio(), mNearPlane, mFarPlane);
 
 	mProjectionDirty = false;
 }
+
+
 
 void Camera::recalculateViewMatrix()
 {

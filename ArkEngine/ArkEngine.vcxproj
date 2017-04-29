@@ -224,6 +224,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneToRendererSynchronizer.cpp" />
     <ClCompile Include="SystemTasks.cpp" />
+    <ClCompile Include="SystemThread.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +240,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneToRendererSynchronizer.h" />
     <ClInclude Include="SystemTasks.h" />
+    <ClInclude Include="SystemThread.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,32 +3,23 @@
 #include "SceneManager.h"
 #include "ArkEngineCore.h"
 #include "SceneToRendererSynchronizer.h"
-ProjectManager * ProjectManager::sm_instance = NULL;
-
-void ProjectManager::Initialize()
-{
-	if ( !sm_instance )
-	{
-		Debug::Log("Initializing ProjectManager");
-		sm_instance = new ProjectManager();
-	}
-}
-
 
 ProjectManager::ProjectManager()
 	: m_lock(NULL)
 {
 	m_lock = new ArkThreading::ArkMutex();
+	subscribeToEvent(NotificationEvent::System_Startup);
 }
+
+
 
 void ProjectManager::createNewProjectWithName(ArkString name)
 {
 	SCOPE_LOCKER lock(m_lock, "Project Manager create new project");
-
 	m_currentProject = new ArkProject(name); /* nothing to open so don't open project */
-
 	m_currentProject->openProject();
 }
+
 
 
 void ProjectManager::openProject(ArkString name)
@@ -46,6 +37,7 @@ void ProjectManager::openProject(ArkString name)
 }
 
 
+
 void ProjectManager::closeCurrentProject()
 {
 	SCOPE_LOCKER lock(m_lock, "Project Manager close project");
@@ -55,26 +47,46 @@ void ProjectManager::closeCurrentProject()
 }
 
 
+
+void ProjectManager::onNotify(NotificationEvent const * type)
+{
+	switch ( type->getType() )
+	{
+	case NotificationEvent::System_Startup:
+		createNewProjectWithName("DefaultProject");
+		break;
+	case NotificationEvent::System_Shutdown:
+		closeCurrentProject();
+		break;
+	default: break;
+	}
+
+}
+
+
+
 ArkProject::ArkProject(ArkString name)
 	: m_projectName(name)
-	, m_projectDirectory(name)
 {
-	bool existedBefore = m_projectDirectory.exists();
-
+	ArkDirectory dir(name);
+	bool existedBefore = dir.exists();
 	if ( !existedBefore )
 	{
-		m_projectDirectory.createDirectory();
-
+		dir.mkdir();
 	}
 
 	for ( unsigned i = 0 ; i < ResourceType::Num_Types ; i++ )
 	{
 		ArkString dirPath = getProjectDirectory() + getResourceFolderName(static_cast<ResourceType>(i));
-		m_resourceDirectories.push_back(new ArkDirectory(dirPath));
+		m_resourceDirectories.push_back(dirPath);
 		if ( !existedBefore )
-			m_resourceDirectories.at(i)->createDirectory();
+		{
+			ArkDirectory dir(m_resourceDirectories.at(i));
+			dir.mkdir();
+		}
 	}
 }
+
 
 
 void ArkProject::openProject()
@@ -84,42 +96,44 @@ void ArkProject::openProject()
 }
 
 
-ArkDirectory * ArkProject::getResourceDirectory(ResourceType type) const
+
+ArkString ArkProject::getResourceDirectory(ResourceType type) const
 {
 	return m_resourceDirectories.at(type);
 }
 
 
+
 void ArkProject::serializeProject() const
 {
-	// TODO (AD) synchronize project settings
-	ResourceManager::Instance()->serializeResources();
+	arkEngine->getResourceManager()->serializeResources();
 }
+
 
 
 void ArkProject::deserializeProject()
 {
-	// TODO (AD) desynchronize project settings
-	if ( ResourceManager::Instance() )
-	{
-		ResourceManager::Instance()->deserializeResources();
-	}
+	arkEngine->getResourceManager()->deserializeResources();
+	eventSystem->fireEvent(NotificationEvent::System_ProjectLoaded);
 }
+
+
 
 void ArkProject::setResourcesDirectories()
 {
-	ResourceManager * rm = ResourceManager::Instance();
-	if ( !rm ) return;
+	ResourceManager * rm = arkEngine->getResourceManager();
 	rm->setProjectDirectory(getProjectDirectory());
-	rm->GetMaterialFactory()->setDirectory(getResourceDirectory(ResourceType::Material));
-	rm->GetShaderFactory()->setDirectory(getResourceDirectory(ResourceType::Shader));
-	rm->GetMeshFactory()->setDirectory(getResourceDirectory(ResourceType::Mesh));
-	rm->GetModelFactory()->setDirectory(getResourceDirectory(ResourceType::Model));
+	rm->GetMaterialFactory()->setResourcePath(getResourceDirectory(ResourceType::Material));
+	rm->GetShaderFactory()->setResourcePath(getResourceDirectory(ResourceType::Shader));
+	rm->GetMeshFactory()->setResourcePath(getResourceDirectory(ResourceType::Mesh));
+	rm->GetModelFactory()->setResourcePath(getResourceDirectory(ResourceType::Model));
 
 	ArkEngineCore * engine = ArkEngineCore::Instance();
 	if ( engine )
 		engine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
 }
+
+
 
 ArkString ArkProject::getResourceFolderName(ResourceType type) const
 {

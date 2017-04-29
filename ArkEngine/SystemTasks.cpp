@@ -24,8 +24,8 @@ void SystemTask::run()
 	object->addComponent<MeshRenderer>();
 	MeshRenderer * ren = object->getComponent<MeshRenderer>();
 
-	MaterialInfo * material = ResourceManager::Instance()->GetMaterialFactory()->getResourceByName("DefaultMaterial");
-	MeshInfo * mesh = ResourceManager::Instance()->GetMeshFactory()->getResourceByName("cube.obj");
+	MaterialInfo * material = arkEngine->getResourceManager()->GetMaterialFactory()->getResourceByName("DefaultMaterial");
+	MeshInfo * mesh = arkEngine->getResourceManager()->GetMeshFactory()->getResourceByName("cube.obj");
 
 	ren->setMaterial(material);
 	ren->setMesh(mesh);
@@ -36,22 +36,16 @@ void SystemTask::run()
 	obj->addComponent<MeshRenderer>();
 	ren = obj->getComponent<MeshRenderer>();
 	ren->setMaterial(material);
-	ren->setMesh(ResourceManager::Instance()->GetMeshFactory()->getResourceByName("Suzanne.obj"));
+	ren->setMesh(arkEngine->getResourceManager()->GetMeshFactory()->getResourceByName("Suzanne.obj"));
 
 	object->instantiate(obj, Vec3::zero(), Quaternion(0, 0, 0, 0));
 
 	
-	SystemNotificationBus * bus = ArkEngineCore::Instance()->getNotificationBus();
-
 	do
 	{
-
-
-
-
 		if ( m_currentScene->getSceneChanged() )
 		{
-			bus->fireNotify(SystemNotifications::ServiceTypes::OnSceneChanged);
+			eventSystem->fireEvent(NotificationEvent::System_SceneChanged);
 			m_currentScene->setSceneChanged(false);
 		}
 		glfwPollEvents();

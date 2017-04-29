@@ -4,6 +4,8 @@
 #include "Vec3.h"
 #include "Vec2.h"
 
+class ArkWindow;
+
 class Camera
 {
 public:
@@ -12,7 +14,7 @@ public:
 		Perspective,
 		Orthographic
 	};
-	Camera(CameraTypes cameraType, float fov, float nearPlane, float farPlane, Vec2 screenOrigin, Vec2 percScreenDim);
+	Camera(ArkWindow * window, CameraTypes cameraType, float fov, float nearPlane, float farPlane, Vec2 screenOrigin, Vec2 percScreenDim);
 
 	Mat4 getProjectionMatrix() const		{ return mProjection; }
 	Mat4 getViewMatrix() const				{ return mView; }
@@ -27,6 +29,8 @@ public:
 
 	void setTarget(Vec3 newTarget)			{ mViewDirty = true; mTarget = newTarget; }
 	void setPosition(Vec3 newPosition)		{ mViewDirty = true; mPosition = newPosition; }
+
+	void setWindow(ArkWindow * window) { m_window = m_window; }
 
 	float getNearPlane() const		{ return mNearPlane; }
 	float getFarPlane() const		{ return mFarPlane; }
@@ -56,4 +60,6 @@ private:
 
 	bool mProjectionDirty;
 	bool mViewDirty;
+
+	ArkWindow * m_window;
 };

@@ -6,9 +6,9 @@
 class SceneToRendererSynchronizer : public NotificationSubscriber
 {
 public:
-	SceneToRendererSynchronizer();
+	SceneToRendererSynchronizer(RendererContext * context);
 
-	void onNotify(SystemNotifications::ServiceTypes notifiedBy) override;
+	void onNotify(NotificationEvent const * notifyEvent) override;
 
 private:
 	void doSynchronizationToRenderer();

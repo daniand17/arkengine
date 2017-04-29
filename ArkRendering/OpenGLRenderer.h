@@ -10,26 +10,27 @@
 #include "Vec2.h"
 #include "Vec3.h"
 #include "RenderState.h"
+#include "Camera.h"
+class RendererContext;
 
 #ifdef USE_OPENGL
 class OpenGLRenderer
 {
 public:
-	static OpenGLRenderer const * Instance() { return mInstance; }
-	ArkWindow const * GetWindowHandle() const { return mWindow; }
+	ArkWindow const * GetWindowHandle() const { return m_arkWindow; }
 	OpenGLRenderer(ArkWindow * windowHandle);
-	OpenGLRenderer::~OpenGLRenderer() { DeinitRenderer(); }
+	OpenGLRenderer::~OpenGLRenderer() { shutdownRenderer(); }
 
 	OpenGLRenderer();
 
-	void Stop() { m_shouldRun = false; }
-	void DeinitRenderer();
-	void InitializeRenderer();
-	void Run();
+	void stop() { m_shouldRun = false; }
+	void shutdownRenderer();
+	void initializeRenderer();
+	void run();
+	void setRenderContext(RendererContext * rendererContext) { m_rendererContext = rendererContext; }
 
 private:
-	static OpenGLRenderer * mInstance;
-	ArkWindow *	mWindow;
+	ArkWindow *	m_arkWindow;
 	bool	m_shouldRun;
 	GLuint	mVertexArrayId;
 
@@ -38,7 +39,11 @@ private:
 	typedef std::map<ArkString, BufferSet *> BufferCollection;
 	typedef std::pair<ArkString, BufferSet *> BufferMaterialNamePair;
 	BufferCollection mBufferSetMap;
+	RendererContext * m_rendererContext;
 
-	void updateBufferSets();
+
+private:
+	void clearScreen();
+
 };
 #endif

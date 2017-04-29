@@ -19,9 +19,6 @@ public:
 		AllocatedModel() : isFree(true), mesh(NULL), material(NULL) {}
 	};
 
-	static void Initialize() { sm_instance = new RendererContext();}
-	static RendererContext * Instance() { return sm_instance; }
-
 	RendererContext();
 	~RendererContext();
 

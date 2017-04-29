@@ -13,15 +13,11 @@ using namespace ArkRendering;
 using namespace ArkMath;
 using namespace std;
 
-OpenGLRenderer * OpenGLRenderer::mInstance = NULL;
-
-
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
-	: mWindow(windowHandle)
+	: m_arkWindow(windowHandle)
 {
-	if ( !mInstance )
-		mInstance = this;
 }
+
 
 
 OpenGLRenderer::OpenGLRenderer()
@@ -30,13 +26,15 @@ OpenGLRenderer::OpenGLRenderer()
 }
 
 
-void OpenGLRenderer::DeinitRenderer()
+
+void OpenGLRenderer::shutdownRenderer()
 {
 	glDeleteVertexArrays(1, &mVertexArrayId);
 }
 
 
-void OpenGLRenderer::InitializeRenderer()
+
+void OpenGLRenderer::initializeRenderer()
 {
 	Debug::Log("Initializing Renderer");
 	glGenVertexArrays(1, &mVertexArrayId);
@@ -54,14 +52,15 @@ void OpenGLRenderer::InitializeRenderer()
 }
 
 
-void OpenGLRenderer::Run()
+
+void OpenGLRenderer::run()
 {
-	GLFWwindow * win = mWindow->getOSWindowHandle();
+	GLFWwindow * win = m_arkWindow->getOSWindowHandle();
 
 	double lastTime = glfwGetTime();
 	int nbFrames = 0;
 
-	Camera cam(Camera::Perspective, 45.0f, 0.1f, 100.0f, Vec2(0, 0), Vec2(1, 1));
+	Camera cam(m_arkWindow, Camera::Perspective, 45.0f, 0.1f, 100.0f, Vec2(0, 0), Vec2(1, 1));
 	cam.setPosition(Vec3(3, 3, 3));
 	cam.setTarget(Vec3(0, 0, 0));
 	float rotY = 0.0f;
@@ -72,8 +71,7 @@ void OpenGLRenderer::Run()
 
 	do
 	{
-		glClearColor(0.0, 0.0, 0.0, 0.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		clearScreen();
 
 		// Do timer
 		double currentTime = glfwGetTime();
@@ -84,8 +82,6 @@ void OpenGLRenderer::Run()
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
-
-		updateBufferSets();
 
 		// Render all the render states
 		for ( RenderState * renderState : mRenderStateList )
@@ -140,72 +136,9 @@ void OpenGLRenderer::Run()
 }
 
 
-void OpenGLRenderer::updateBufferSets()
+
+void OpenGLRenderer::clearScreen()
 {
-	RendererContext * renderContext = RendererContext::Instance();
-
-	if ( !renderContext || !renderContext->IsDirty() )
-		return;
-
-	SCOPE_LOCKER resourceManagerLock(ResourceManager::Instance()->getLock(), "Update Buffer Sets");
-	MeshFactory * meshFactory = ResourceManager::Instance()->GetMeshFactory();
-	MaterialFactory * materialFactory = ResourceManager::Instance()->GetMaterialFactory();
-	std::set<ArkString> usedMaterials;
-	renderContext->getUsedMaterials(usedMaterials);
-
-	for ( std::set<ArkString>::const_iterator resIdIter = usedMaterials.begin() ; resIdIter != usedMaterials.end() ; resIdIter++ )
-	{
-		std::vector<RendererContext::AllocatedModel *> modelInfoList;
-		MaterialInfo * material = materialFactory->getResourceByName(*resIdIter);
-		if ( !material ) return;
-		renderContext->getModelsUsingMaterial(material->m_name, modelInfoList);
-
-		auto pos = mBufferSetMap.find(material->m_name);
-		BufferSet * currBufferSet = NULL;
-		if ( pos == mBufferSetMap.end() )
-		{
-			currBufferSet = new BufferSet();
-			mBufferSetMap.insert(BufferMaterialNamePair(material->m_name, currBufferSet));
-			mRenderStateList.push_back(new RenderState(material, currBufferSet));
-		}
-		else
-			currBufferSet = pos->second;
-
-		std::vector<Vec3> newVertBuffer;
-		std::vector<Vec3> newNormalBuffer;
-		std::vector<Vec2> newUvBuffer;
-		size_t vertCount = 0;
-		size_t normalCount = 0;
-		size_t uvCount = 0;
-		for ( unsigned int i = 0 ; i < modelInfoList.size() ; i++ )
-		{
-			MeshInfo * meshInfo = modelInfoList[i]->mesh;
-			if ( meshInfo )
-			{
-				vertCount += meshInfo->vertices.size();
-				normalCount += meshInfo->normals.size();
-				uvCount += meshInfo->uvs.size();
-			}
-		}
-
-		if ( vertCount > 0 )
-		{
-			newVertBuffer.reserve(vertCount);
-			newNormalBuffer.reserve(normalCount);
-			newUvBuffer.reserve(uvCount);
-			for ( unsigned int i = 0 ; i < modelInfoList.size() ; i++ )
-			{
-				MeshInfo * meshInfo = modelInfoList[i]->mesh;
-				newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
-				newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
-				newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
-			}
-
-			currBufferSet->GetVertexBuffer()->SetBufferData(newVertBuffer);
-			currBufferSet->GetNormalBuffer()->SetBufferData(newNormalBuffer);
-			currBufferSet->GetUVBuffer()->SetBufferData(newUvBuffer);
-		}
-
-		renderContext->SetModelsUpdated();
-	}
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

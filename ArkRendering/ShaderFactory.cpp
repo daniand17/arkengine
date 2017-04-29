@@ -13,12 +13,14 @@ void ShaderFactory::CreateShader(ArkString shaderName, ArkString vertexShaderNam
 }
 
 
+
 void ShaderFactory::deserializeResources()
 {
 	ArkString fileContents;
-	if ( m_directory->fileExists("shaders.meta") )
+	ArkDirectory dir(m_resourcePath);
+	if ( dir.fileExists("shaders.meta") )
 	{
-		ArkFile * file = m_directory->getFileByFilename("shaders.meta");
+		ArkFile * file = dir.getFileByFilename("shaders.meta");
 		fileContents = file->getFileContents();
 	}
 
@@ -34,6 +36,7 @@ void ShaderFactory::deserializeResources()
 void ShaderFactory::serializeResources()
 {	
 	ArkString syncString("");
+	ArkDirectory dir(m_resourcePath);
 	for ( auto iter = m_loadedShaders.begin() ; iter != m_loadedShaders.end() ; iter++ )
 	{
 		if ( iter != m_loadedShaders.begin() )
@@ -42,12 +45,13 @@ void ShaderFactory::serializeResources()
 	}
 
 	ArkFile * file = 
-		m_directory->fileExists("shaders.meta") 
-		? m_directory->getFileByFilename("shaders.meta") 
-		: m_directory->createFile("shaders", "meta");
+		dir.fileExists("shaders.meta") 
+		? dir.getFileByFilename("shaders.meta") 
+		: dir.createFile("shaders", "meta");
 
 	file->writeToFile(syncString);
 }
+
 
 
 void ShaderFactory::clear()
@@ -58,6 +62,8 @@ void ShaderFactory::clear()
 	m_loadedShaders.clear();
 }
 
+
+
 ArkRendering::ShaderProgram * ShaderFactory::getResourceByName(ArkString name)
 {
 	auto iter = m_loadedShaders.find(name);
@@ -65,21 +71,24 @@ ArkRendering::ShaderProgram * ShaderFactory::getResourceByName(ArkString name)
 }
 
 
+
 void ShaderFactory::createShaderFromString(ArkString theString)
 {
 	if ( theString.length() > 0 )
 	{
+		ArkDirectory dir(m_resourcePath);
 		ArkStringList list = theString.split('\n');
 
 		// Need to get the project here
 		ARK_ASSERT(list.size() >= 4, "Expected at least 3 lines in a shader");
 		ArkString shaderName = list.at(1).split(':').at(1);
-		ArkString vertShaderName = m_directory->getAbsolutePath() + list.at(2).split(':').at(1);
-		ArkString fragShaderName = m_directory->getAbsolutePath() + list.at(3).split(':').at(1);
+		ArkString vertShaderName = dir.getAbsolutePath() + list.at(2).split(':').at(1);
+		ArkString fragShaderName = dir.getAbsolutePath() + list.at(3).split(':').at(1);
 
 		CreateShader(shaderName, vertShaderName, fragShaderName);
 	}
 }
+
 
 
 void ShaderFactory::compileShaders()

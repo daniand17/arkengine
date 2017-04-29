@@ -6,8 +6,8 @@
 class ResourceFactory
 {
 public:
-	ArkDirectory * getDirectory() const { return m_directory; }
-	void setDirectory(ArkDirectory * directory) { m_directory = directory; }
+	ArkString getResourcePath() const { return m_resourcePath; }
+	void setResourcePath(ArkString dirPath) { m_resourcePath = dirPath; }
 	
 	virtual size_t size() const = 0;
 	virtual ArkRendering::Resource * getResourceByName(ArkString name) = 0;
@@ -17,5 +17,5 @@ public:
 	virtual void clear() = 0;
 
 protected:
-	ArkDirectory * m_directory;
+	ArkString m_resourcePath;
 };

@@ -1,12 +1,8 @@
 #include "RendererContext.h"
 #include "ArkDebug.h"
 
-RendererContext * RendererContext::sm_instance = NULL;
-
 using namespace ArkRendering;
 using namespace std;
-
-
 
 RendererContext::RendererContext()
 	: m_isDirty(true)

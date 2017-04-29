@@ -10,7 +10,9 @@ void MeshFactory::LoadMesh(ArkString modelName)
 
 	MeshInfo * meshInfo = new MeshInfo();
 
-	if ( ModelLoading::loadOBJ(m_directory->getAbsolutePath() + modelName, meshInfo->vertices, meshInfo->uvs, meshInfo->normals) )
+	ArkDirectory dir(m_resourcePath);
+
+	if ( ModelLoading::loadOBJ(dir.getAbsolutePath() + modelName, meshInfo->vertices, meshInfo->uvs, meshInfo->normals) )
 	{
 		meshInfo->name = modelName;
 		m_loadedMeshes.insert(MeshNamePair(modelName, meshInfo));
@@ -28,7 +30,8 @@ void MeshFactory::serializeResources()
 
 void MeshFactory::deserializeResources()
 {
-	std::vector<ArkFile> const * fileList = m_directory->getFileList();
+	ArkDirectory dir(m_resourcePath);
+	std::vector<ArkFile> const * fileList = dir.getFileList();
 	for ( unsigned int i = 0 ; i < fileList->size() ; i++ )
 		LoadMesh(fileList->at(i).getFilename());
 }

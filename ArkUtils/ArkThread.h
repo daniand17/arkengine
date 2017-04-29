@@ -26,23 +26,13 @@ namespace ArkThreading
 	class ArkThread
 	{
 	public:
-		ArkThread(WorkerTask * workerTask) : mWorkerTask(workerTask), mThread(NULL) {}
-		void init() { mThread = new std::thread(&ArkThread::run, this); }
+		ArkThread() : mThread(NULL) {}
+		void start() { mThread = new std::thread(&ArkThread::run, this); }
 		void join() { mThread->join(); }
+		virtual void run() = 0;
+
 	private:
-
-		void run()
-		{
-			if ( mWorkerTask )
-			{
-				std::move(mWorkerTask);
-				mWorkerTask->initialize();
-				mWorkerTask->runTask();
-			}
-
-		}
 		std::thread * mThread;
-		WorkerTask * mWorkerTask;
 	};
 
 	class ArkMutex : public std::mutex

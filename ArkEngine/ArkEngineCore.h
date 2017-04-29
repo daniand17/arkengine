@@ -10,33 +10,31 @@
 #include "SceneToRendererSynchronizer.h"
 
 class SceneToRendererSynchronizer;
+class ProjectManager;
+
+#define arkEngine ArkEngineCore::Instance()
 
 class ArkEngineCore
 {
 public:
-	static ArkEngineCore * Instance();
+	static ArkEngineCore * Instance() { return sm_instance; }
 	static void InitEngine();
-	int Run()
-	{
-		initMemory();
-		startThreads();
+	int run();
+	
 
-		runMainLoop();
-		return 0;
-	}
-
-	int Shutdown()
+	int shutdown()
 	{
 		stopThreads();
 		deinitMemory();
-
 		return 0;
 	}
 
 	ArkWindow const * GetMainWindowHandle() const { return m_window; }
 
 	SceneManager * getSceneManager() const { return m_sceneManager; }
-	SystemNotificationBus * getNotificationBus() const { return m_notificationBus; }
+	ResourceManager * getResourceManager() const { return m_resourceManager; }
+	RendererContext * getRendererContext() const { return m_rendererContext; }
+	ProjectManager * getProjectManager() const { return m_projectManager; }
 
 
 private:
@@ -52,12 +50,16 @@ private:
 	void deinitMemory();
 
 private:
-	ArkWindow * m_window;	
+	ArkWindow * m_window;
 	ArkThreading::ArkThread * m_systemThread;
 
 	SceneManager * m_sceneManager;
-	SystemNotificationBus * m_notificationBus;
 	SceneToRendererSynchronizer * m_sceneToRendererSynchronizer;
+
+	ResourceManager * m_resourceManager;
+	RendererContext * m_rendererContext;
+	ProjectManager * m_projectManager;
+
 
 #ifdef USE_OPENGL
 	OpenGLRenderer * m_renderer;
