@@ -31,11 +31,11 @@ namespace Test_ArkUtils
 
 			Assert::IsTrue(dir.exists());
 
-			Assert::AreEqual(static_cast<size_t>(0), dir.getFileCount());
+			Assert::AreEqual(static_cast<unsigned int>(0), dir.getFileCount());
 
 			std::vector<ArkFile> const * fileList = dir.getFileList();
 
-			Assert::AreEqual(static_cast<size_t>(0), fileList->size());
+			Assert::AreEqual(static_cast<unsigned int>(0), fileList->size());
 
 			dir.deleteDirectory();
 		}
@@ -60,7 +60,7 @@ namespace Test_ArkUtils
 
 			Assert::IsTrue(dir.exists());
 
-			Assert::AreEqual(static_cast<size_t>(4), dir.getFileCount());
+			Assert::AreEqual(static_cast<unsigned int>(4), dir.getFileCount());
 				
 		}
 
@@ -125,7 +125,7 @@ namespace Test_ArkUtils
 			Assert::IsTrue(contents.length() > 0);
 			
 			ArkStringList linelist = contents.split('\n');
-			Assert::AreEqual(static_cast<size_t>(7), linelist.size());
+			Assert::AreEqual(static_cast<unsigned int>(7), linelist.size());
 		}
 	};
 }

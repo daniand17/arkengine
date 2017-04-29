@@ -1,7 +1,7 @@
 #include "RendererContext.h"
 #include "ArkDebug.h"
 
-RendererContext * RendererContext::smInstance = NULL;
+RendererContext * RendererContext::sm_instance = NULL;
 
 using namespace ArkRendering;
 using namespace std;
@@ -17,6 +17,7 @@ RendererContext::RendererContext()
 }
 
 
+
 RendererContext::~RendererContext()
 {
 	delete m_lock;
@@ -24,53 +25,49 @@ RendererContext::~RendererContext()
 }
 
 
+
 void RendererContext::getUsedMaterials(std::set<ArkString> & out) const
 {
 	out.clear();
 	SCOPE_LOCKER lock(m_lock, "Get used materials");
-	for ( vector<AllocatedModel>::const_iterator iter = m_models.begin() ; iter < m_models.end() ; iter++ )
+	for ( ModelList::const_iterator citer = m_models.begin() ; citer != m_models.end() ; citer++ )
 	{
-		if ( out.find(iter->material->m_name) == out.end() ) 
-			out.insert(iter->material->m_name);
+		AllocatedModel * model = *citer;
+		if ( out.find(model->material->m_name) == out.end() )
+			out.insert(model->material->getShaderName());
 	}
 }
 
 
-void RendererContext::getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel> & out)
+
+void RendererContext::getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel *> & out)
 {
 	SCOPE_LOCKER lock(m_lock, "Get used models with material");
-	for ( size_t i = 0 ; i < m_models.size() ; i++ )
+	for ( ModelList::const_iterator citer = m_models.begin() ; citer != m_models.end() ; citer++ )
 	{
-		if ( m_models[i].material->m_name == material )
-			out.push_back(m_models[i]);
+		if ( (*citer)->material->m_name == material )
+			out.push_back(*citer);
 	}
 }
 
 
-bool RendererContext::materialAlreadyInContext(ArkRendering::MaterialInfo * material) const
+
+RendererContext::AllocatedModel * RendererContext::getModelForPopulate()
 {
-	ArkString matName = material->m_name;
+	m_isDirty = true;
+	AllocatedModel * newModel;
+	if ( m_freeModels.size() == 0 )
+	{
+		newModel = new AllocatedModel();
+	}
+	else
+	{
+		newModel = m_freeModels.front();
+		m_freeModels.pop_front();
+	}
 
-	for ( size_t i = 0 ; i < m_usedMaterials.size() ; i++ )
-		if ( matName == m_usedMaterials[i].m_name )
-			return true;
-		
-	return false;
-}
-
-
-void RendererContext::addMaterial(ArkRendering::MaterialInfo const * materialInfo)
-{
-	m_usedMaterials.push_back(*materialInfo);
-}
-
-
-void RendererContext::addModelToContext(AllocatedModel model)
-{
-	AllocatedModel newModel;
-	newModel.material = model.material;
-	newModel.mesh = model.mesh;
-	m_models.push_back(model);
+	m_models.push_back(newModel);
+	return newModel;
 }
 
 

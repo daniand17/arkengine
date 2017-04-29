@@ -52,7 +52,7 @@ void MaterialFactory::deserializeResources()
 	if ( fileContents.length() > 0 )
 	{
 		ArkStringList materialList = fileContents.split(',');
-		for ( size_t i = 0 ; i < materialList.size() ; i++ )
+		for ( unsigned int i = 0 ; i < materialList.size() ; i++ )
 			createMaterialFromString(materialList.at(static_cast<unsigned>(i)));
 	}
 }

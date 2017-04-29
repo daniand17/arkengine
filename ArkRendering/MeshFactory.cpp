@@ -29,7 +29,7 @@ void MeshFactory::serializeResources()
 void MeshFactory::deserializeResources()
 {
 	std::vector<ArkFile> const * fileList = m_directory->getFileList();
-	for ( size_t i = 0 ; i < fileList->size() ; i++ )
+	for ( unsigned int i = 0 ; i < fileList->size() ; i++ )
 		LoadMesh(fileList->at(i).getFilename());
 }
 

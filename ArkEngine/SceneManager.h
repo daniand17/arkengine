@@ -6,7 +6,7 @@
 class Scene
 {
 public:
-	typedef std::vector<MeshRenderer *>::const_iterator SceneRendererIterator;
+	typedef std::vector<MeshRenderer *>::const_iterator MeshRendererIterator;
 	Scene() : m_sceneChanged(false) {}
 	void instantiateGameObject(GameObject const * gameObject);
 	void destroyGameObject(GameObject * gameObject);
@@ -17,8 +17,9 @@ public:
 	bool getSceneChanged() const { return m_sceneChanged; }
 	void setSceneChanged(bool set) { m_sceneChanged = set; }
 
-	size_t getNumRenderers() const { return m_renderers.size(); }
+	unsigned int getNumRenderers() const { return m_renderers.size(); }
 	std::vector<MeshRenderer *>::const_iterator getRendererIterator() const { return m_renderers.begin(); }
+	std::vector<MeshRenderer *>::const_iterator getEnd() const { return m_renderers.end(); }
 
 private:
 	std::vector<GameObject *> m_gameObjects;

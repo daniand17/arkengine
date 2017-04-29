@@ -28,6 +28,7 @@ public:
 
 	ArkString toString() const override { return ArkString("Rigidbody"); }
 	void copyFrom(Component const * component) override;
+	ArkString getJson() const override;
 
 private:
 	Vec3 unresolvedForce;

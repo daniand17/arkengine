@@ -64,7 +64,7 @@ public:
 		, mNormalBuffer(BufferTypes::ArrayBuffer)
 		, mUVBuffer(BufferTypes::ArrayBuffer) {}
 
-	size_t Size() const { return mVertexBuffer.Size(); }
+	unsigned int Size() const { return mVertexBuffer.Size(); }
 	bool IsDirty() const { return mIsDirty; }
 	
 	void BindBuffersForDrawing() const

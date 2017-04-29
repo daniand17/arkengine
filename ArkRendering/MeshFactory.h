@@ -13,7 +13,7 @@ public:
 
 	virtual void serializeResources() override;
 	virtual void deserializeResources() override;
-	virtual size_t size() const override { return m_loadedMeshes.size(); }
+	virtual unsigned int size() const override { return m_loadedMeshes.size(); }
 	virtual ArkRendering::MeshInfo * getResourceByName(ArkString name) override;
 	virtual void clear() override;
 

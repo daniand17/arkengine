@@ -50,3 +50,8 @@ void Rigidbody::copyFrom(Component const * component)
 	rotation = rb->rotation;
 }
 
+ArkString Rigidbody::getJson() const
+{
+	return ArkString();
+}
+

@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include <set>
 
+
 SceneToRendererSynchronizer::SceneToRendererSynchronizer()
 {
 	ArkEngineCore * core = ArkEngineCore::Instance();
@@ -18,38 +19,35 @@ SceneToRendererSynchronizer::SceneToRendererSynchronizer()
 	ARK_ASSERT(m_rendererContext != NULL, "No renderer context");
 }
 
+
 void SceneToRendererSynchronizer::onNotify(SystemNotifications::ServiceTypes notifiedBy)
 {
 	SCOPE_LOCKER(m_rendererContext->getLock(), "Synchronization to renderer");
 	doSynchronizationToRenderer();
 }
 
+
 void SceneToRendererSynchronizer::doSynchronizationToRenderer()
 {
 	Scene * currentScene = ArkEngineCore::Instance()->getSceneManager()->getCurrentScene();
-	size_t siz = currentScene->getNumRenderers();
+	unsigned int siz = currentScene->getNumRenderers();
 
-	Scene::SceneRendererIterator iter = currentScene->getRendererIterator();
+	Scene::MeshRendererIterator iter = currentScene->getRendererIterator();
 
-	bool addedModelsToRendererContext = false;
-
-	for ( size_t i = 0 ; i < siz; i++, iter++ )
+	while ( iter != currentScene->getEnd() )
 	{
-		ArkRendering::MaterialInfo  * mat = (*iter)->getMaterial();
-		if ( !m_rendererContext->materialAlreadyInContext(mat) )
+		MeshRenderer * renderer = (*iter);
+		if ( !renderer->isSynchronized() )
 		{
-			m_rendererContext->addMaterial(mat);
-			addedModelsToRendererContext = true;
+			ArkRendering::MaterialInfo * mat = renderer->getMaterial();
+
+			RendererContext::AllocatedModel * model = m_rendererContext->getModelForPopulate();
+			model->material = mat;
+			model->mesh = renderer->getMesh();
+			model->modelMatrix = renderer->getTransform()->getModelMatrix();
+
+			renderer->setSynchronized(true);
+			iter++;
 		}
-
-		RendererContext::AllocatedModel model;
-		model.material = mat;
-		model.mesh = (*iter)->getMesh();
-
-		m_rendererContext->addModelToContext(model);
-		addedModelsToRendererContext = true;
 	}
-
-
-
 }

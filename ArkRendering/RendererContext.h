@@ -1,4 +1,5 @@
 #include <vector>
+#include <list>
 #include <mutex>
 #include <set>
 #include "ArkRendering.h"
@@ -10,37 +11,39 @@ class RendererContext
 public:
 	struct AllocatedModel
 	{
+		bool isFree;
 		ArkRendering::MeshInfo * mesh;
 		ArkRendering::MaterialInfo * material;
+		Mat4 modelMatrix;
+
+		AllocatedModel() : isFree(true), mesh(NULL), material(NULL) {}
 	};
 
-	static void Initialize() { smInstance = new RendererContext();}
-	static RendererContext * Instance() { return smInstance; }
+	static void Initialize() { sm_instance = new RendererContext();}
+	static RendererContext * Instance() { return sm_instance; }
 
 	RendererContext();
 	~RendererContext();
 
-	ArkRendering::ModelInfo * GetNextModelInfoForPopulate();
-	size_t GetNumModels() const { return m_models.size(); }
+	unsigned int GetNumModels() const { return m_models.size(); }
 	void getUsedMaterials(std::set<ArkString> &out) const;
-	void getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel> & out);
+	void getModelsUsingMaterial(ArkString material, std::vector<AllocatedModel *> & out);
 
 	bool IsDirty() const { return m_isDirty; }
 	void setIsDirty() { m_isDirty = true; }
 	void SetModelsUpdated() { m_isDirty = false; }
 	ArkThreading::ArkMutex * getLock() const { return m_lock; }
 
-	bool materialAlreadyInContext(ArkRendering::MaterialInfo * material) const;
-	void addMaterial(ArkRendering::MaterialInfo const * materialInfo);
-
-	void addModelToContext(AllocatedModel model);
+	AllocatedModel * getModelForPopulate();
 
 private:
-	std::vector<AllocatedModel> m_models;
-	std::vector<ArkRendering::MaterialInfo> m_usedMaterials;
+	typedef std::list<AllocatedModel *> ModelList;
+
+	std::list<AllocatedModel *> m_models;
+	std::list<AllocatedModel *> m_freeModels;
 
 	ArkThreading::ArkMutex * m_lock;
-	static RendererContext * smInstance;
+	static RendererContext * sm_instance;
 
 	void clearUnusedMaterials();
 

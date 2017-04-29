@@ -20,3 +20,8 @@ void MeshRenderer::copyFrom(Component const * component)
 	m_material = other->m_material;
 	m_doShadows = other->m_doShadows;
 }
+
+ArkString MeshRenderer::getJson() const
+{
+	return ArkString();
+}

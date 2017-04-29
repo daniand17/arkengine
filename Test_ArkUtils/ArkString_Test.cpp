@@ -51,13 +51,13 @@ namespace Test_ArkUtils
 			ArkString hello = "Hello world!";
 			ArkStringList strList = hello.split(' ');
 			// TODO THis is not enough coverage
-			Assert::AreEqual(static_cast<size_t>(2), strList.size());
+			Assert::AreEqual(static_cast<unsigned int>(2), strList.size());
 			Assert::AreEqual(ArkString("Hello").toStdString(), strList.at(0).toStdString());
 			Assert::AreEqual(ArkString("world!").toStdString(), strList.at(1).toStdString());
 
 			ArkString longerString = "Hello world and some other things! Things! Things!";
 			ArkStringList longerStrList = longerString.split(' ');
-			Assert::AreEqual(static_cast<size_t>(8), longerStrList.size());
+			Assert::AreEqual(static_cast<unsigned int>(8), longerStrList.size());
 			Assert::AreEqual(std::string("Hello"), longerStrList.at(0).toStdString());
 			Assert::AreEqual(std::string("world"), longerStrList.at(1).toStdString());
 			Assert::AreEqual(std::string("and"), longerStrList.at(2).toStdString());
@@ -74,7 +74,7 @@ namespace Test_ArkUtils
 			ArkStringList split = hello.split(' ');
 			ArkString result = split.join(" ");
 
-			Assert::AreEqual(static_cast<size_t>(6), split.size());
+			Assert::AreEqual(static_cast<unsigned int>(6), split.size());
 			Assert::AreEqual(hello.toStdString(), result.toStdString());
 		}
 
@@ -91,6 +91,16 @@ namespace Test_ArkUtils
 			ArkString dandy("Pandy");
 
 			Assert::IsTrue(andy < dandy);
+		}
+
+		TEST_METHOD(ArkString_Substring)
+		{
+			ArkString handy("AndyPandy");
+
+			Assert::AreEqual(ArkString("Andy").toStdString(), handy.substring(0, 4).toStdString());
+			Assert::AreEqual(ArkString("Pandy").toStdString(), handy.substring(4, handy.length()).toStdString());
+
+			Assert::AreEqual(ArkString("dyP").toStdString(), handy.substring(2, 5).toStdString());
 		}
 
 	};

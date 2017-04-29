@@ -7,7 +7,7 @@
 #include "Renderer.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-#define SIZE_T(exp) static_cast<size_t>(exp)
+#define SIZE_T(exp) static_cast<unsigned int>(exp)
 namespace Test_ArkEngine
 {
 	TEST_CLASS(GameObject_Test)

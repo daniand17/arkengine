@@ -12,7 +12,7 @@ public:
 
 	void serializeResources() override;
 	void deserializeResources() override;
-	virtual size_t size() const override { return m_loadedModels.size(); }
+	virtual unsigned int size() const override { return m_loadedModels.size(); }
 	virtual void clear() override;
 	virtual ArkRendering::ModelInfo * getResourceByName(ArkString name) override;
 

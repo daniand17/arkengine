@@ -85,7 +85,7 @@ void ResourceManager::bindMaterialsToShaders()
 	std::vector<ArkRendering::MaterialInfo *> mats;
 	m_materialFactory->getAllMaterials(mats);
 
-	for ( size_t i = 0 ; i < mats.size() ; i++ )
+	for ( unsigned int i = 0 ; i < mats.size() ; i++ )
 	{
 		MaterialInfo * matInfo = mats.at(i);
 		ShaderProgram * shader = m_shaderFactory->getResourceByName(matInfo->getShaderName());

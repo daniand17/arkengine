@@ -2,7 +2,7 @@
 
 bool operator == (ArkString const & lhs, ArkString const & rhs)
 {
-	size_t len = lhs.length();
+	unsigned int len = lhs.length();
 
 	if ( len != rhs.length() )
 		return false;
@@ -43,32 +43,32 @@ std::ostream & operator<<(std::ostream & outStream, ArkString const & theString)
 
 char const * ArkString::c_str() const
 {
-	return 	mString.c_str();
+	return 	m_string.c_str();
 }
 
 
 ArkStringList ArkString::split(char delim) const
 {
 	ArkStringList list;
-	if ( mString.length() == 0 )
+	if ( m_string.length() == 0 )
 		return list;
 
-	size_t i = 0;
-	size_t pos = mString.find(delim);
+	unsigned int i = 0;
+	unsigned int pos = m_string.find(delim);
 
-	size_t siz = mString.length();
+	unsigned int siz = m_string.length();
 	while ( pos < siz )
 	{
-		list.push_back(ArkString(mString.substr(i, pos - i)));
+		list.push_back(ArkString(m_string.substr(i, pos - i)));
 		i = ++pos;
-		pos = mString.find(delim, pos);
+		pos = m_string.find(delim, pos);
 
 		if ( pos >= siz )
-			list.push_back(mString.substr(i, siz));
+			list.push_back(m_string.substr(i, siz));
 	}
 
 	if ( list.size() == 0 )
-		list.push_back(mString);
+		list.push_back(m_string);
 	return list;
 }
 
@@ -76,7 +76,7 @@ ArkStringList ArkString::split(char delim) const
 ArkString ArkStringList::join(ArkString delim) const
 {
 	ArkString joinedString;
-	size_t siz = m_stringList.size();
+	unsigned int siz = m_stringList.size();
 	for ( unsigned i = 0 ; i < siz; i++ )
 	{
 		joinedString += m_stringList[i];

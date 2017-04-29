@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "ArkEngineCore.h"
 
+
 void SceneManager::openSceneByName(ArkString sceneName)
 {
 	Scene * scene = new Scene();
@@ -15,15 +16,21 @@ void SceneManager::openSceneByName(ArkString sceneName)
 	m_currentScene = scene;
 }
 
+
+
 void SceneManager::closeCurrentOpenScene()
 {
 }
+
+
 
 SceneManager::SceneManager()
 	:m_currentScene(NULL)
 	, m_sceneDirectory(NULL)
 {
 }
+
+
 
 void Scene::instantiateGameObject(GameObject const * gameObject)
 {
@@ -51,13 +58,19 @@ void Scene::instantiateGameObject(GameObject const * gameObject)
 	}
 }
 
+
+
 void Scene::destroyGameObject(GameObject * gameObject)
 {
 }
 
+
+
 void Scene::deserializeScene(ArkFile * file)
 {
 }
+
+
 
 void Scene::serializeScene(ArkFile * file)
 {

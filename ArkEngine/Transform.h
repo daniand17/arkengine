@@ -15,6 +15,7 @@ public:
 
 	void copyFrom(Component const * component) override;
 	ArkString toString() const { return ArkString("(Transform) ") + m_position.ToString(); }
+	ArkString getJson() const override;
 
 private:
 	Vec3 m_position;

@@ -16,7 +16,7 @@ public:
 	void destroy(GameObject * object) const;
 	Transform * getTransform() const { return m_transform; }
 
-	size_t numComponents() const { return m_components.size(); }
+	unsigned int numComponents() const { return m_components.size(); }
 
 	template <typename T> void addComponent();
 	template <typename T> T * getComponent();

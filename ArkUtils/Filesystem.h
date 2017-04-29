@@ -39,7 +39,7 @@ public:
 	ArkString getAbsolutePath() const;
 	ArkString getRelativePath() const { return m_path; }
 
-	size_t getFileCount() const { return m_filelist.size(); }
+	unsigned int getFileCount() const { return m_filelist.size(); }
 
 private:
 	void populateFileList();

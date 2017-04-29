@@ -80,7 +80,7 @@ void OpenGLRenderer::Run()
 		nbFrames++;
 		if ( currentTime - lastTime >= 1.0 )
 		{
-			printf("%f ms/frame\n", 1000.0 / double(nbFrames));
+			//printf("%f ms/frame\n", 1000.0 / double(nbFrames));
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
@@ -155,8 +155,9 @@ void OpenGLRenderer::updateBufferSets()
 
 	for ( std::set<ArkString>::const_iterator resIdIter = usedMaterials.begin() ; resIdIter != usedMaterials.end() ; resIdIter++ )
 	{
-		std::vector<RendererContext::AllocatedModel> modelInfoList;
+		std::vector<RendererContext::AllocatedModel *> modelInfoList;
 		MaterialInfo * material = materialFactory->getResourceByName(*resIdIter);
+		if ( !material ) return;
 		renderContext->getModelsUsingMaterial(material->m_name, modelInfoList);
 
 		auto pos = mBufferSetMap.find(material->m_name);
@@ -173,12 +174,12 @@ void OpenGLRenderer::updateBufferSets()
 		std::vector<Vec3> newVertBuffer;
 		std::vector<Vec3> newNormalBuffer;
 		std::vector<Vec2> newUvBuffer;
-		size_t vertCount = 0;
-		size_t normalCount = 0;
-		size_t uvCount = 0;
-		for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+		unsigned int vertCount = 0;
+		unsigned int normalCount = 0;
+		unsigned int uvCount = 0;
+		for ( unsigned int i = 0 ; i < modelInfoList.size() ; i++ )
 		{
-			MeshInfo * meshInfo = modelInfoList[i].mesh;
+			MeshInfo * meshInfo = modelInfoList[i]->mesh;
 			if ( meshInfo )
 			{
 				vertCount += meshInfo->vertices.size();
@@ -192,14 +193,14 @@ void OpenGLRenderer::updateBufferSets()
 			newVertBuffer.reserve(vertCount);
 			newNormalBuffer.reserve(normalCount);
 			newUvBuffer.reserve(uvCount);
-			for ( size_t i = 0 ; i < modelInfoList.size() ; i++ )
+			for ( unsigned int i = 0 ; i < modelInfoList.size() ; i++ )
 			{
-				MeshInfo * meshInfo = modelInfoList[i].mesh;
+				MeshInfo * meshInfo = modelInfoList[i]->mesh;
 				newVertBuffer.insert(newVertBuffer.end(), meshInfo->vertices.begin(), meshInfo->vertices.end());
 				newNormalBuffer.insert(newNormalBuffer.end(), meshInfo->normals.begin(), meshInfo->normals.end());
 				newUvBuffer.insert(newUvBuffer.end(), meshInfo->uvs.begin(), meshInfo->uvs.end());
 			}
-			
+
 			currBufferSet->GetVertexBuffer()->SetBufferData(newVertBuffer);
 			currBufferSet->GetNormalBuffer()->SetBufferData(newNormalBuffer);
 			currBufferSet->GetUVBuffer()->SetBufferData(newUvBuffer);

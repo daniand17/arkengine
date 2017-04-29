@@ -50,7 +50,7 @@ void GameObject::copyFrom(GameObject const * gameObject)
 
 	std::vector<Rigidbody *> rigidbodies = gameObject->getComponents<Rigidbody>();
 
-	for ( size_t i = 0 ; i < rigidbodies.size() ; i++ )
+	for ( unsigned int i = 0 ; i < rigidbodies.size() ; i++ )
 	{
 		Rigidbody * rb = new Rigidbody(this);
 		rb->copyFrom(rigidbodies[i]);
@@ -59,7 +59,7 @@ void GameObject::copyFrom(GameObject const * gameObject)
 
 	std::vector<MeshRenderer *> meshRenderers = gameObject->getComponents<MeshRenderer>();
 
-	for ( size_t i = 0 ; i < meshRenderers.size() ; i++ )
+	for ( unsigned int i = 0 ; i < meshRenderers.size() ; i++ )
 	{
 		MeshRenderer * renderer = new MeshRenderer(this);
 		renderer->copyFrom(meshRenderers[i]);

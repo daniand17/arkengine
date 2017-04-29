@@ -7,7 +7,7 @@
 #include "ArkString.h"
 #include "Mat4.h"
 
-typedef size_t Resource_Id;
+typedef unsigned int Resource_Id;
 
 namespace ArkRendering
 {

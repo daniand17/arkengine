@@ -15,3 +15,8 @@ void Transform::copyFrom(Component const * component)
 	m_position = trans->m_position;
 	m_rotation = trans->m_rotation;
 }
+
+ArkString Transform::getJson() const
+{
+	return ArkString();
+}

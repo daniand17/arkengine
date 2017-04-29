@@ -6,7 +6,7 @@
 #include "SystemNotifications.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-#define SIZE_T(exp) static_cast<size_t>(exp)
+#define SIZE_T(exp) static_cast<unsigned int>(exp)
 namespace Test_ArkUtils
 {
 	class MockSubscriber : public NotificationSubscriber
@@ -23,7 +23,7 @@ namespace Test_ArkUtils
 		TEST_METHOD(SystemNotifierBus_Creation)
 		{
 			SystemNotificationBus bus;
-			for ( size_t i = 0 ; i < SystemNotifications::ServiceTypes::Num_Services ; i++ )
+			for ( unsigned int i = 0 ; i < SystemNotifications::ServiceTypes::Num_Services ; i++ )
 				Assert::AreEqual(SIZE_T(0), bus.numSubscribers(static_cast<SystemNotifications::ServiceTypes>(i)));
 		}
 

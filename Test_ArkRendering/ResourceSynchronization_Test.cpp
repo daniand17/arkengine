@@ -57,7 +57,7 @@ namespace Test_ArkRendering
 
 			ArkFile * file = dir.getFileByFilename("materials.meta");
 			ArkStringList materialContents = file->getFileContents().split(',');
-			Assert::AreEqual(static_cast<size_t>(2), materialContents.size());
+			Assert::AreEqual(static_cast<unsigned int>(2), materialContents.size());
 
 			// TODO More code coverage needed here
 		}
@@ -68,7 +68,7 @@ namespace Test_ArkRendering
 			ArkDirectory dir(MATERIAL_DIR);
 
 			Assert::IsTrue(dir.exists());
-			Assert::AreEqual(static_cast<size_t>(1), dir.getFileCount());
+			Assert::AreEqual(static_cast<unsigned int>(1), dir.getFileCount());
 			resources.setDirectory(&dir);
 			resources.deserializeResources();
 
@@ -108,7 +108,7 @@ namespace Test_ArkRendering
 			fac.setDirectory(&dir);
 			fac.deserializeResources();
 
-			Assert::AreEqual(static_cast<size_t>(4), fac.size());
+			Assert::AreEqual(static_cast<unsigned int>(4), fac.size());
 		}
 	};
 

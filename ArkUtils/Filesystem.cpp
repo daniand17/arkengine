@@ -68,7 +68,7 @@ bool ArkDirectory::exists() const
 
 bool ArkDirectory::fileExists(ArkString filename) const
 {
-	for ( size_t i = 0 ; i < m_filelist.size() ; i++ )
+	for ( unsigned int i = 0 ; i < m_filelist.size() ; i++ )
 		if ( m_filelist[i].getFilename() == filename )
 			return true;
 
@@ -91,7 +91,7 @@ void ArkDirectory::deleteDirectory() const
 
 ArkFile * ArkDirectory::getFileByFilename(ArkString filename)
 {
-	for ( size_t i = 0 ; i < m_filelist.size() ; i++ )
+	for ( unsigned int i = 0 ; i < m_filelist.size() ; i++ )
 		if ( m_filelist[i].getFilename() == filename )
 			return &m_filelist[i];
 

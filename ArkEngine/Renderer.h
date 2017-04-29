@@ -14,9 +14,13 @@ public:
 
 	virtual ArkString toString() const override { return ArkString("Renderer"); }
 
+	bool isSynchronized() const { return m_synchronized; }
+	void setSynchronized(bool set) { m_synchronized = set; }
+
 protected:
 	ArkRendering::MaterialInfo * m_material;
 	bool m_doShadows;
+	bool m_synchronized;
 };
 
 
@@ -31,6 +35,7 @@ public:
 	ArkString toString() const override { return ArkString("MeshRenderer"); }
 
 	void copyFrom(Component const * component) override;
+	ArkString getJson() const override;
 
 private:
 	ArkRendering::MeshInfo * m_mesh;
