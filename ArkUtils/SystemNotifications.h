@@ -32,7 +32,7 @@ class NotificationSubscriber
 {
 public:
 	NotificationSubscriber();
-	void subscribeToEvent(NotificationEvent::EventType eventType) const;
+	void subscribeToEvent(NotificationEvent::EventType eventType);
 	virtual void onNotify(NotificationEvent const * type) = 0;
 };
 

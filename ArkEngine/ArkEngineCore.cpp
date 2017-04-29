@@ -68,6 +68,7 @@ void ArkEngineCore::startThreads()
 
 void ArkEngineCore::runMainLoop()
 {
+	eventSystem->fireEvent(NotificationEvent::System_Startup);
 	m_renderer->run();
 }
 

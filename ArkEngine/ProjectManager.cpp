@@ -127,10 +127,7 @@ void ArkProject::setResourcesDirectories()
 	rm->GetShaderFactory()->setResourcePath(getResourceDirectory(ResourceType::Shader));
 	rm->GetMeshFactory()->setResourcePath(getResourceDirectory(ResourceType::Mesh));
 	rm->GetModelFactory()->setResourcePath(getResourceDirectory(ResourceType::Model));
-
-	ArkEngineCore * engine = ArkEngineCore::Instance();
-	if ( engine )
-		engine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
+	arkEngine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
 }
 
 

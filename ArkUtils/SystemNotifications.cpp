@@ -49,9 +49,10 @@ void SystemNotificationBus::fireEvent(NotificationEvent::EventType notifyType)
 {
 	if ( notifyType > NotificationEvent::EventType::UndefinedService && notifyType < NotificationEvent::EventType::Num_Services )
 	{
+		NotificationEvent * notificationEvent = new NotificationEvent(notifyType);
+
 		for ( SubscriberList::iterator iter = m_subscribers[notifyType].begin() ; iter != m_subscribers[notifyType].end() ; iter++ )
 		{
-			NotificationEvent * notificationEvent = new NotificationEvent(notifyType);
 			(*iter)->onNotify(notificationEvent);
 			delete notificationEvent;
 		}
@@ -66,6 +67,7 @@ NotificationSubscriber::NotificationSubscriber()
 
 
 
-void NotificationSubscriber::subscribeToEvent(NotificationEvent::EventType eventType) const
+void NotificationSubscriber::subscribeToEvent(NotificationEvent::EventType eventType)
 {
+	eventSystem->subscribeToEvent(this, eventType);
 }
