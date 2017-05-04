@@ -2,7 +2,9 @@
 #include "ArkDebug.h"
 #include "SceneManager.h"
 #include "ArkEngineCore.h"
-#include "SceneToRendererSynchronizer.h"
+#include "StandardLocations.h"
+#include "ArkConstants.h"
+
 
 ProjectManager::ProjectManager()
 	: m_lock(NULL)
@@ -68,80 +70,26 @@ void ProjectManager::onNotify(NotificationEvent const * type)
 ArkProject::ArkProject(ArkString name)
 	: m_projectName(name)
 {
-	ArkDirectory dir(name);
-	bool existedBefore = dir.exists();
-	if ( !existedBefore )
-	{
-		dir.mkdir();
-	}
 
-	for ( unsigned i = 0 ; i < ResourceType::Num_Types ; i++ )
-	{
-		ArkString dirPath = getProjectDirectory() + getResourceFolderName(static_cast<ResourceType>(i));
-		m_resourceDirectories.push_back(dirPath);
-		if ( !existedBefore )
-		{
-			ArkDirectory dir(m_resourceDirectories.at(i));
-			dir.mkdir();
-		}
-	}
+}
+
+
+
+void ArkProject::closeProject()
+{
+	eventSystem->fireEvent(NotificationEvent::System_ProjectClosed, m_projectName);
 }
 
 
 
 void ArkProject::openProject()
 {
-	setResourcesDirectories();
-	deserializeProject();
-}
-
-
-
-ArkString ArkProject::getResourceDirectory(ResourceType type) const
-{
-	return m_resourceDirectories.at(type);
-}
-
-
-
-void ArkProject::serializeProject() const
-{
-	arkEngine->getResourceManager()->serializeResources();
-}
-
-
-
-void ArkProject::deserializeProject()
-{
-	arkEngine->getResourceManager()->deserializeResources();
-	eventSystem->fireEvent(NotificationEvent::System_ProjectLoaded);
-}
-
-
-
-void ArkProject::setResourcesDirectories()
-{
-	ResourceManager * rm = arkEngine->getResourceManager();
-	rm->setProjectDirectory(getProjectDirectory());
-	rm->GetMaterialFactory()->setResourcePath(getResourceDirectory(ResourceType::Material));
-	rm->GetShaderFactory()->setResourcePath(getResourceDirectory(ResourceType::Shader));
-	rm->GetMeshFactory()->setResourcePath(getResourceDirectory(ResourceType::Mesh));
-	rm->GetModelFactory()->setResourcePath(getResourceDirectory(ResourceType::Model));
-	arkEngine->getSceneManager()->setSceneDirectory(getResourceDirectory(ResourceType::Scene));
-}
-
-
-
-ArkString ArkProject::getResourceFolderName(ResourceType type) const
-{
-	switch ( type )
+	ArkString rootPath = StandardLocations::writeableLocation(StandardLocations::AppDataLocation);
+	ArkString path(rootPath + "/" + APP_NAME + "/" + "Projects/" + m_projectName);
+	ArkDirectory dir(path);
+	if ( !dir.exists() )
 	{
-	case Mesh:		return "meshes/";
-	case Material:	return "materials/";
-	case Model:		return "models/";
-	case Shader:	return "shaders/";
-	case Meta:		return "meta/";
-	case Scene:		return "scenes/";
-	default:		return "meta/";
+		dir.mkPath();
 	}
+	eventSystem->fireEvent(NotificationEvent::System_ProjectOpened, m_projectName);
 }

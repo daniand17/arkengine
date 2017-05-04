@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include "ArkString.h"
 
 class NotificationEvent
 {
@@ -14,16 +15,19 @@ public:
 
 		System_Startup,
 		System_Shutdown,
-		System_ProjectLoaded,
+		System_ProjectClosed,
+		System_ProjectOpened,
 
 		Num_Services
 	};
 
 	NotificationEvent(EventType type) : m_type(type) {}
 	EventType getType() const { return m_type; }
+	void addInfo(ArkString info) { m_infoList.push_back(info); }
 
 private:
 	EventType m_type;
+	ArkStringList m_infoList;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -55,7 +59,7 @@ public:
 			? m_subscribers[service].size()
 			: 0;
 	}
-	void fireEvent(NotificationEvent::EventType serviceType);
+	void fireEvent(NotificationEvent::EventType serviceType, ArkString info = "");
 
 private:
 	typedef std::list<NotificationSubscriber *> SubscriberList;

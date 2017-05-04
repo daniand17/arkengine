@@ -21,6 +21,7 @@ bool operator!=(ArkString const & lhs, ArkString const & rhs)
 }
 
 
+
 ArkString operator+(ArkString const & lhs, ArkString const & rhs)
 {
 	ArkString l(lhs);
@@ -28,10 +29,13 @@ ArkString operator+(ArkString const & lhs, ArkString const & rhs)
 	return l;
 }
 
+
+
 bool operator<(ArkString const & lhs, ArkString const & rhs)
 {
 	return lhs.toStdString() < rhs.toStdString();
 }
+
 
 
 std::ostream & operator<<(std::ostream & outStream, ArkString const & theString)
@@ -41,10 +45,12 @@ std::ostream & operator<<(std::ostream & outStream, ArkString const & theString)
 }
 
 
+
 char const * ArkString::c_str() const
 {
 	return 	m_string.c_str();
 }
+
 
 
 ArkStringList ArkString::split(char delim) const
@@ -73,6 +79,7 @@ ArkStringList ArkString::split(char delim) const
 }
 
 
+
 ArkString ArkStringList::join(ArkString delim) const
 {
 	ArkString joinedString;
@@ -85,6 +92,7 @@ ArkString ArkStringList::join(ArkString delim) const
 	}
 	return joinedString;
 }
+
 
 
 ArkString ArkStringList::pop_back()

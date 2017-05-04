@@ -13,7 +13,6 @@ ArkEngineCore::ArkEngineCore()
 	: m_window(NULL)
 	, m_systemThread(NULL)
 	, m_sceneManager(NULL)
-	, m_sceneToRendererSynchronizer(NULL)
 	, m_resourceManager(NULL)
 	, m_rendererContext(NULL)
 	, m_projectManager(NULL)
@@ -53,7 +52,6 @@ void ArkEngineCore::initMemory()
 	m_resourceManager = new ResourceManager();
 	m_rendererContext = new RendererContext();
 	m_projectManager = new ProjectManager();
-	m_sceneToRendererSynchronizer = new SceneToRendererSynchronizer(m_rendererContext);
 }
 
 
@@ -69,7 +67,26 @@ void ArkEngineCore::startThreads()
 void ArkEngineCore::runMainLoop()
 {
 	eventSystem->fireEvent(NotificationEvent::System_Startup);
-	m_renderer->run();
+
+
+
+	while ( 1 )
+	{
+		// do physics
+
+		eventSystem->fireEvent(NotificationEvent::Tick_FixedUpdate);
+
+
+
+		// do other updates 
+
+		eventSystem->fireEvent(NotificationEvent::Tick_Update);
+
+		m_renderer->renderScene();
+	}
+	
+	
+	eventSystem->fireEvent(NotificationEvent::System_Shutdown);
 }
 
 
@@ -84,7 +101,6 @@ void ArkEngineCore::stopThreads()
 
 void ArkEngineCore::deinitMemory()
 {
-	delete m_sceneToRendererSynchronizer;
 	delete m_sceneManager;
 	delete m_renderer;
 	delete m_systemThread;

@@ -20,10 +20,13 @@ private:
 	ArkString m_path;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 class ArkDirectory
 {
 
 public:
+	ArkDirectory();
 	ArkDirectory(ArkString path);
 
 	std::vector<ArkFile> const * getFileList() const { return &m_filelist; }
@@ -31,7 +34,8 @@ public:
 	bool fileExists(ArkString filename) const;
 	
 	void mkdir() const;
-	void deleteDirectory() const;
+	void rmdir() const;
+	void mkPath() const;
 	
 	ArkFile * getFileByFilename(ArkString filename);
 	ArkFile * createFile(ArkString name, ArkString extension);
@@ -46,4 +50,7 @@ private:
 	std::vector<ArkFile> m_filelist;
 
 	ArkString m_path;
+
+	bool exists(ArkString path) const;
+	void mkdir(ArkString dir) const;
 };

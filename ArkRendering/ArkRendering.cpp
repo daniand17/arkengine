@@ -2,7 +2,7 @@
 #include "ShaderLoader.h"
 #include "ImageLoader.h"
 #include "ArkAssert.h"
-ArkRendering::Texture::Texture(ArkString filename)
+ArkRendering::TextureInfo::TextureInfo(ArkString filename)
 	: mTextureId(0)
 {
 	mTextureId = loadBMP_custom(filename.c_str());

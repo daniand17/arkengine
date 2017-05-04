@@ -45,28 +45,16 @@
     <ClInclude Include="BufferData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractResourceFactory.h">
+    <ClInclude Include="RendererContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RendererContext.h">
+    <ClInclude Include="SharedResourceCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,25 +83,16 @@
     <ClCompile Include="ArkRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MeshFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\ArkUtils\ArkDebug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderFactory.cpp">
+    <ClCompile Include="RendererContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererContext.cpp">
+    <ClCompile Include="SharedResourceCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

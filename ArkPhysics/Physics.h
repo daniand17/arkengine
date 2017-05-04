@@ -16,19 +16,24 @@ namespace Physics
 
 	struct RigidbodyInfo
 	{
-		RigidbodyInfo() 
+		RigidbodyInfo()
 			: position(Vec3::zero())
 			, velocity(Vec3::zero())
 			, mass(1.0f)
 			, drag(1.0f)
 			, angularDrag(1.0f)
-			, gravityScale(1.0f) {}
+			, gravityScale(1.0f)
+		{
+		}
+		
 		Vec3 position;
 		Vec3 velocity;
+		Vec3 angularVelocity;
 		Quaternion rotation;
 		float mass;
 		float drag;
 		float angularDrag;
 		float gravityScale;
+
 	};
 };

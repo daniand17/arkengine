@@ -37,7 +37,7 @@ namespace Test_ArkUtils
 
 			Assert::AreEqual(static_cast<unsigned int>(0), fileList->size());
 
-			dir.deleteDirectory();
+			dir.rmdir();
 		}
 
 		TEST_METHOD(ArkDirectory_ShouldDeleteDirectory)
@@ -49,7 +49,7 @@ namespace Test_ArkUtils
 
 			Assert::IsTrue(dir.exists());
 
-			dir.deleteDirectory();
+			dir.rmdir();
 			Assert::IsFalse(dir.exists());
 		}
 

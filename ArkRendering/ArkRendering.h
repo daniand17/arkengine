@@ -7,7 +7,7 @@
 #include "ArkString.h"
 #include "Mat4.h"
 
-typedef unsigned int Resource_Id;
+typedef unsigned int ResourceId;
 
 namespace ArkRendering
 {
@@ -15,19 +15,17 @@ namespace ArkRendering
 	{
 		Mat4 projectionMatrix;
 		Mat4 viewMatrix;
-	};
-
-
-	enum LightType
-	{
-		Point,
-		Directional,
-		Spot
+		Vec3 position;
 	};
 
 	struct LightInfo
 	{
-		Resource_Id id;
+		enum LightType
+		{
+			Point,
+			Directional,
+			Spot
+		};
 
 		Vec3 eyePosition;
 		Vec3 color;
@@ -40,11 +38,11 @@ namespace ArkRendering
 		GLuint colId;
 	};
 
-	class Texture
+	class TextureInfo
 	{
 	public:
-		Texture(ArkString filename);
-		~Texture() { glDeleteTextures(1, &mTextureId); }
+		TextureInfo(ArkString filename);
+		~TextureInfo() { glDeleteTextures(1, &mTextureId); }
 
 	private:
 		GLuint mTextureId;
@@ -53,7 +51,9 @@ namespace ArkRendering
 	struct Resource
 	{
 		ArkString m_name;
+		ResourceId m_id;
 		virtual ArkString serialize() const = 0;
+		virtual void deserialize() const = 0;
 	};
 
 	////////////////////////////////////////
@@ -63,7 +63,7 @@ namespace ArkRendering
 	public:
 		ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader);
 		~ShaderProgram() {} // TODO (AD) probably not a great place for this 
-		void setTexture(Texture * texture) { m_texture = texture; }
+		void setTexture(TextureInfo * texture) { m_texture = texture; }
 		GLuint getId() const { return m_programId; }
 		GLuint getTextureId() const { return m_programId; }
 		int numAttributes() const { return m_numAttributes; }
@@ -87,7 +87,7 @@ namespace ArkRendering
 		GLuint m_programId;
 		int m_numAttributes;
 		int m_numUniforms;
-		Texture * m_texture;
+		TextureInfo * m_texture;
 	};
 
 	////////////////////////////////////////

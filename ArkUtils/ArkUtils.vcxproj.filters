@@ -48,6 +48,12 @@
     <ClInclude Include="JsonUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StandardLocations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp">
@@ -60,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SystemNotifications.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardLocations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

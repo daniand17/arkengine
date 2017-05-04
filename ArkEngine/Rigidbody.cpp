@@ -1,17 +1,17 @@
 #include "Rigidbody.h"
+#include "ArkEngineCore.h"
 
+using namespace Physics;
 
 Rigidbody::Rigidbody(GameObject * gameObject)
 	: Component(gameObject)
-	, mass(1.0f)
-	, drag(1.0f)
-	, angularDrag(1.0f)
-	, gravityScale(1.0f)
-	, velocity(Vec3::zero())
-	, angularVelocity(Vec3::zero())
-	, unresolvedForce(Vec3::zero())
+	, m_unresolvedForce(Vec3::zero())
 {
+	// TODO (AD) This needs to register with something somehow
+	m_rigidbodyInfo = new RigidbodyInfo();
 }
+
+
 
 void Rigidbody::addForce(Vec3 force, Physics::ForceType forceType)
 {
@@ -27,27 +27,33 @@ void Rigidbody::addForce(Vec3 force, Physics::ForceType forceType)
 		break;
 	}
 
-	unresolvedForce += force;// TODO not quite right
+	m_unresolvedForce += force;// TODO not quite right
 }
+
+
 
 void Rigidbody::addTorque(Vec3 torque, Physics::ForceType forceType)
 {
-	// TODO Rigidbody::addTorque method stub
+	// TODO Rigidbody::addTorque stub
 }
+
+
 
 void Rigidbody::copyFrom(Component const * component)
 {
 	Rigidbody const * rb = dynamic_cast<Rigidbody const *>(component);
 	
-	mass = rb->mass;
-	drag = rb->drag;
-	angularDrag = rb->angularDrag;
-	gravityScale = rb->gravityScale;
+	RigidbodyInfo * rbInfo = rb->m_rigidbodyInfo;
 
-	velocity = rb->velocity;
-	unresolvedForce = rb->unresolvedForce;
-	angularVelocity = rb->angularVelocity;
-	rotation = rb->rotation;
+	m_rigidbodyInfo->angularVelocity	= rbInfo->angularVelocity;
+	m_rigidbodyInfo->gravityScale		= rbInfo->gravityScale;
+	m_rigidbodyInfo->angularDrag		= rbInfo->angularDrag;
+	m_rigidbodyInfo->velocity			= rbInfo->velocity;
+	m_rigidbodyInfo->rotation			= rbInfo->rotation;
+	m_rigidbodyInfo->mass				= rbInfo->mass;
+	m_rigidbodyInfo->drag				= rbInfo->drag;
+
+	m_unresolvedForce = rb->m_unresolvedForce;
 }
 
 ArkString Rigidbody::getJson() const

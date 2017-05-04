@@ -1,38 +1,35 @@
 #include "ResourceManager.h"
 #include "ArkDebug.h"
 #include "ArkAssert.h"
+#include "StandardLocations.h"
 
 using namespace ArkThreading;
-using namespace ArkRendering;
 
 ResourceManager::ResourceManager()
-	: m_modelFactory(NULL)
-	, m_materialFactory(NULL)
-	, m_meshFactory(NULL)
-	, m_lock(NULL)
+	: m_lock(NULL)
+	, m_materialCollection(NULL)
+	, m_shaderCollection(NULL)
+	, m_meshCollection(NULL)
+	, m_modelCollection(NULL)
 {
-	m_lock = new ArkMutex();
+	subscribeToEvent(NotificationEvent::System_ProjectOpened);
+	subscribeToEvent(NotificationEvent::System_ProjectClosed);
 
-	m_meshFactory = new MeshFactory();
-	m_materialFactory = new MaterialFactory();
-	m_modelFactory = new ModelFactory();
-	m_shaderFactory = new ShaderFactory();
-
-	Debug::Log("Initialized Resource Manager");
+	m_materialCollection = new SharedResourceCollection();
+	m_shaderCollection = new SharedResourceCollection();
+	m_meshCollection = new SharedResourceCollection();
+	m_modelCollection = new SharedResourceCollection();
 }
+
+
 
 ResourceManager::~ResourceManager()
 {
 	delete m_lock;
-	delete m_meshFactory;
-	delete m_materialFactory;
-	delete m_modelFactory;
-	delete m_shaderFactory;
-
-	m_meshFactory = 0;
-	m_materialFactory = 0;
-	m_modelFactory = 0;
-	m_shaderFactory = 0;
+	delete m_materialCollection;
+	delete m_shaderCollection;
+	delete m_meshCollection;
+	delete m_modelCollection;
 }
 
 
@@ -40,50 +37,57 @@ ResourceManager::~ResourceManager()
 void ResourceManager::deserializeResources()
 {
 	SCOPE_LOCKER lock(getLock(), "Deserialize ResourceManager");
-	m_shaderFactory->clear();
-	m_materialFactory->clear();
-	m_meshFactory->clear();
-	m_modelFactory->clear();
-
-	m_shaderFactory->deserializeResources();
-	m_materialFactory->deserializeResources();
-	m_meshFactory->deserializeResources();
-	m_modelFactory->deserializeResources();
-
-	bindMaterialsToShaders();
+	m_materialCollection->deserializeResources();
+	m_shaderCollection->deserializeResources();
+	m_meshCollection->deserializeResources();
+	m_modelCollection->deserializeResources();
 }
+
+
+
+void ResourceManager::onNotify(NotificationEvent const * notificationEvent)
+{
+	switch ( notificationEvent->getType() )
+	{
+	case NotificationEvent::EventType::System_ProjectOpened:
+		m_materialCollection->setResourcePath(getResourceDirectory(ResourceType::Material));
+		m_shaderCollection->setResourcePath(getResourceDirectory(ResourceType::Shader));
+		m_meshCollection->setResourcePath(getResourceDirectory(ResourceType::Mesh));
+		m_modelCollection->setResourcePath(getResourceDirectory(ResourceType::Model));
+		break;
+	}
+}
+
+
 
 void ResourceManager::serializeResources()
 {
 	SCOPE_LOCKER lock(getLock(), "Serialize ResourceManager");
-	m_modelFactory->serializeResources();
-	m_meshFactory->serializeResources();
-	m_materialFactory->serializeResources();
-	m_shaderFactory->serializeResources();
+	m_materialCollection->serializeResources();
+	m_shaderCollection->serializeResources();
+	m_meshCollection->serializeResources();
+	m_modelCollection->serializeResources();
 }
 
-ArkRendering::Resource * ResourceManager::GetResourceByNameAndType(ArkString name, ResourceType type) const
+
+
+ArkString ResourceManager::getResourceFolderName(ResourceType type) const
 {
 	switch ( type )
 	{
-	case Mesh: return m_meshFactory->getResourceByName(name);
-	case Model: return m_modelFactory->getResourceByName(name);
-	case Material: return m_materialFactory->getResourceByName(name);
+	case Mesh:		return "meshes/";
+	case Material:	return "materials/";
+	case Model:		return "models/";
+	case Shader:	return "shaders/";
+	case Meta:		return "meta/";
+	case Scene:		return "scenes/";
+	default:		return "meta/";
 	}
-	return NULL;
 }
 
-void ResourceManager::bindMaterialsToShaders()
+
+
+ArkString ResourceManager::getResourceDirectory(ResourceType resourceType) const
 {
-	m_shaderFactory->compileShaders();
-
-	std::vector<ArkRendering::MaterialInfo *> mats;
-	m_materialFactory->getAllMaterials(mats);
-
-	for ( unsigned int i = 0 ; i < mats.size() ; i++ )
-	{
-		MaterialInfo * matInfo = mats.at(i);
-		ShaderProgram * shader = m_shaderFactory->getResourceByName(matInfo->getShaderName());
-		matInfo->setShaderProgram(shader);
-	}
+	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/Projects/" + getResourceFolderName(resourceType);
 }

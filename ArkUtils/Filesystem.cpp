@@ -13,6 +13,7 @@ ArkFile::ArkFile(ArkString directory, ArkString name)
 }
 
 
+
 ArkString ArkFile::getFileContents() const
 {
 	Filestream filestream(m_path + m_filename);
@@ -27,6 +28,7 @@ ArkString ArkFile::getFileContents() const
 }
 
 
+
 ArkString ArkFile::getExtension() const
 {
 	ArkStringList list = m_filename.split('.');
@@ -35,6 +37,7 @@ ArkString ArkFile::getExtension() const
 		return list.at(list.size() - 1);
 	return ArkString("");
 }
+
 
 
 void ArkFile::writeToFile(ArkString contents)
@@ -51,6 +54,13 @@ void ArkFile::writeToFile(ArkString contents)
 }
 
 
+
+ArkDirectory::ArkDirectory()
+{
+}
+
+
+
 ArkDirectory::ArkDirectory(ArkString path)
 	: m_path(path)
 {
@@ -59,11 +69,28 @@ ArkDirectory::ArkDirectory(ArkString path)
 }
 
 
+
 bool ArkDirectory::exists() const
 {
-	DWORD dwAttrib = GetFileAttributes(m_path.c_str());
+	return exists(m_path);
+}
+
+
+
+bool ArkDirectory::exists(ArkString path) const
+{
+	DWORD dwAttrib = GetFileAttributes(path.c_str());
 	return dwAttrib != INVALID_FILE_ATTRIBUTES && dwAttrib & FILE_ATTRIBUTE_DIRECTORY;
 }
+
+void ArkDirectory::mkdir(ArkString dir) const
+{
+	if ( !exists(dir) )
+	{
+		CreateDirectory(dir.c_str(), NULL);
+	}
+}
+
 
 
 bool ArkDirectory::fileExists(ArkString filename) const
@@ -76,18 +103,54 @@ bool ArkDirectory::fileExists(ArkString filename) const
 }
 
 
+
 void ArkDirectory::mkdir() const
 {
 	if ( exists() || m_path.length() == 0 ) return;
-	CreateDirectory(m_path.c_str(), NULL);
+	mkdir(m_path);
 }
 
 
-void ArkDirectory::deleteDirectory() const
+
+void ArkDirectory::rmdir() const
 {
 	if ( exists() )
+	{
 		RemoveDirectory(m_path.c_str());
+	}
 }
+
+
+
+void ArkDirectory::mkPath() const
+{
+	ArkStringList strList = m_path.split('\\');
+	
+	ArkStringList totalPath;
+
+	for ( int i = 0 ; i < strList.size() ; i++ )
+	{
+		ArkStringList l = strList.at(i).split('/');
+
+		for ( int k = 0 ; k < l.size() ; k++ )
+		{
+			totalPath.push_back(l.at(k));
+		}
+	}
+	
+	
+	ArkString currPath("");
+	for ( int i = 0 ; i < totalPath.size() ; i++ )
+	{
+		currPath += totalPath.at(i) + "\\";
+		if ( !exists(currPath) )
+		{
+			mkdir(currPath);
+		}
+	}
+}
+
+
 
 ArkFile * ArkDirectory::getFileByFilename(ArkString filename)
 {
@@ -97,6 +160,7 @@ ArkFile * ArkDirectory::getFileByFilename(ArkString filename)
 
 	return NULL;
 }
+
 
 
 ArkString ArkDirectory::getAbsolutePath() const
@@ -109,6 +173,7 @@ ArkString ArkDirectory::getAbsolutePath() const
 		p += "\\";
 	return p;
 }
+
 
 
 void ArkDirectory::populateFileList()
@@ -136,6 +201,7 @@ void ArkDirectory::populateFileList()
 	}
 	while ( FindNextFile(handle, &findFileData) );
 }
+
 
 
 ArkFile * ArkDirectory::createFile(ArkString name, ArkString extension)

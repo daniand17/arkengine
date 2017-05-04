@@ -8,19 +8,7 @@
 class Rigidbody : public Component
 {
 public:
-	Vec3 position;
-	Vec3 velocity;
-	Vec3 angularVelocity;
-	Quaternion rotation;
-
-	float mass;
-	float drag;
-	float angularDrag;
-	float gravityScale;
-
 	Rigidbody(GameObject * gameObject);
-
-	~Rigidbody() { position = Vec3::zero(); velocity = Vec3::zero(); angularVelocity = Vec3::zero(); }
 
 	// Physics
 	void addForce(Vec3 force, Physics::ForceType forceType = Physics::ForceType::Force);
@@ -31,5 +19,6 @@ public:
 	ArkString getJson() const override;
 
 private:
-	Vec3 unresolvedForce;
+	Vec3 m_unresolvedForce;
+	Physics::RigidbodyInfo * m_rigidbodyInfo;
 };

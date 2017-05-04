@@ -181,6 +181,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArkAssert.h" />
+    <ClInclude Include="ArkConstants.h" />
     <ClInclude Include="ArkDebug.h" />
     <ClInclude Include="Filesystem.h" />
     <ClInclude Include="ArkGlobals.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ArkThread.h" />
     <ClInclude Include="Filestream.h" />
     <ClInclude Include="JsonUtil.h" />
+    <ClInclude Include="StandardLocations.h" />
     <ClInclude Include="SystemNotifications.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
@@ -196,6 +198,7 @@
     <ClCompile Include="ArkString.cpp" />
     <ClCompile Include="Filesystem.cpp" />
     <ClCompile Include="Filestream.cpp" />
+    <ClCompile Include="StandardLocations.cpp" />
     <ClCompile Include="SystemNotifications.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -26,7 +26,7 @@ public:
 	void stop() { m_shouldRun = false; }
 	void shutdownRenderer();
 	void initializeRenderer();
-	void run();
+	void renderScene();
 	void setRenderContext(RendererContext * rendererContext) { m_rendererContext = rendererContext; }
 
 private:

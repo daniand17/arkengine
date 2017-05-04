@@ -45,11 +45,15 @@ void SystemNotificationBus::unsubscribeFromEvent(NotificationSubscriber * subscr
 
 
 
-void SystemNotificationBus::fireEvent(NotificationEvent::EventType notifyType)
+void SystemNotificationBus::fireEvent(NotificationEvent::EventType notifyType, ArkString info)
 {
 	if ( notifyType > NotificationEvent::EventType::UndefinedService && notifyType < NotificationEvent::EventType::Num_Services )
 	{
 		NotificationEvent * notificationEvent = new NotificationEvent(notifyType);
+		if ( info.length() > 0 )
+		{
+			notificationEvent->addInfo(info);
+		}
 
 		for ( SubscriberList::iterator iter = m_subscribers[notifyType].begin() ; iter != m_subscribers[notifyType].end() ; iter++ )
 		{

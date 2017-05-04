@@ -7,9 +7,7 @@
 #include "ResourceManager.h"
 #include "SceneManager.h"
 #include "SystemNotifications.h"
-#include "SceneToRendererSynchronizer.h"
 
-class SceneToRendererSynchronizer;
 class ProjectManager;
 
 #define arkEngine ArkEngineCore::Instance()
@@ -54,7 +52,6 @@ private:
 	ArkThreading::ArkThread * m_systemThread;
 
 	SceneManager * m_sceneManager;
-	SceneToRendererSynchronizer * m_sceneToRendererSynchronizer;
 
 	ResourceManager * m_resourceManager;
 	RendererContext * m_rendererContext;

@@ -8,38 +8,17 @@
 class ArkProject
 {
 public:
-	enum ResourceType
-	{
-		Mesh,
-		Material,
-		Model,
-		Shader,
-		Meta,
-		Scene,
-		Num_Types
-
-	};
-
 	ArkProject(ArkString name);
 	void setProjectName(ArkString projectName) { m_projectName = projectName; }
 
-	void closeProject() { serializeProject(); }
+	void closeProject();
 	void openProject();
 
 	ArkString getProjectName() const { return m_projectName; }
 	ArkString getProjectDirectory() const { return m_projectName + "/"; }
-	ArkString getResourceDirectory(ResourceType type) const;
-
 
 private:
 	ArkString m_projectName;
-	void serializeProject() const;
-	void deserializeProject();
-
-	void setResourcesDirectories(); 
-
-	ArkString getResourceFolderName(ResourceType type) const;
-
 	std::vector<ArkString> m_resourceDirectories;
 };
 
