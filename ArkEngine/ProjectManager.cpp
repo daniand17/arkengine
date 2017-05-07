@@ -100,7 +100,7 @@ void ArkProject::openProject()
 	ArkDirectory dir(path);
 	if ( !dir.exists() )
 	{
-		dir.mkPath();
+		dir.mkpath();
 	}
 	eventSystem->fireEvent(NotificationEvent::System_ProjectOpened, m_projectName);
 }

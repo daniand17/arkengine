@@ -49,6 +49,7 @@ ArkDirectory::ArkDirectory(ArkString path)
 }
 
 
+
 bool ArkDirectory::exists() const
 {
 	return exists(m_path);
@@ -92,7 +93,7 @@ void ArkDirectory::rmdir() const
 
 
 
-void ArkDirectory::mkPath() const
+void ArkDirectory::mkpath() const
 {
 	ArkStringList strList = m_path.split('\\');
 

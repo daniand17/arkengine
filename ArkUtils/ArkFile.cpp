@@ -31,9 +31,11 @@ ArkString ArkFile::getFileContents() const
 void ArkFile::writeToFile(ArkString contents) const
 {
 	Filestream filestream(m_path);
-	filestream.openFile(Filestream::FileOpenType::Write);
-	filestream.writeToFile(contents);
-	filestream.closeFile();
+	if ( filestream.openFile(Filestream::FileOpenType::Write) )
+	{
+		filestream.writeToFile(contents);
+		filestream.closeFile();
+	}
 }
 
 

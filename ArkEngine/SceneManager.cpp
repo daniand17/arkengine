@@ -10,6 +10,11 @@ void SceneManager::openSceneByName(ArkString sceneName)
 
 	ArkDirectory dir(rootPath);
 	
+	if ( !dir.exists() )
+	{
+		dir.mkpath();
+	}
+
 	ArkString filename(rootPath + sceneName + ".scene");
 	ArkFile file(filename);
 
@@ -19,7 +24,7 @@ void SceneManager::openSceneByName(ArkString sceneName)
 	}
 	else
 	{
-		
+		file.mkfile();
 	}
 
 	if ( m_currentScene )

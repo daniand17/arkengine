@@ -16,10 +16,10 @@ Filestream::Filestream(ArkString filename, ArkString extension)
 
 
 
-int Filestream::openFile(FileOpenType type)
+bool Filestream::openFile(FileOpenType type)
 {
 	if ( type < 0 || type > FileOpenType::NumTypes )
-		return -1;
+		return false;
 
 	m_openType = type;
 	switch ( type )
@@ -38,13 +38,26 @@ int Filestream::openFile(FileOpenType type)
 	if ( m_filestream.is_open() )
 	{
 		if ( m_filestream.fail() )
+		{
 			throw FailBit;
+		}
 		else if ( m_filestream.bad() )
+		{
 			throw BadBit;
+		}
 		else if ( m_filestream.eof() )
+		{
 			throw Eof;
+		}
+		else
+		{
+			return true;
+		}
 	}
-	return GoodBit;
+	else
+	{
+		return false;
+	}
 }
 
 

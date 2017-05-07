@@ -16,7 +16,7 @@ public:
 	
 	void mkdir() const;
 	void rmdir() const;
-	void mkPath() const;
+	void mkpath() const;
 	
 	ArkString getAbsolutePath() const;
 	ArkString getRelativePath() const { return m_path; }

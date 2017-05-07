@@ -27,7 +27,7 @@ public:
 	Filestream(ArkString filepath);
 	Filestream(ArkString filename, ArkString extension);
 
-	int openFile(FileOpenType type);
+	bool openFile(FileOpenType type);
 	void closeFile();
 	bool isOpen() const { return m_filestream.is_open(); }
 
