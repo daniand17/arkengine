@@ -20,7 +20,7 @@ void SceneManager::openSceneByName(ArkString sceneName)
 
 	if ( file.exists() )
 	{
-		scene->deserialize();
+		scene->deserialize(filename);
 	}
 	else
 	{
@@ -39,7 +39,7 @@ void SceneManager::openSceneByName(ArkString sceneName)
 
 void SceneManager::closeCurrentOpenScene()
 {
-	m_currentScene->serialize();
+	m_currentScene->serialize(getPathToSceneFile(m_currentScene));
 	eventSystem->fireEvent(NotificationEvent::System_SceneClosed);
 }
 
@@ -50,9 +50,11 @@ void SceneManager::onNotify(NotificationEvent const * type)
 	openSceneByName("New Scene");	// TODO (AD) eventually open last scene open
 }
 
-ArkString SceneManager::getScenePath() const
+
+
+ArkString SceneManager::getPathToSceneFile(Scene const * scene) const
 {
-	return ArkString();
+	return arkEngine->getProjectManager()->getCurrentProject()->getProjectDirectory() + "scenes/" + scene->getName() + ".scene";
 }
 
 

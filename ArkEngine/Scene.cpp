@@ -21,13 +21,12 @@ void Scene::destroyGameObject(GameObject * gameObject)
 
 
 
-ArkString Scene::serialize() const
+void Scene::serialize(ArkString absFilepath) const
 {
-	return ArkString();
 }
 
 
 
-void Scene::deserialize() const
+void Scene::deserialize(ArkString absFilepath) const
 {
 }

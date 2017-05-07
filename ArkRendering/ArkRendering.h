@@ -54,6 +54,8 @@ namespace ArkRendering
 		ArkString m_mesh;
 		Mat4 modelMatrix;
 
-		ArkString serialize() const override;
+		// Inherited via Resource
+		virtual void serialize(ArkString absFilepath) const override;
+		virtual void deserialize(ArkString absFilepath) const override;
 	};
 }

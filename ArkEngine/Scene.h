@@ -20,8 +20,8 @@ public:
 	std::vector<Renderer *> getRenderers() const { return m_renderers; }
 
 	// Inherited via Resource
-	virtual ArkString serialize() const override;
-	virtual void deserialize() const override;
+	virtual void serialize(ArkString absFilepath) const override;
+	virtual void deserialize(ArkString absFilepath) const override;
 
 private:
 	std::vector<GameObject *> m_gameObjects;

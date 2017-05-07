@@ -18,11 +18,20 @@ void ArkRendering::LightInfo::getUniformLocationsFromShader(GLuint shaderProgram
 
 
 
-ArkString ArkRendering::ModelInfo::serialize() const
+void ArkRendering::ModelInfo::serialize(ArkString absFilepath) const
 {
 	ArkString syncString = "ModelInfo";
 	syncString += "\n\tname:" + m_name;
 	syncString += "\n\tmesh:" + m_mesh;
 	syncString += "\n\tmaterial:" + m_material;
-	return syncString;
+
+	// TODO (AD) Serialize Model Info to file
+
+}
+
+
+
+void ArkRendering::ModelInfo::deserialize(ArkString absFilepath) const
+{
+	// TODO (AD) Deserialize model info from file
 }

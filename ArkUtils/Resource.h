@@ -9,6 +9,10 @@ struct Resource
 {
 	ArkString m_name;
 	ResourceId m_id;
-	virtual ArkString serialize() const = 0;
-	virtual void deserialize() const = 0;
+
+	ArkString getName() const { return m_name; }
+	ResourceId getId() const { return m_id; }
+
+	virtual void serialize(ArkString absFilepath) const = 0;
+	virtual void deserialize(ArkString absFilepath) const = 0;
 };

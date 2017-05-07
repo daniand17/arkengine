@@ -15,8 +15,6 @@ public:
 	int numAttributes() const { return m_numAttributes; }
 	int numUniforms() const { return m_numUniforms; }
 
-	ArkString serialize() const override;
-
 	void setVertexShader(ArkString vertexShader) { m_vertexShader = vertexShader; }
 	void setFragmentShader(ArkString vertexShader) { m_fragmentShader = m_fragmentShader; }
 	void compileAndLoadShader();
@@ -27,6 +25,10 @@ public:
 	ArkString getVertexShaderName() const { return m_vertexShader.split('\\').getLast(); }
 	ArkString getFragmentShaderName() const { return m_fragmentShader.split('\\').getLast(); }
 
+	// Inherited via Resource
+	virtual void serialize(ArkString absFilepath) const override;
+	virtual void deserialize(ArkString absFilepath) const override;
+
 private:
 	ArkString m_vertexShader;
 	ArkString m_fragmentShader;
@@ -35,9 +37,5 @@ private:
 	int m_numUniforms;
 	TextureInfo * m_texture;
 
-
-
-	// Inherited via Resource
-	virtual void deserialize() const override;
 	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
 };

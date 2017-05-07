@@ -15,17 +15,6 @@ ShaderProgram::ShaderProgram(ArkString name, ArkString vertexShader, ArkString f
 
 
 
-ArkString ShaderProgram::serialize() const
-{
-	ArkString sync("ShaderProgram");
-	sync += "\n\tname:" + m_name;
-	sync += "\n\tvertexShader:" + getVertexShaderName();
-	sync += "\n\tfragmentShader:" + getFragmentShaderName();
-	return sync;
-}
-
-
-
 void ShaderProgram::compileAndLoadShader()
 {
 	m_programId = loadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
@@ -43,13 +32,8 @@ void ShaderProgram::unloadShader()
 }
 
 
-void ShaderProgram::deserialize() const
-{
-}
 
-
-
-GLuint ShaderProgram::loadShaders (const char * vertex_file_path, const char * fragment_file_path)
+GLuint ShaderProgram::loadShaders(const char * vertex_file_path, const char * fragment_file_path)
 {
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -143,4 +127,22 @@ GLuint ShaderProgram::loadShaders (const char * vertex_file_path, const char * f
 	glDeleteShader(FragmentShaderID);
 
 	return ProgramID;
+}
+
+
+
+void ShaderProgram::serialize(ArkString absFilepath) const
+{
+	ArkString sync("ShaderProgram");
+	sync += "\n\tname:" + m_name;
+	sync += "\n\tvertexShader:" + getVertexShaderName();
+	sync += "\n\tfragmentShader:" + getFragmentShaderName();
+	// TODO (AD) Serialize shader program to file.
+}
+
+
+
+void ShaderProgram::deserialize(ArkString absFilepath) const
+{
+	// TODO (AD) Deserialize ShaderProgram from file
 }

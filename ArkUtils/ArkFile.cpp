@@ -42,8 +42,8 @@ void ArkFile::writeToFile(ArkString contents) const
 
 bool ArkFile::exists() const
 {
-	DWORD dwAttrib = GetFileAttributes(m_path.c_str());
-	return dwAttrib != INVALID_FILE_ATTRIBUTES && dwAttrib & FILE_ATTRIBUTE_DIRECTORY;
+	return INVALID_FILE_ATTRIBUTES != GetFileAttributes(m_path.c_str())
+		&& GetLastError() != ERROR_FILE_NOT_FOUND;
 }
 
 

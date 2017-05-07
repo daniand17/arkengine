@@ -20,5 +20,5 @@ private:
 	// Inherited via NotificationSubscriber
 	virtual void onNotify(NotificationEvent const * type) override;
 
-	ArkString getScenePath() const;
+	ArkString getPathToSceneFile(Scene const * scene) const;
 };
