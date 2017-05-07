@@ -39,9 +39,6 @@
     <ClInclude Include="ArkAssert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Filesystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SystemNotifications.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,6 +51,18 @@
     <ClInclude Include="ArkConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedResourceCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkDirectory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp">
@@ -62,13 +71,19 @@
     <ClCompile Include="Filestream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Filesystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SystemNotifications.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StandardLocations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedResourceCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkDirectory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

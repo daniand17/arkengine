@@ -2,11 +2,10 @@
 
 #include <vector>
 #include "GameObject.h"
-#include "Filesystem.h"
+#include "ArkDirectory.h"
 #include "Renderer.h"
 
-
-class Scene
+class Scene : public Resource
 {
 public:
 	typedef std::vector<MeshRenderer *>::const_iterator MeshRendererIterator;
@@ -18,6 +17,11 @@ public:
 	void setSceneChanged(bool set) { m_sceneChanged = set; }
 
 	size_t getNumRenderers() const { return m_renderers.size(); }
+	std::vector<Renderer *> getRenderers() const { return m_renderers; }
+
+	// Inherited via Resource
+	virtual ArkString serialize() const override;
+	virtual void deserialize() const override;
 
 private:
 	std::vector<GameObject *> m_gameObjects;

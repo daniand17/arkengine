@@ -1,7 +1,7 @@
 #pragma once
 #include "ArkString.h"
-#include "Filesystem.h"
-#include "ArkRendering.h"
+#include "ArkDirectory.h"
+#include "Resource.h"
 
 #include <vector>
 
@@ -16,7 +16,7 @@ public:
 		return m_resources.size();
 	}
 
-	ArkRendering::Resource * getResource(ResourceId id);
+	Resource * getResource(ResourceId id);
 	void deserializeResources();
 	void serializeResources();
 
@@ -25,6 +25,6 @@ protected:
 
 
 private:
-	std::vector<ArkRendering::Resource *> m_resources;
+	std::vector<Resource *> m_resources;
 
 };

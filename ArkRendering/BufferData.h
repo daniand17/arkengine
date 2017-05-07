@@ -26,11 +26,15 @@ private:
 	GLsizei mSize;
 };
 
+
+
 template<typename T>
 inline BufferData<T>::~BufferData()
 {
 	glDeleteBuffers(1, &mBufferId);
 }
+
+
 
 template<typename T>
 inline void BufferData<T>::BindBufferForDrawing(unsigned int numInOrder) const
@@ -47,6 +51,8 @@ inline void BufferData<T>::BindBufferForDrawing(unsigned int numInOrder) const
 	);
 }
 
+
+
 template<typename T>
 inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 {
@@ -55,6 +61,8 @@ inline void BufferData<T>::SetBufferData(std::vector<T> & data)
 	mSize = static_cast<GLsizei>((sizeof(T)) * data.size());
 	glBufferData(bufType, mSize, &data[0], GL_STATIC_DRAW);
 }
+
+
 
 class BufferSet
 {

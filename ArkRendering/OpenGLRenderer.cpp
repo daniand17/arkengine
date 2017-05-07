@@ -5,9 +5,9 @@
 #include "ArkMath.h"
 #include "Camera.h"
 #include "ModelLoader.h"
-#include "RendererContext.h"
 #include "ArkDebug.h"
 #include "ResourceManager.h"
+#include "MaterialInfo.h"
 
 using namespace ArkRendering;
 using namespace ArkMath;
@@ -15,13 +15,6 @@ using namespace std;
 
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: m_arkWindow(windowHandle)
-{
-}
-
-
-
-OpenGLRenderer::OpenGLRenderer()
-	: m_shouldRun(true)
 {
 }
 
@@ -53,7 +46,7 @@ void OpenGLRenderer::initializeRenderer()
 
 
 
-void OpenGLRenderer::renderScene()
+void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 {
 	GLFWwindow * win = m_arkWindow->getOSWindowHandle();
 
@@ -81,36 +74,37 @@ void OpenGLRenderer::renderScene()
 		lastTime += 1.0;
 	}
 
-	// Render all the render states
-	for ( RenderState * renderState : mRenderStateList )
+	std::vector<MaterialInfo *> mats;
+
+	for ( std::vector<MaterialInfo *>::const_iterator mIt(mats.begin()) ; mIt != mats.end() ; mIt++ )
 	{
-		MaterialInfo const * material = renderState->getMaterial();
-		if ( material )
+		// Render all the render states
+		MaterialInfo const * material = *mIt;
+
+		std::vector<RenderPass *> renderPasses = material->getRenderPasses();
+		for ( std::vector<RenderPass *>::const_iterator rpIt(renderPasses.begin()) ; rpIt != renderPasses.end() ; rpIt++ )
 		{
-			material->useShaderProgram();
-			GLuint programId = material->getShaderProgram()->getId();
+			RenderPass * renderPass(*rpIt);
+			renderPass->useShaderProgramAndBindValues();
 
-			GLuint vId = glGetUniformLocation(programId, "V");
-			GLuint mId = glGetUniformLocation(programId, "M");
-			GLuint mvpId = glGetUniformLocation(programId, "MVP");
-			GLuint normId = glGetUniformLocation(programId, "N");
-
-			light.getUniformLocationsFromShader(programId);
-
+			//// Temporary camera stuff ////
 			rotY += 0.01f;
-
 			cam.setPosition(Vec3(5 * cos(rotY), 3, 5 * sin(rotY)));
-			cam.refreshCamera();	// TODO (AD) perhaps move this to an update loop outside the renderer
+			cam.refreshCamera();	
+			////////////////////////////////
 
 			Mat4 modelMat = Mat4::identity();
 			Mat4 viewMat = cam.getViewMatrix();
 			Mat4 normalMat = ((viewMat * modelMat).inverse()).transpose();
 			Mat4 mvpMat = cam.getCameraViewingMatrix() * modelMat;
 
-			glUniformMatrix4fv(mId, 1, GL_FALSE, &modelMat[0][0]);
-			glUniformMatrix4fv(vId, 1, GL_FALSE, &viewMat[0][0]);
-			glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvpMat[0][0]);
-			glUniformMatrix4fv(normId, 1, GL_FALSE, &normalMat[0][0]);
+			GLuint programId = renderPass->getShaderProgramId();
+			light.getUniformLocationsFromShader(programId);
+
+			glUniformMatrix4fv(glGetUniformLocation(programId, "M"), 1, GL_FALSE, &modelMat[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(programId, "V"), 1, GL_FALSE, &viewMat[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(programId, "MVP"), 1, GL_FALSE, &mvpMat[0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(programId, "N"), 1, GL_FALSE, &normalMat[0][0]);
 
 			// Converting the light to eye pos
 			Vec3 worldLightPos = light.eyePosition;
@@ -120,15 +114,18 @@ void OpenGLRenderer::renderScene()
 			light.bindLightToShader();
 
 			light.eyePosition = worldLightPos;
-			renderState->BindBuffersForDrawing();
-			glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(renderState->Size()));	// TODO failure here
-			renderState->DisableBuffers();
+			//renderState->BindBuffersForDrawing();
+			//glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(renderState->Size()));
+			//renderState->DisableBuffers();
 		}
+
 	}
+
 
 	glfwSwapBuffers(win);
 	glfwPollEvents();
-	m_shouldRun = glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
+
+	glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
 
 }
 

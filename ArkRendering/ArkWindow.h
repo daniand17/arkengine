@@ -1,6 +1,5 @@
 #pragma once
 #include "BuildOptions.h"
-
 #include "ArkString.h"
 #include "ArkSize.h"
 

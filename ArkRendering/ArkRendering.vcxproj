@@ -187,31 +187,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ArkUtils\BuildOptions.h" />
-    <ClInclude Include="SharedResourceCollection.h" />
     <ClInclude Include="ArkWindow.h" />
     <ClInclude Include="BufferData.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ImageLoader.h" />
+    <ClInclude Include="MaterialInfo.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OpenGLRenderer.h" />
     <ClInclude Include="ArkRendering.h" />
-    <ClInclude Include="RendererContext.h" />
-    <ClInclude Include="RenderState.h" />
+    <ClInclude Include="RendererInfo.h" />
+    <ClInclude Include="RenderPass.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="ShaderLoader.h" />
+    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="TextureInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ArkUtils\ArkDebug.cpp" />
     <ClCompile Include="ArkWindow.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="MaterialInfo.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="ArkRendering.cpp" />
     <ClCompile Include="OpenGLRenderer.cpp" />
-    <ClCompile Include="RendererContext.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="SharedResourceCollection.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TextureInfo.cpp" />
     <ClCompile Include="Window_glfw.cpp" />
     <ClCompile Include="Window_win32.cpp" />
   </ItemGroup>

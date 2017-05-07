@@ -16,7 +16,6 @@ public:
 		Meta,
 		Scene,
 		Num_Types
-
 	};
 
 	ResourceManager();

@@ -1,11 +1,55 @@
-#pragma once
-
+#include "ShaderProgram.h"
 #include <fstream>
-#include <vector>
-#include <string>
-#include <GL\glew.h>
 
-GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path)
+
+ShaderProgram::ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader)
+	: m_vertexShader(vertexShader)
+	, m_fragmentShader(fragmentShader)
+	, m_numAttributes(0)
+	, m_numUniforms(0)
+	, m_programId(0)
+	, m_texture(NULL)
+{
+	m_name = name;
+}
+
+
+
+ArkString ShaderProgram::serialize() const
+{
+	ArkString sync("ShaderProgram");
+	sync += "\n\tname:" + m_name;
+	sync += "\n\tvertexShader:" + getVertexShaderName();
+	sync += "\n\tfragmentShader:" + getFragmentShaderName();
+	return sync;
+}
+
+
+
+void ShaderProgram::compileAndLoadShader()
+{
+	m_programId = loadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
+	glGetProgramInterfaceiv(m_programId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &m_numAttributes);
+	glGetProgramInterfaceiv(m_programId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &m_numUniforms);
+	// TODO (AD) code to get more info about a shaders attrs http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+}
+
+
+
+void ShaderProgram::unloadShader()
+{
+	glDeleteProgram(m_programId);
+	delete m_texture;
+}
+
+
+void ShaderProgram::deserialize() const
+{
+}
+
+
+
+GLuint ShaderProgram::loadShaders (const char * vertex_file_path, const char * fragment_file_path)
 {
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);

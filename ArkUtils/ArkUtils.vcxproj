@@ -183,21 +183,26 @@
     <ClInclude Include="ArkAssert.h" />
     <ClInclude Include="ArkConstants.h" />
     <ClInclude Include="ArkDebug.h" />
-    <ClInclude Include="Filesystem.h" />
+    <ClInclude Include="ArkFile.h" />
+    <ClInclude Include="ArkDirectory.h" />
     <ClInclude Include="ArkGlobals.h" />
     <ClInclude Include="ArkSize.h" />
     <ClInclude Include="ArkString.h" />
     <ClInclude Include="ArkThread.h" />
     <ClInclude Include="Filestream.h" />
     <ClInclude Include="JsonUtil.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SharedResourceCollection.h" />
     <ClInclude Include="StandardLocations.h" />
     <ClInclude Include="SystemNotifications.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArkFile.cpp" />
     <ClCompile Include="ArkString.cpp" />
-    <ClCompile Include="Filesystem.cpp" />
+    <ClCompile Include="ArkDirectory.cpp" />
     <ClCompile Include="Filestream.cpp" />
+    <ClCompile Include="SharedResourceCollection.cpp" />
     <ClCompile Include="StandardLocations.cpp" />
     <ClCompile Include="SystemNotifications.cpp" />
   </ItemGroup>

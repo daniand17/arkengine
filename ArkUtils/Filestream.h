@@ -27,20 +27,20 @@ public:
 	Filestream(ArkString filepath);
 	Filestream(ArkString filename, ArkString extension);
 
-	int OpenFile(FileOpenType type);
-	void CloseFile();
-	bool IsOpen() const { return mFileStream.is_open(); }
+	int openFile(FileOpenType type);
+	void closeFile();
+	bool isOpen() const { return m_filestream.is_open(); }
 
-	void ReadAll(ArkString * outContents);
+	void readAll(ArkString * outContents);
 
-	void WriteStringToFile(ArkString * stringToWrite);
-	void WriteStringToFile(ArkString & stringToWrite);
+	void writeToFile(ArkString * stringToWrite);
+	void writeToFile(ArkString & stringToWrite);
 
 private:
 
-	FileOpenType mOpenType;
-	ArkString mPath;
+	FileOpenType m_openType;
+	ArkString m_path;
 
-	std::fstream mFileStream;
+	std::fstream m_filestream;
 
 };

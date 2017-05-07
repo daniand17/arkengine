@@ -10,13 +10,15 @@ public:
 		UndefinedService = -1,
 		Tick_Update,
 		Tick_FixedUpdate,
-		System_SceneChanged,
 		OnRenderContextChanged,
 
 		System_Startup,
 		System_Shutdown,
 		System_ProjectClosed,
 		System_ProjectOpened,
+
+		System_SceneOpened,
+		System_SceneClosed,
 
 		Num_Services
 	};
@@ -61,10 +63,15 @@ public:
 	}
 	void fireEvent(NotificationEvent::EventType serviceType, ArkString info = "");
 
+
 private:
 	typedef std::list<NotificationSubscriber *> SubscriberList;
 	SubscriberList m_subscribers[NotificationEvent::Num_Services];
-
 	static SystemNotificationBus * sm_instance;
+
+	std::list<NotificationEvent * > m_queuedEvents;
+
+
+	void executeEvent(NotificationEvent * notificationEvent);
 
 };

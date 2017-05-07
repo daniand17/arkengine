@@ -155,11 +155,11 @@ namespace Test_ArkRendering
 			fac.serializeResources();
 
 			Filestream file("shaderTest.shaders");
-			file.OpenFile(Filestream::FileOpenType::Read);
+			file.openFile(Filestream::FileOpenType::Read);
 
 			ArkString contents;
-			file.ReadAll(&contents);
-			file.CloseFile();
+			file.readAll(&contents);
+			file.closeFile();
 			ArkString expected("ShaderProgram");
 			expected += "\n\tid:" + ArkString::Number(0);
 			expected += "\n\tvertexShader:SimpleVertexShader.vert";

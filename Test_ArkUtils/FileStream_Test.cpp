@@ -21,7 +21,7 @@ namespace Test_ArkUtils
 			int result = 0;
 			try
 			{
-				result = filestream.OpenFile(Filestream::FileOpenType::Read);
+				result = filestream.openFile(Filestream::FileOpenType::Read);
 			}
 			catch ( std::exception & e )
 			{
@@ -30,7 +30,7 @@ namespace Test_ArkUtils
 
 			Assert::IsTrue(result == Filestream::FileReadResult::GoodBit);
 
-			filestream.CloseFile();
+			filestream.closeFile();
 		}
 
 		TEST_METHOD(ReadFile)
@@ -39,12 +39,12 @@ namespace Test_ArkUtils
 
 			try
 			{
-				filestream.OpenFile(Filestream::FileOpenType::Read);
+				filestream.openFile(Filestream::FileOpenType::Read);
 			}
 			catch ( std::exception & e ) { e.what(); }
 
 			ArkString contents;
-			filestream.ReadAll(&contents);
+			filestream.readAll(&contents);
 			Assert::AreEqual(ArkString("Hello World").toStdString(), contents.toStdString());
 		}
 
@@ -52,20 +52,20 @@ namespace Test_ArkUtils
 		{
 			Filestream stream("WriteToFileAndReadBackTest", "txt");
 
-			try { stream.OpenFile(Filestream::FileOpenType::Write); }
+			try { stream.openFile(Filestream::FileOpenType::Write); }
 			catch ( std::exception & e ) { e.what(); }
 
 			ArkString stuffToWrite("Goodbye cruel world!");
-			stream.WriteStringToFile(&stuffToWrite);
-			stream.CloseFile();
+			stream.writeToFile(&stuffToWrite);
+			stream.closeFile();
 
 			Filestream istream("WriteToFileAndReadBackTest", "txt");
-			try { istream.OpenFile(Filestream::FileOpenType::Read); }
+			try { istream.openFile(Filestream::FileOpenType::Read); }
 			catch ( std::exception & e ) { e.what(); }
 
 			ArkString stuffToRead;
-			istream.ReadAll(&stuffToRead);
-			istream.CloseFile();
+			istream.readAll(&stuffToRead);
+			istream.closeFile();
 			Assert::AreEqual(stuffToWrite.toStdString(), stuffToRead.toStdString());
 		}
 
@@ -73,21 +73,21 @@ namespace Test_ArkUtils
 		{
 			Filestream ofilestream("ManyLinesWriteAndRead", "txt");
 
-			try { ofilestream.OpenFile(Filestream::FileOpenType::Write); }
+			try { ofilestream.openFile(Filestream::FileOpenType::Write); }
 			catch ( std::exception & e ) { e.what(); }
 
 			ArkString stringtowrite("Hello world\nGoodbye world");
 
-			ofilestream.WriteStringToFile(stringtowrite);
-			ofilestream.CloseFile();
+			ofilestream.writeToFile(stringtowrite);
+			ofilestream.closeFile();
 
 			Filestream ifilestream("ManyLinesWriteAndRead", "txt");
-			try { ifilestream.OpenFile(Filestream::FileOpenType::Read); }
+			try { ifilestream.openFile(Filestream::FileOpenType::Read); }
 			catch ( std::exception & e ) { e.what(); }
 
 			ArkString result("");
-			ifilestream.ReadAll(&result);
-			ifilestream.CloseFile();
+			ifilestream.readAll(&result);
+			ifilestream.closeFile();
 
 			Assert::AreEqual(stringtowrite.toStdString(), result.toStdString());
 		}

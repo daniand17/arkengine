@@ -48,6 +48,18 @@ void ProjectManager::closeCurrentProject()
 	m_currentProject = NULL;
 }
 
+ArkString ProjectManager::getProjectRoot() const
+{
+	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/ArkEngine/Projects/" + m_currentProject->getProjectName() + "/";
+}
+
+
+
+ArkString ArkProject::getProjectRoot() const
+{
+	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/Projects/" + m_projectName + "/";
+}
+
 
 
 void ProjectManager::onNotify(NotificationEvent const * type)
@@ -62,7 +74,6 @@ void ProjectManager::onNotify(NotificationEvent const * type)
 		break;
 	default: break;
 	}
-
 }
 
 

@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 
 #include "Vec3.h"
@@ -5,11 +6,15 @@
 
 struct Mesh
 {
-public:
+	struct Vertex
+	{
+		Vec3 point;
+		Vec3 normal;
+		Vec2 uv;
+	};
+
+	std::vector<Vertex> m_vertices;
+
 	Mesh();
 
-private:
-	std::vector<Vec3> mVertices;
-	std::vector<Vec2> mUvs;
-	std::vector<Vec3> mNormals;
 };

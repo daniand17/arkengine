@@ -50,16 +50,40 @@ void SystemNotificationBus::fireEvent(NotificationEvent::EventType notifyType, A
 	if ( notifyType > NotificationEvent::EventType::UndefinedService && notifyType < NotificationEvent::EventType::Num_Services )
 	{
 		NotificationEvent * notificationEvent = new NotificationEvent(notifyType);
+
 		if ( info.length() > 0 )
 		{
 			notificationEvent->addInfo(info);
 		}
 
-		for ( SubscriberList::iterator iter = m_subscribers[notifyType].begin() ; iter != m_subscribers[notifyType].end() ; iter++ )
+		if ( m_queuedEvents.size() > 0 )
 		{
-			(*iter)->onNotify(notificationEvent);
-			delete notificationEvent;
+			m_queuedEvents.push_back(notificationEvent);
 		}
+		else
+		{
+			m_queuedEvents.push_back(notificationEvent);
+			while ( m_queuedEvents.size() > 0 )
+			{
+				NotificationEvent * ev = m_queuedEvents.front();
+				executeEvent(m_queuedEvents.front());
+				m_queuedEvents.pop_front();
+				delete ev;
+			}
+		}
+
+	}
+}
+
+
+
+void SystemNotificationBus::executeEvent(NotificationEvent * notificationEvent)
+{
+	std::list<NotificationSubscriber *> & sublist = m_subscribers[notificationEvent->getType()];
+
+	for ( SubscriberList::iterator iter = sublist.begin() ; iter != sublist.end() ; iter++ )
+	{
+		(*iter)->onNotify(notificationEvent);
 	}
 }
 

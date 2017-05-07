@@ -2,60 +2,68 @@
 #include "ArkDebug.h"
 
 Filestream::Filestream(ArkString filepath)
-	: mPath(filepath)
-	, mOpenType(FileOpenType::Read)
+	: m_path(filepath)
+	, m_openType(FileOpenType::Read)
 {
 }
+
+
 
 Filestream::Filestream(ArkString filename, ArkString extension)
 {
-	mPath = filename + "." + extension;
+	m_path = filename + "." + extension;
 }
 
-int Filestream::OpenFile(FileOpenType type)
+
+
+int Filestream::openFile(FileOpenType type)
 {
 	if ( type < 0 || type > FileOpenType::NumTypes )
 		return -1;
 
-	mOpenType = type;
+	m_openType = type;
 	switch ( type )
 	{
 	case FileOpenType::Read:
-		mFileStream.open(mPath.c_str(), std::ios::in);
+		m_filestream.open(m_path.c_str(), std::ios::in);
 		break;
 	case FileOpenType::Write:
-		mFileStream.open(mPath.c_str(), std::ios::out);
+		m_filestream.open(m_path.c_str(), std::ios::out);
 		break;
 	case FileOpenType::ReadWrite:
-		mFileStream.open(mPath.c_str(), std::ios::out | std::ios::out);
+		m_filestream.open(m_path.c_str(), std::ios::out | std::ios::out);
 		break;
 	}
 
-	if ( mFileStream.is_open() )
+	if ( m_filestream.is_open() )
 	{
-		if ( mFileStream.fail() )
+		if ( m_filestream.fail() )
 			throw FailBit;
-		else if ( mFileStream.bad() )
+		else if ( m_filestream.bad() )
 			throw BadBit;
-		else if ( mFileStream.eof() )
+		else if ( m_filestream.eof() )
 			throw Eof;
 	}
 	return GoodBit;
 }
 
-void Filestream::CloseFile()
+
+
+void Filestream::closeFile()
 {
-	if ( mFileStream.is_open() )
-		mFileStream.close();
+	if ( m_filestream.is_open() )
+		m_filestream.close();
 }
 
-void Filestream::ReadAll(ArkString * outContents)
+
+
+void Filestream::readAll(ArkString * outContents)
 {
-	if ( mOpenType == FileOpenType::ReadWrite || mOpenType == FileOpenType::Read )
+	if ( m_openType == FileOpenType::ReadWrite || m_openType == FileOpenType::Read )
 	{
 		std::string line;
 		bool previousLine = false;
-		while ( std::getline(mFileStream, line) )
+		while ( std::getline(m_filestream, line) )
 		{
 			if ( previousLine )
 				*outContents += "\n";
@@ -66,18 +74,22 @@ void Filestream::ReadAll(ArkString * outContents)
 	}
 }
 
-void Filestream::WriteStringToFile(ArkString * stringToWrite)
-{
-	_ASSERTE(mFileStream.is_open());
 
-	if ( mFileStream.is_open() )
-		mFileStream.write(stringToWrite->c_str(), stringToWrite->length());
+
+void Filestream::writeToFile(ArkString * stringToWrite)
+{
+	_ASSERTE(m_filestream.is_open());
+
+	if ( m_filestream.is_open() )
+		m_filestream.write(stringToWrite->c_str(), stringToWrite->length());
 }
 
-void Filestream::WriteStringToFile(ArkString & stringToWrite)
-{
-	_ASSERTE(mFileStream.is_open());
 
-	if ( mFileStream.is_open() )
-		mFileStream.write(stringToWrite.c_str(), stringToWrite.length());
+
+void Filestream::writeToFile(ArkString & stringToWrite)
+{
+	_ASSERTE(m_filestream.is_open());
+
+	if ( m_filestream.is_open() )
+		m_filestream.write(stringToWrite.c_str(), stringToWrite.length());
 }

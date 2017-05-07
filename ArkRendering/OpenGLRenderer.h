@@ -9,9 +9,9 @@
 #include "BufferData.h"
 #include "Vec2.h"
 #include "Vec3.h"
-#include "RenderState.h"
 #include "Camera.h"
-class RendererContext;
+#include "RendererInfo.h"
+
 
 #ifdef USE_OPENGL
 class OpenGLRenderer
@@ -21,26 +21,13 @@ public:
 	OpenGLRenderer(ArkWindow * windowHandle);
 	OpenGLRenderer::~OpenGLRenderer() { shutdownRenderer(); }
 
-	OpenGLRenderer();
-
-	void stop() { m_shouldRun = false; }
 	void shutdownRenderer();
 	void initializeRenderer();
-	void renderScene();
-	void setRenderContext(RendererContext * rendererContext) { m_rendererContext = rendererContext; }
+	void renderScene(std::vector<RendererInfo> & renderers);
 
 private:
 	ArkWindow *	m_arkWindow;
-	bool	m_shouldRun;
 	GLuint	mVertexArrayId;
-
-	std::vector<RenderState *> mRenderStateList;
-
-	typedef std::map<ArkString, BufferSet *> BufferCollection;
-	typedef std::pair<ArkString, BufferSet *> BufferMaterialNamePair;
-	BufferCollection mBufferSetMap;
-	RendererContext * m_rendererContext;
-
 
 private:
 	void clearScreen();
