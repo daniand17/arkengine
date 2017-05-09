@@ -2,20 +2,39 @@
 
 Resource * SharedResourceCollection::getResource(ResourceId id)
 {
-	for ( std::vector<Resource *>::const_iterator it(m_resources.begin()) ; it != m_resources.end() ; it++ )
+	for ( std::list<Resource *>::const_iterator it(m_resources.begin()) ; it != m_resources.end() ; it++ )
 	{
-		if ( (*it)->m_id == id )
+		if ( (*it)->getId() == id )
 		{
 			return (*it);
 		}
+
 	}
 	return NULL;
 }
 
+
+
 void SharedResourceCollection::deserializeResources()
 {
+	ArkDirectory dir(m_resourcePath);
+
+	if ( dir.exists() )
+	{
+		ArkStringList filelist = dir.getFileList();
+
+	}
 }
+
+
 
 void SharedResourceCollection::serializeResources()
 {
+	for ( std::list<Resource *>::const_iterator it(m_resources.begin()) ; it != m_resources.end() ; it++ )
+	{
+		Resource * resource(*it);
+
+		resource->serialize(m_resourcePath + resource->getName() + "." + resource->getResourceFileExtension());
+
+	}
 }

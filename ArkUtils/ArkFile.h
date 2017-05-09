@@ -6,7 +6,7 @@ class ArkFile
 {
 public:
 	ArkFile(ArkString path);
-	ArkString getFileContents() const;
+	ArkString readAll() const;
 	ArkString getPath() const { return m_path; }
 
 	void writeToFile(ArkString contents) const;

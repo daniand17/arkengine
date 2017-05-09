@@ -50,31 +50,17 @@ void Scene::serialize(ArkString absFilepath) const
 void Scene::deserialize(ArkString absFilepath) const
 {
 	std::vector<SerializableRelationship> sceneObjects;
+	ArkFile sceneFile(absFilepath);
+
+	ArkStringList sceneContents;
 
 	ArkStringList objectList;
-	getSceneObjectsForDeserialize(absFilepath, objectList);
 
-	if ( objectList.size() > 0 )
-	{
-		for ( size_t i = 0 ; i < objectList.size() ; i++ )
-		{
-			unsigned classId(0), fileId(0);
-			if ( YAML_Extractor::extractObjectHeader(objectList.at(i), classId, fileId) )
-			{
-
-			}
-		}
-	}
-}
-
-
-
-void Scene::getSceneObjectsForDeserialize(ArkString &absFilepath, ArkStringList &objectList) const
-{
-	ArkFile sceneFile(absFilepath);
 	if ( sceneFile.exists() )
 	{
-		ArkStringList sceneContents = sceneFile.readAll().split('\n');
+		ArkString scene = sceneFile.readAll();
+		sceneContents = scene.split('\n');
+
 		ArkString obj("");
 
 		for ( size_t i = 0 ; i < sceneContents.size() ; i++ )
@@ -95,6 +81,7 @@ void Scene::getSceneObjectsForDeserialize(ArkString &absFilepath, ArkStringList 
 		{
 			objectList.push_back(obj);
 		}
+
 	}
 }
 

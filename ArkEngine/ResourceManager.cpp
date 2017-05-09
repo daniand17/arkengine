@@ -2,6 +2,8 @@
 #include "ArkDebug.h"
 #include "ArkAssert.h"
 #include "StandardLocations.h"
+#include "ArkEngineCore.h"
+#include "ProjectManager.h"
 
 using namespace ArkThreading;
 
@@ -15,10 +17,13 @@ ResourceManager::ResourceManager()
 	subscribeToEvent(NotificationEvent::System_ProjectOpened);
 	subscribeToEvent(NotificationEvent::System_ProjectClosed);
 
+
+	m_lock = new ArkMutex();
 	m_materialCollection = new SharedResourceCollection();
 	m_shaderCollection = new SharedResourceCollection();
 	m_meshCollection = new SharedResourceCollection();
 	m_modelCollection = new SharedResourceCollection();
+
 }
 
 
@@ -47,13 +52,23 @@ void ResourceManager::deserializeResources()
 
 void ResourceManager::onNotify(NotificationEvent const * notificationEvent)
 {
+
+
 	switch ( notificationEvent->getType() )
 	{
 	case NotificationEvent::EventType::System_ProjectOpened:
-		m_materialCollection->setResourcePath(getResourceDirectory(ResourceType::Material));
-		m_shaderCollection->setResourcePath(getResourceDirectory(ResourceType::Shader));
-		m_meshCollection->setResourcePath(getResourceDirectory(ResourceType::Mesh));
-		m_modelCollection->setResourcePath(getResourceDirectory(ResourceType::Model));
+	{
+
+		m_materialCollection	->setResourcePath(getResourceDirectory(ResourceType::Material));
+		m_shaderCollection		->setResourcePath(getResourceDirectory(ResourceType::Shader));
+		m_meshCollection		->setResourcePath(getResourceDirectory(ResourceType::Mesh));
+		m_modelCollection		->setResourcePath(getResourceDirectory(ResourceType::Model));
+
+		deserializeResources();
+	}
+		break;
+	case NotificationEvent::System_ProjectClosed:
+		serializeResources();
 		break;
 	}
 }
@@ -89,5 +104,5 @@ ArkString ResourceManager::getResourceFolderName(ResourceType type) const
 
 ArkString ResourceManager::getResourceDirectory(ResourceType resourceType) const
 {
-	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/Projects/" + getResourceFolderName(resourceType);
+	return arkEngine->getProjectManager()->getProjectRoot() + getResourceFolderName(resourceType);
 }

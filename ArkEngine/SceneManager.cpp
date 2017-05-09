@@ -5,6 +5,7 @@
 void SceneManager::openSceneByName(ArkString sceneName)
 {
 	Scene * scene = new Scene();
+	scene->setName(sceneName);
 
 	ArkString rootPath(arkEngine->getProjectManager()->getProjectRoot() + "scenes/");
 
@@ -33,6 +34,14 @@ void SceneManager::openSceneByName(ArkString sceneName)
 	}
 
 	m_currentScene = scene;
+
+	GameObject * obj = new GameObject();
+	obj->addComponent<MeshRenderer>();
+	obj->addComponent<Rigidbody>();
+
+	scene->instantiateGameObject(obj);
+
+	closeCurrentOpenScene();
 }
 
 
@@ -54,7 +63,7 @@ void SceneManager::onNotify(NotificationEvent const * type)
 
 ArkString SceneManager::getPathToSceneFile(Scene const * scene) const
 {
-	return arkEngine->getProjectManager()->getCurrentProject()->getProjectDirectory() + "scenes/" + scene->getName() + ".scene";
+	return arkEngine->getProjectManager()->getProjectRoot() + "scenes/" + scene->getName() + ".scene";
 }
 
 

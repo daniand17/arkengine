@@ -55,13 +55,6 @@ ArkString ProjectManager::getProjectRoot() const
 
 
 
-ArkString ArkProject::getProjectRoot() const
-{
-	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/Projects/" + m_projectName + "/";
-}
-
-
-
 void ProjectManager::onNotify(NotificationEvent const * type)
 {
 	switch ( type->getType() )

@@ -196,6 +196,7 @@
     <ClInclude Include="StandardLocations.h" />
     <ClInclude Include="SystemNotifications.h" />
     <ClInclude Include="Time.h" />
+    <ClInclude Include="YAML_Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkFile.cpp" />

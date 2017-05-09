@@ -6,7 +6,6 @@
 #include "Camera.h"
 #include "ModelLoader.h"
 #include "ArkDebug.h"
-#include "ResourceManager.h"
 #include "MaterialInfo.h"
 
 using namespace ArkRendering;
@@ -81,8 +80,8 @@ void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 		// Render all the render states
 		MaterialInfo const * material = *mIt;
 
-		std::vector<RenderPass *> renderPasses = material->getRenderPasses();
-		for ( std::vector<RenderPass *>::const_iterator rpIt(renderPasses.begin()) ; rpIt != renderPasses.end() ; rpIt++ )
+		std::list<RenderPass *> renderPasses = material->getRenderPasses();
+		for ( std::list<RenderPass *>::const_iterator rpIt(renderPasses.begin()) ; rpIt != renderPasses.end() ; rpIt++ )
 		{
 			RenderPass * renderPass(*rpIt);
 			renderPass->useShaderProgramAndBindValues();

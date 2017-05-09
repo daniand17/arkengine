@@ -3,14 +3,21 @@
 #include "Transform.h"
 #include "Component.h"
 #include "SystemNotifications.h"
+#include "ISerializable.h"
+#include "Rigidbody.h"
+#include "Renderer.h"
+
 #include <list>
 #include <typeinfo>
 
-class GameObject : public NotificationSubscriber
+class GameObject : public NotificationSubscriber, public I_Serializable
 {
 public:
 	GameObject(GameObject const * gameObject = NULL);
 	~GameObject() {}
+
+	bool hasChildren() const { return m_components.size() > 0; }
+
 
 	void instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const;
 	void destroy(GameObject * object) const;
@@ -21,7 +28,7 @@ public:
 	template <typename T> void addComponent();
 	template <typename T> T * getComponent();
 	template <typename T> void removeComponent();
-	template <typename T> std::vector<T *> getComponents() const;
+	template <typename T> std::list<T *> getComponentsOfType() const;
 
 	void copyFrom(GameObject const * gameObject);
 
@@ -34,6 +41,13 @@ public:
 		}
 	}
 
+	std::list<GameObject *> getChildren() const { return m_children; }
+	std::list<Component *> getAllComponents() const { return m_components; }
+
+	// Inherited via I_Serializable
+	virtual ArkString serialize() const override;
+	virtual void deserialize(ArkString) override;
+
 	ArkString toString();
 protected:
 	virtual void update() {}
@@ -45,13 +59,14 @@ private:
 	Transform * m_transform;
 	ArkString m_name;
 	std::list<Component *> m_components;
+	std::list<GameObject *> m_children;
 };
 
 
 template<typename T>
 inline void GameObject::addComponent()
 {
-	m_components.push_back(new T(this));
+	m_components.push_back(new T());
 	// TODO (AD) Should register the component for updates
 }
 
@@ -93,9 +108,9 @@ inline void GameObject::removeComponent()
 
 
 template<typename T>
-inline std::vector<T*> GameObject::getComponents() const
+inline std::list<T*> GameObject::getComponentsOfType() const
 {
-	std::vector<T *> out;
+	std::list<T *> out;
 	for ( ComponentCollection::const_iterator iter = m_components.begin()
 		; iter != m_components.end()
 		; iter++ )

@@ -33,9 +33,9 @@ namespace Test_ArkRendering
 
 			ArkString expected = "MaterialInfo";
 			expected += "\n\tname:" + matInfo.m_name;
-			expected += "\n\tambient:" + Vec3::one().ToString();
-			expected += "\n\tdiffuse:" + Vec3::one().ToString();
-			expected += "\n\tspecular:" + Vec3::one().ToString();
+			expected += "\n\tambient:" + Vec3::one().toString();
+			expected += "\n\tdiffuse:" + Vec3::one().toString();
+			expected += "\n\tspecular:" + Vec3::one().toString();
 			expected += "\n\tshininess:" + ArkString::Number(1.0f);
 			expected += "\n\tshader:";
 

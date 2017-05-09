@@ -47,9 +47,9 @@ void ArkEngineCore::initMemory()
 	m_renderer->initializeRenderer();
 #endif // USE_OPENGL
 
-	m_sceneManager = new SceneManager();
 	m_resourceManager = new ResourceManager();
 	m_projectManager = new ProjectManager();
+	m_sceneManager = new SceneManager();
 	m_taskQueue = new TaskQueue();
 }
 

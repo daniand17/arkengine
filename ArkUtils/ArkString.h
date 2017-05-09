@@ -2,7 +2,7 @@
 #include <string>
 #include <ostream>
 #include <istream>
-#include <vector>
+#include <list>
 
 class ArkStringList;
 
@@ -27,8 +27,14 @@ public:
 	std::string toStdString() const { return m_string; }
 	char const * c_str() const;
 
-	ArkStringList split(char delim) const;
+	int indexOf(ArkString const & other) const;
+	bool contains(ArkString const & other) const
+	{
+		return indexOf(other) != -1;
+	}
 
+	ArkStringList split(char delim) const;
+	ArkStringList split(ArkString delim) const;
 	ArkString substring(unsigned int start, unsigned int end) const { return m_string.substr(start, end - start); }
 
 	static ArkString Number(unsigned number) { return ArkString(std::to_string(number)); }
@@ -42,16 +48,22 @@ bool operator == (ArkString const & lhs, ArkString const & rhs);
 bool operator != (ArkString const & lhs, ArkString const & rhs);
 ArkString operator + (ArkString const & lhs, ArkString const & rhs);
 
+////////////////////////////////////////////////////////////////////////////////
+
 class ArkStringList
 {
 public:
 	size_t size() const { return m_stringList.size(); }
 	ArkString join(ArkString delim) const;
-	ArkString at(size_t index) { return index < m_stringList.size() ? m_stringList[index] : ArkString(); }
+	ArkString at(size_t index) { return index < m_stringList.size() ? *(std::next(m_stringList.begin(), index)) : ArkString(); }
 	ArkString getLast() const { return m_stringList.back(); }
 	ArkString getFirst() const { return m_stringList.front(); }
 	void push_back(ArkString str) { m_stringList.push_back(str); }
 	ArkString pop_back();
+
+	std::list<ArkString>::const_iterator begin() const { return m_stringList.begin(); }
+	std::list<ArkString>::const_iterator end() const { return m_stringList.end(); }
+
 private:
-	std::vector<ArkString> m_stringList;
+	std::list<ArkString> m_stringList;
 };

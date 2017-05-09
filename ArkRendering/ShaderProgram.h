@@ -8,7 +8,7 @@ struct ShaderProgram : Resource
 {
 public:
 	ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader);
-	~ShaderProgram() {} // TODO (AD) probably not a great place for this 
+
 	void setTexture(TextureInfo * texture) { m_texture = texture; }
 	GLuint getId() const { return m_programId; }
 	GLuint getTextureId() const { return m_programId; }
@@ -38,4 +38,7 @@ private:
 	TextureInfo * m_texture;
 
 	GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
+
+	// Inherited via Resource
+	virtual ArkString getResourceFileExtension() const override;
 };

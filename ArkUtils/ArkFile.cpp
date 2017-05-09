@@ -13,7 +13,7 @@ ArkFile::ArkFile(ArkString path)
 
 
 
-ArkString ArkFile::getFileContents() const
+ArkString ArkFile::readAll() const
 {
 	Filestream filestream(m_path);
 	filestream.openFile(Filestream::Read);

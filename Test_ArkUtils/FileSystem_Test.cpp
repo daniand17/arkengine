@@ -121,7 +121,7 @@ namespace Test_ArkUtils
 			Assert::IsTrue(dir.fileExists("materials.meta"));
 			
 			ArkFile * materialFile = dir.getFileByFilename("materials.meta");
-			ArkString contents = materialFile->getFileContents();
+			ArkString contents = materialFile->readAll();
 			Assert::IsTrue(contents.length() > 0);
 			
 			ArkStringList linelist = contents.split('\n');

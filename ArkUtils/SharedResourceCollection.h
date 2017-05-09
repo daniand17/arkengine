@@ -3,7 +3,7 @@
 #include "ArkDirectory.h"
 #include "Resource.h"
 
-#include <vector>
+#include <list>
 
 class SharedResourceCollection
 {
@@ -23,8 +23,7 @@ public:
 protected:
 	ArkString m_resourcePath;
 
-
 private:
-	std::vector<Resource *> m_resources;
+	std::list<Resource *> m_resources;
 
 };

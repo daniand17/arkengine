@@ -1,6 +1,7 @@
 #include "ArkRendering.h"
-#include "ImageLoader.h"
 #include "ArkAssert.h"
+#include "ArkFile.h"
+
 
 void ArkRendering::LightInfo::bindLightToShader() const
 {
@@ -20,18 +21,19 @@ void ArkRendering::LightInfo::getUniformLocationsFromShader(GLuint shaderProgram
 
 void ArkRendering::ModelInfo::serialize(ArkString absFilepath) const
 {
-	ArkString syncString = "ModelInfo";
-	syncString += "\n\tname:" + m_name;
-	syncString += "\n\tmesh:" + m_mesh;
-	syncString += "\n\tmaterial:" + m_material;
-
+	ArkString syncString("");
+	syncString += "\n\tname=" + m_name;
+	syncString += "\n\tmesh=" + m_mesh;
+	syncString += "\n\tmaterial=" + m_material;
+	ArkFile file(absFilepath);
+	file.writeToFile(syncString);
 	// TODO (AD) Serialize Model Info to file
-
 }
 
 
 
 void ArkRendering::ModelInfo::deserialize(ArkString absFilepath) const
 {
+
 	// TODO (AD) Deserialize model info from file
 }

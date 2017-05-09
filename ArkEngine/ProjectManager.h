@@ -16,7 +16,6 @@ public:
 
 	ArkString getProjectName() const { return m_projectName; }
 	ArkString getProjectDirectory() const { return m_projectName + "/"; }
-	ArkString getProjectRoot() const;
 
 private:
 	ArkString m_projectName;

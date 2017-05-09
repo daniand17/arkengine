@@ -6,7 +6,7 @@
 class Renderer : public Component
 {
 public:
-	Renderer(GameObject * obj);
+	Renderer(ClassIDs id);
 
 	MaterialInfo * getMaterial() const { return m_material; }
 	bool receivesShadows() const { return m_doShadows; }
@@ -18,22 +18,28 @@ public:
 protected:
 	MaterialInfo * m_material;
 	bool m_doShadows;
+	virtual void copyFrom(Component const * component) override;
+
+	virtual ArkString serialize() const override = 0;
+	virtual void deserialize(ArkString) override = 0;
 };
 
 
 class MeshRenderer : public Renderer
 {
 public:
-	MeshRenderer(GameObject * gameObject);
-
+	MeshRenderer();
 	Mesh * getMesh() const { return m_mesh; }
 	void setMesh(Mesh * mesh) { m_mesh = mesh; }
 
 	ArkString toString() const override { return ArkString("MeshRenderer"); }
 
 	void copyFrom(Component const * component) override;
-	ArkString getJson() const override;
 
 private:
 	Mesh * m_mesh;
+
+	// Inherited via Renderer
+	virtual ArkString serialize() const override;
+	virtual void deserialize(ArkString) override;
 };

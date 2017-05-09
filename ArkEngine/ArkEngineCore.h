@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BuildOptions.h"
 #include "ArkWindow.h"
 #include "OpenGLRenderer.h"

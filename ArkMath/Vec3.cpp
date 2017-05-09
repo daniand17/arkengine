@@ -26,7 +26,7 @@ bool operator != (Vec3 const & lhs, Vec3 const & rhs)
 	return !(xDel < FLT_EPSILON && yDel < FLT_EPSILON && zDel < FLT_EPSILON);
 }
 
-std::string Vec3::ToString() const
+std::string Vec3::toString() const
 {
 	return std::string("Vec3(" + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ")");
 }

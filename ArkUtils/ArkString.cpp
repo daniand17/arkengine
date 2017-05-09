@@ -53,6 +53,38 @@ char const * ArkString::c_str() const
 
 
 
+int ArkString::indexOf(ArkString const & other) const
+{
+	char const * lhs = m_string.c_str();
+	char const * rhs = other.c_str();
+
+	size_t thisLen(m_string.length()), otherLen(other.length());
+
+	for ( size_t i = 0 ; i < thisLen ; i++ )
+	{
+		bool valid = true;
+		for ( size_t k = 0 ; k < otherLen ; k++ )
+		{
+			int compIndex(i + k);
+
+			if ( compIndex < thisLen && lhs[compIndex] != rhs[k] )
+			{
+				valid = false;
+				break;
+			}
+		}
+
+		if ( valid )
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+
+
 ArkStringList ArkString::split(char delim) const
 {
 	ArkStringList list;
@@ -80,15 +112,31 @@ ArkStringList ArkString::split(char delim) const
 
 
 
+ArkStringList ArkString::split(ArkString delim) const
+{
+	ArkStringList strList;
+
+	if ( m_string.length() == 0 )
+	{
+		return strList;
+	}
+
+	return ArkStringList();
+}
+
+
+
 ArkString ArkStringList::join(ArkString delim) const
 {
 	ArkString joinedString;
-	size_t siz(m_stringList.size());
-	for ( unsigned i = 0 ; i < siz; i++ )
+	for ( std::list<ArkString>::const_iterator it(m_stringList.begin()); it != m_stringList.end() ; it++ )
 	{
-		joinedString += m_stringList[i];
-		if ( i + 1 != siz )
+		joinedString += *it;
+		if ( (++it) != m_stringList.end() )
+		{
 			joinedString += delim;
+		}
+		it--;
 	}
 	return joinedString;
 }
@@ -97,7 +145,7 @@ ArkString ArkStringList::join(ArkString delim) const
 
 ArkString ArkStringList::pop_back()
 {
-	ArkString retVal = m_stringList[m_stringList.size() - 1];
+	ArkString retVal = *(std::next(m_stringList.begin(), m_stringList.size() - 1));
 	m_stringList.pop_back();
 	return retVal;
 }

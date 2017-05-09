@@ -1,13 +1,6 @@
 #include "Component.h"
 #include "GameObject.h"
-#include "Mat4.h"
-
-Component::Component(GameObject * gameObject)
-	: m_gameObject(gameObject)
-{
-}
-
-Transform * Component::getTransform() const { return m_gameObject ? m_gameObject->getTransform() : NULL; }
+#include "ArkMath.h"
 
 Mat4 Component::getModelMatrix() const
 {

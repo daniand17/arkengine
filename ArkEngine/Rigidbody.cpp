@@ -3,8 +3,8 @@
 
 using namespace Physics;
 
-Rigidbody::Rigidbody(GameObject * gameObject)
-	: Component(gameObject)
+Rigidbody::Rigidbody()
+	: Component(CI_Rigidbody)
 	, m_unresolvedForce(Vec3::zero())
 {
 	// TODO (AD) This needs to register with something somehow
@@ -56,8 +56,24 @@ void Rigidbody::copyFrom(Component const * component)
 	m_unresolvedForce = rb->m_unresolvedForce;
 }
 
-ArkString Rigidbody::getJson() const
+
+
+ArkString Rigidbody::serialize() const
 {
-	return ArkString();
+	ArkString str(YAML_Generator::genObjectNameHeader("Rigidbody"));
+	str += YAML_Generator::genRawProperty("m_position",			m_rigidbodyInfo->position.toString());
+	str += YAML_Generator::genRawProperty("m_rotation",			m_rigidbodyInfo->rotation.toString());
+	str += YAML_Generator::genNumberProperty("m_mass",			m_rigidbodyInfo->mass);
+	str += YAML_Generator::genNumberProperty("m_drag",			m_rigidbodyInfo->drag);
+	str += YAML_Generator::genNumberProperty("m_angularDrag",	m_rigidbodyInfo->angularDrag);
+	str += YAML_Generator::genNumberProperty("m_gravityScale",	m_rigidbodyInfo->gravityScale);
+	return str;
+}
+
+
+
+void Rigidbody::deserialize(ArkString)
+{
+	// TODO (AD) Rigidbody deserialize stub
 }
 

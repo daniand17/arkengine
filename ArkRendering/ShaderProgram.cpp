@@ -1,6 +1,8 @@
 #include "ShaderProgram.h"
+#include "ShaderProgram.h"
 #include <fstream>
 
+#include <vector>
 
 ShaderProgram::ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader)
 	: m_vertexShader(vertexShader)
@@ -131,6 +133,13 @@ GLuint ShaderProgram::loadShaders(const char * vertex_file_path, const char * fr
 
 
 
+ArkString ShaderProgram::getResourceFileExtension() const
+{
+	return "shaderprogram";
+}
+
+
+
 void ShaderProgram::serialize(ArkString absFilepath) const
 {
 	ArkString sync("ShaderProgram");
@@ -144,5 +153,6 @@ void ShaderProgram::serialize(ArkString absFilepath) const
 
 void ShaderProgram::deserialize(ArkString absFilepath) const
 {
+
 	// TODO (AD) Deserialize ShaderProgram from file
 }

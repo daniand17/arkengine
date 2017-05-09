@@ -83,6 +83,7 @@ void SystemNotificationBus::executeEvent(NotificationEvent * notificationEvent)
 
 	for ( SubscriberList::iterator iter = sublist.begin() ; iter != sublist.end() ; iter++ )
 	{
+		NotificationSubscriber * sub = (*iter);
 		(*iter)->onNotify(notificationEvent);
 	}
 }

@@ -25,7 +25,7 @@ struct Vec3
 	float sqrMagnitude() const { return x * x + y * y + z * z; }
 	Vec3 normalized() const { float val = magnitude(); return Vec3(x / val, y / val, z / val); }
 
-	std::string ToString() const;
+	std::string toString() const;
 
 	static Vec3 cross(Vec3 const & lhs, Vec3 const & rhs) { return Vec3(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x); }
 	static float dot(Vec3 const & lhs, Vec3 const & rhs) { return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z; }

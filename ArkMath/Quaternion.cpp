@@ -15,3 +15,9 @@ bool operator == (Quaternion const & lhs, Quaternion const & rhs)
 	if ( wDel < 0 ) wDel = -wDel;
 	return xDel < FLT_EPSILON && yDel < FLT_EPSILON && zDel < FLT_EPSILON && wDel < FLT_EPSILON;
 }
+
+
+std::string Quaternion::toString() const
+{
+	return "Quat::toString()";
+}

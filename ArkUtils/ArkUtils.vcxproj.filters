@@ -63,6 +63,9 @@
     <ClInclude Include="ArkDirectory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="YAML_Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkString.cpp">
