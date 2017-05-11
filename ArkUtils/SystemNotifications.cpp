@@ -90,12 +90,6 @@ void SystemNotificationBus::executeEvent(NotificationEvent * notificationEvent)
 
 
 
-NotificationSubscriber::NotificationSubscriber()
-{
-}
-
-
-
 void NotificationSubscriber::subscribeToEvent(NotificationEvent::EventType eventType)
 {
 	eventSystem->subscribeToEvent(this, eventType);

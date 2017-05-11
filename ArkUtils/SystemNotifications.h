@@ -10,15 +10,16 @@ public:
 		UndefinedService = -1,
 		Tick_Update,
 		Tick_FixedUpdate,
-		OnRenderContextChanged,
 
 		System_Startup,
 		System_Shutdown,
-		System_ProjectClosed,
-		System_ProjectOpened,
 
-		System_SceneOpened,
-		System_SceneClosed,
+		Project_Opened,
+		Project_Closed,
+		Project_ResourcesLoaded,
+
+		Scene_Opened,
+		Scene_Closed,
 
 		Num_Services
 	};
@@ -37,7 +38,6 @@ private:
 class NotificationSubscriber
 {
 public:
-	NotificationSubscriber();
 	void subscribeToEvent(NotificationEvent::EventType eventType);
 	virtual void onNotify(NotificationEvent const * type) = 0;
 };

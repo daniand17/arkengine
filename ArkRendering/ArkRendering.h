@@ -6,9 +6,9 @@
 #include "BuildOptions.h"
 #include "ArkString.h"
 #include "Mat4.h"
-#include "Resource.h"
+#include "ProjectResource.h"
 #include "ShaderProgram.h"
-#include "MaterialInfo.h"
+#include "MaterialResource.h"
 
 namespace ArkRendering
 {
@@ -19,43 +19,4 @@ namespace ArkRendering
 		Vec3 position;
 	};
 
-	struct LightInfo
-	{
-		enum LightType
-		{
-			Point,
-			Directional,
-			Spot
-		};
-
-		Vec3 eyePosition;
-		Vec3 color;
-
-		void bindLightToShader() const;
-		void getUniformLocationsFromShader(GLuint shaderProgramId);
-
-	private:
-		GLuint eyeId;
-		GLuint colId;
-	};
-
-	////////////////////////////////////////
-
-	struct ModelInfo : Resource
-	{
-		ModelInfo()
-			: m_material("")
-			, m_mesh("")
-			, modelMatrix(Mat4::identity())
-		{
-		}
-
-		ArkString m_material;
-		ArkString m_mesh;
-		Mat4 modelMatrix;
-
-		// Inherited via Resource
-		virtual void serialize(ArkString absFilepath) const override;
-		virtual void deserialize(ArkString absFilepath) const override;
-	};
 }

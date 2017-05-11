@@ -27,7 +27,7 @@ public:
 	std::string toStdString() const { return m_string; }
 	char const * c_str() const;
 
-	int indexOf(ArkString const & other) const;
+	size_t indexOf(ArkString const & other) const;
 	bool contains(ArkString const & other) const
 	{
 		return indexOf(other) != -1;

@@ -9,8 +9,8 @@ class SceneManager : public NotificationSubscriber
 {
 public:
 	SceneManager();
-	void openSceneByName(ArkString sceneName);
-	void closeCurrentOpenScene();
+	void openScene(Scene * scene);
+	void closeOpenScene();
 	
 	Scene * getCurrentScene() const { return m_currentScene; }
 

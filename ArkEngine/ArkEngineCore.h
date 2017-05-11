@@ -3,7 +3,7 @@
 #include "ArkWindow.h"
 #include "OpenGLRenderer.h"
 #include "ArkThread.h"
-#include "ResourceManager.h"
+#include "ProjectResourceManager.h"
 #include "SceneManager.h"
 #include "SystemNotifications.h"
 
@@ -29,7 +29,7 @@ public:
 	ArkWindow const * GetMainWindowHandle() const { return m_window; }
 
 	SceneManager * getSceneManager() const { return m_sceneManager; }
-	ResourceManager * getResourceManager() const { return m_resourceManager; }
+	ProjectResourceManager * getResourceManager() const { return m_resourceManager; }
 	ProjectManager * getProjectManager() const { return m_projectManager; }
 
 private:
@@ -49,7 +49,7 @@ private:
 
 	SceneManager * m_sceneManager;
 
-	ResourceManager * m_resourceManager;
+	ProjectResourceManager * m_resourceManager;
 	ProjectManager * m_projectManager;
 
 	std::list<ArkThreading::ArkThread *> m_threads;

@@ -6,12 +6,18 @@
 
 class ArkDirectory
 {
-
 public:
+	enum EntryTypes
+	{
+		ET_Files,
+		ET_Directories
+	};
+
 	ArkDirectory();
 	ArkDirectory(ArkString path);
 
-	ArkStringList getFileList() const;
+	ArkStringList getEntryList(EntryTypes type) const;
+
 	bool exists() const;
 	
 	void mkdir() const;
@@ -27,4 +33,9 @@ private:
 
 	bool exists(ArkString path) const;
 	void mkdir(ArkString dir) const;
-};
+
+	ArkStringList getFileList() const;
+	ArkStringList getFolderList() const;
+
+
+};	

@@ -8,15 +8,15 @@ class Renderer : public Component
 public:
 	Renderer(ClassIDs id);
 
-	MaterialInfo * getMaterial() const { return m_material; }
+	MaterialResource * getMaterial() const { return m_material; }
 	bool receivesShadows() const { return m_doShadows; }
 
-	void setMaterial(MaterialInfo * material) { m_material = material; }
+	void setMaterial(MaterialResource * material) { m_material = material; }
 
 	virtual ArkString toString() const override { return ArkString("Renderer"); }
 
 protected:
-	MaterialInfo * m_material;
+	MaterialResource * m_material;
 	bool m_doShadows;
 	virtual void copyFrom(Component const * component) override;
 

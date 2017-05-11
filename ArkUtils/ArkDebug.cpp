@@ -1,4 +1,4 @@
-#include "ArkDebug.h"
+	#include "ArkDebug.h"
 
 void Debug::Log(ArkString string)
 {

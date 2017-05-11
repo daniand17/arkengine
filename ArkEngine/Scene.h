@@ -5,12 +5,13 @@
 #include "ArkDirectory.h"
 #include "Renderer.h"
 
-class Scene : public Resource
+class Scene : public ProjectResource
 {
 public:
 	typedef std::vector<MeshRenderer *>::const_iterator MeshRendererIterator;
-	Scene() : m_sceneChanged(false) {}
-	void instantiateGameObject(GameObject const * gameObject);
+	Scene(ArkString name, ArkString filename);
+	~Scene();
+	void addGameObjectToScene(GameObject * gameObject);
 	void destroyGameObject(GameObject * gameObject);
 
 	bool getSceneChanged() const { return m_sceneChanged; }
@@ -20,18 +21,19 @@ public:
 	std::vector<Renderer *> getRenderers() const { return m_renderers; }
 
 	// Inherited via Resource
-	virtual void serialize(ArkString absFilepath) const override;
-	virtual void deserialize(ArkString absFilepath) const override;
-	virtual ArkString getResourceFileExtension() const override;
+	virtual void serialize() const override;
+	virtual void deserialize() override;
 
 private:
 	std::vector<GameObject *> m_gameObjects;
 	std::vector<Renderer *> m_renderers;
-
 	bool m_sceneChanged;
 
 	std::vector<SerializableRelationship> flattenTree() const;
-	void flattenTree(GameObject const * obj, std::vector<SerializableRelationship> & currResult, unsigned & currId, unsigned currParentId) const;
-	void getSceneObjectsForDeserialize(ArkString &absFilepath, ArkStringList &objectList) const;
+	std::vector<GameObject *> unflattenObjectTree(std::vector<SerializableRelationship> &objs) const;
+	std::vector<SerializableRelationship> genFlattenedObjectTree(ArkStringList &objectList) const;
 
+	void getSceneObjectsForDeserialize(ArkString &absFilepath, ArkStringList &objectList) const;
+	void clearScene();
+	void flattenTree(GameObject * obj, std::vector<SerializableRelationship> & currResult, unsigned & currId, unsigned currParentId) const;
 };

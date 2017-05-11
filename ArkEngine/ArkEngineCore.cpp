@@ -47,7 +47,7 @@ void ArkEngineCore::initMemory()
 	m_renderer->initializeRenderer();
 #endif // USE_OPENGL
 
-	m_resourceManager = new ResourceManager();
+	m_resourceManager = new ProjectResourceManager();
 	m_projectManager = new ProjectManager();
 	m_sceneManager = new SceneManager();
 	m_taskQueue = new TaskQueue();
@@ -71,31 +71,38 @@ void ArkEngineCore::runMainLoop()
 {
 	eventSystem->fireEvent(NotificationEvent::System_Startup);
 
+	SceneManager * sceneManager = getSceneManager();
+	Scene * currentScene = sceneManager->getCurrentScene();
 	while ( 1 )
 	{
-		// do physics
-		eventSystem->fireEvent(NotificationEvent::Tick_FixedUpdate);
-
-		// do other updates 
-		eventSystem->fireEvent(NotificationEvent::Tick_Update);
-
-		std::vector<Renderer *> rens = getSceneManager()->getCurrentScene()->getRenderers();
-		std::vector<RendererInfo> renInfos;
-
-		for ( std::vector<Renderer *>::const_iterator renIt(rens.begin()) ; renIt != rens.end() ; renIt++ )
+		if ( currentScene )
 		{
-			Renderer * renderer(*renIt);
+			// do physics
+			eventSystem->fireEvent(NotificationEvent::Tick_FixedUpdate);
 
-			renInfos.push_back(RendererInfo(
-				RendererInfo::RT_Mesh,
-				renderer->getMaterial(),
-				renderer->getModelMatrix(),
-				static_cast<MeshRenderer *>(renderer)->getMesh()
-			));
+			// do other updates 
+			eventSystem->fireEvent(NotificationEvent::Tick_Update);
+
+			std::vector<Renderer *> rens = currentScene->getRenderers();
+			std::vector<RendererInfo> renInfos;
+
+			for ( std::vector<Renderer *>::const_iterator renIt(rens.begin()) ; renIt != rens.end() ; renIt++ )
+			{
+				Renderer * renderer(*renIt);
+
+				if ( renderer->getClassId() == I_Serializable::CI_MeshRenderer )
+				{
+					renInfos.push_back(RendererInfo(
+						RendererInfo::RT_Mesh,
+						renderer->getMaterial(),
+						renderer->getModelMatrix(),
+						static_cast<MeshRenderer *>(renderer)->getMesh()
+					));
+				}
+			}
+
+			m_renderer->renderScene(renInfos);
 		}
-
-		m_renderer->renderScene(renInfos);
-
 	}
 
 	eventSystem->fireEvent(NotificationEvent::System_Shutdown);

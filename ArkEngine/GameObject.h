@@ -14,13 +14,11 @@ class GameObject : public NotificationSubscriber, public I_Serializable
 {
 public:
 	GameObject(GameObject const * gameObject = NULL);
-	~GameObject() {}
+	~GameObject();
 
 	bool hasChildren() const { return m_components.size() > 0; }
 
-
-	void instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const;
-	void destroy(GameObject * object) const;
+	void setTransform(Transform * transform) { m_transform = transform; }
 	Transform * getTransform() const { return m_transform; }
 
 	size_t numComponents() const { return m_components.size(); }
@@ -28,7 +26,7 @@ public:
 	template <typename T> void addComponent();
 	template <typename T> T * getComponent();
 	template <typename T> void removeComponent();
-	template <typename T> std::list<T *> getComponentsOfType() const;
+	template <typename T> std::list<T *> getComponentsInChildren() const;
 
 	void copyFrom(GameObject const * gameObject);
 
@@ -49,6 +47,22 @@ public:
 	virtual void deserialize(ArkString) override;
 
 	ArkString toString();
+
+	void transferComponentToObject(Component * component)
+	{
+		for ( ComponentCollection::const_iterator it(m_components.begin()) ; it != m_components.end() ; it++ )
+		{
+			if ( (*it) == component )
+			{
+				return;
+			}
+		}
+
+		m_components.push_back(component);
+	}
+
+	void addChild(GameObject * child);
+
 protected:
 	virtual void update() {}
 	virtual void fixedUpdate() {}
@@ -60,7 +74,10 @@ private:
 	ArkString m_name;
 	std::list<Component *> m_components;
 	std::list<GameObject *> m_children;
+
+	template <typename T> void getComponentsForGameObject(GameObject const * gameObject, std::list<T *> & components) const;
 };
+
 
 
 template<typename T>
@@ -69,6 +86,7 @@ inline void GameObject::addComponent()
 	m_components.push_back(new T());
 	// TODO (AD) Should register the component for updates
 }
+
 
 
 template<typename T>
@@ -80,16 +98,18 @@ inline T * GameObject::getComponent()
 	{
 		T * comp = dynamic_cast<T *>(*iter);
 		if ( comp )
+		{
 			return comp;
+		}
 	}
 	return NULL;
 }
 
 
+
 template<typename T>
 inline void GameObject::removeComponent()
 {
-
 	// TODO (AD) Also should deregister the component from updates
 	for ( ComponentCollection::iterator iter = m_components.begin()
 		; iter != m_components.end()
@@ -107,18 +127,33 @@ inline void GameObject::removeComponent()
 }
 
 
+
 template<typename T>
-inline std::list<T*> GameObject::getComponentsOfType() const
+inline std::list<T*> GameObject::getComponentsInChildren() const
 {
-	std::list<T *> out;
-	for ( ComponentCollection::const_iterator iter = m_components.begin()
-		; iter != m_components.end()
-		; iter++ )
+	std::list<T *> components;
+
+	getComponentsForGameObject(this, components);
+
+	return components;
+}
+
+
+
+template<typename T>
+void GameObject::getComponentsForGameObject(GameObject const * gameObject, std::list<T *> & components) const
+{
+	for ( std::list<Component *>::const_iterator it(gameObject->m_components.begin()); it != gameObject->m_components.end(); it++ )
 	{
-		T * casted = dynamic_cast<T *>(*iter);
+		T * casted = dynamic_cast<T *>(*it);
 		if ( casted != NULL )
-			out.push_back(casted);
+		{
+			components.push_back(casted);
+		}
 	}
 
-	return out;
+	for ( std::list<GameObject *>::const_iterator it(gameObject->m_children.begin()); it != gameObject->m_children.end(); it++ )
+	{
+		getComponentsForGameObject(*it, components);
+	}
 }

@@ -48,6 +48,8 @@ void ProjectManager::closeCurrentProject()
 	m_currentProject = NULL;
 }
 
+
+
 ArkString ProjectManager::getProjectRoot() const
 {
 	return StandardLocations::writeableLocation(StandardLocations::AppDataLocation) + "/ArkEngine/Projects/" + m_currentProject->getProjectName() + "/";
@@ -81,7 +83,7 @@ ArkProject::ArkProject(ArkString name)
 
 void ArkProject::closeProject()
 {
-	eventSystem->fireEvent(NotificationEvent::System_ProjectClosed, m_projectName);
+	eventSystem->fireEvent(NotificationEvent::Project_Opened, m_projectName);
 }
 
 
@@ -95,5 +97,6 @@ void ArkProject::openProject()
 	{
 		dir.mkpath();
 	}
-	eventSystem->fireEvent(NotificationEvent::System_ProjectOpened, m_projectName);
+
+	eventSystem->fireEvent(NotificationEvent::Project_Opened, m_projectName);
 }

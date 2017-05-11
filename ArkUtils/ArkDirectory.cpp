@@ -8,6 +8,20 @@ ArkDirectory::ArkDirectory()
 }
 
 
+ArkStringList ArkDirectory::getEntryList(EntryTypes type) const
+{
+
+	switch ( type )
+	{
+	case ET_Files:
+		return getFileList();
+	case ET_Directories:
+		return getFolderList();
+	}
+	return ArkStringList();
+}
+
+
 
 ArkStringList ArkDirectory::getFileList() const
 {
@@ -22,9 +36,7 @@ ArkStringList ArkDirectory::getFileList() const
 		firstFile += "*";
 
 	handle = FindFirstFile(firstFile.c_str(), &findFileData);
-
 	ArkStringList fileList;
-
 	do
 	{
 		if ( !(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
@@ -37,7 +49,37 @@ ArkStringList ArkDirectory::getFileList() const
 		}
 	}
 	while ( FindNextFile(handle, &findFileData) );
+	return fileList;
+}
 
+
+
+ArkStringList ArkDirectory::getFolderList() const
+{
+	HANDLE handle = INVALID_HANDLE_VALUE;
+	WIN32_FIND_DATA findFileData;
+
+	ArkString firstFile = m_path;
+
+	if ( m_path.charAt(m_path.length() - 1) != '/' )
+		firstFile += "/*";
+	else
+		firstFile += "*";
+
+	handle = FindFirstFile(firstFile.c_str(), &findFileData);
+	ArkStringList fileList;
+	do
+	{
+		if ( findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+		{
+			ArkString filename(findFileData.cFileName);
+			if ( filename != ArkString("..") )
+			{
+				fileList.push_back(filename);
+			}
+		}
+	}
+	while ( FindNextFile(handle, &findFileData) );
 	return fileList;
 }
 

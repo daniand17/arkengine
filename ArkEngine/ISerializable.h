@@ -29,13 +29,13 @@ protected:
 
 struct SerializableRelationship
 {
-	SerializableRelationship(unsigned id, unsigned parentId, I_Serializable const * item)
+	SerializableRelationship(unsigned id, unsigned parentId, I_Serializable * item)
 		: parentId(parentId)
 		, fileId(id)
 		, serializableItem(item)
 	{
 	}
-	I_Serializable const * serializableItem;
+	I_Serializable * serializableItem;
 
 	unsigned parentId;
 	unsigned fileId;

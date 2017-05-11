@@ -18,7 +18,7 @@ public:
 
 	static ArkString genStringProperty(ArkString propertyName, ArkString propertyValue)
 	{
-		return __genPropertyNameString(propertyName) + propertyValue + "\"";
+		return __genPropertyNameString(propertyName) + propertyValue;
 	}
 
 	static ArkString genBoolProperty(ArkString propertyName, bool propertyValue)
@@ -53,9 +53,9 @@ private:
 class YAML_Extractor
 {
 public:
-	static bool extractObjectHeader(ArkString line, unsigned & classId, unsigned uniqueId)
+	static bool extractObjectHeader(ArkString line, unsigned & classId, unsigned & uniqueId)
 	{
-		bool success = sscanf_s(line.c_str(), "--- !u!%d &%d", &classId, &uniqueId) == 2;
+		bool success = sscanf_s(line.c_str(), "\n--- !u!%d &%d", &classId, &uniqueId) == 2;
 		return success;
 	}
 
@@ -66,47 +66,54 @@ public:
 		result = res;
 		return success && result.length() > 0;
 	}
-	
-	static bool extractStringProperty(ArkString line, ArkString & result)
+
+	static bool extractStringProperty(ArkString line, ArkString propertyName, ArkString & result)
 	{
 		char res[IN_BUF_SIZ];
 
-		bool success = sscanf_s(line.c_str(), ":\t\"%s\"", res, IN_BUF_SIZ) == 1;
+		bool success = sscanf_s(line.c_str(), __genFormatString(propertyName, "%s").c_str(), res, IN_BUF_SIZ) == 1;
 
 		result = ArkString(res);
 
 		return success;
 	}
 
-	static bool extractBoolProperty(ArkString line, bool & result)
+	static bool extractBoolProperty(ArkString line, ArkString propertyName, bool & result)
 	{
 		int res(0);
-		bool success = sscanf_s(line.c_str(), ":\t%d", &res) == 1;
+		bool success = sscanf_s(line.c_str(), __genFormatString(propertyName, "%d").c_str(), &res) == 1;
 		result = res == 1;
 		return success;
 
 	}
 
-	static bool extractRawProperty(ArkString line, ArkString & result)
+	static bool extractRawProperty(ArkString line, ArkString propertyName, ArkString & result)
 	{
 		char raw[IN_BUF_SIZ];
-		bool success = sscanf_s(line.c_str(), ":\t%s", raw, IN_BUF_SIZ) == 1;
+		bool success = sscanf_s(line.c_str(), __genFormatString(propertyName, "%s").c_str(), raw, IN_BUF_SIZ) == 1;
 		result = raw;
 		return success;
 	}
 
-	static bool extractNumberProperty(ArkString line, unsigned & number)
+	static bool extractNumberProperty(ArkString line, ArkString propertyName, unsigned & number)
 	{
-		return sscanf_s(line.c_str(), ":\t%d", &number) == 1;
+		return sscanf_s(line.c_str(), __genFormatString(propertyName, "%d").c_str(), &number) == 1;
 	}
 
-	static bool extractNumberProperty(ArkString line, float & number)
+	static bool extractNumberProperty(ArkString line, ArkString propertyName, float & number)
 	{
-		return sscanf_s(line.c_str(), ":\t%f", &number) == 1;
+		return sscanf_s(line.c_str(), __genFormatString(propertyName, "%f").c_str(), &number) == 1;
 	}
 
-	static bool isProperty(ArkString line, ArkString propertyName)
+	static bool containsProperty(ArkString line, ArkString propertyName)
 	{
 		return line.contains(propertyName);
+	}
+
+private:
+
+	static ArkString __genFormatString(ArkString propertyName, ArkString formatSpecifiers)
+	{
+		return "\t" + propertyName + ":\t" + formatSpecifiers;
 	}
 };

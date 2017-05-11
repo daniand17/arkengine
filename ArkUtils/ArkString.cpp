@@ -53,7 +53,7 @@ char const * ArkString::c_str() const
 
 
 
-int ArkString::indexOf(ArkString const & other) const
+size_t ArkString::indexOf(ArkString const & other) const
 {
 	char const * lhs = m_string.c_str();
 	char const * rhs = other.c_str();
@@ -65,7 +65,7 @@ int ArkString::indexOf(ArkString const & other) const
 		bool valid = true;
 		for ( size_t k = 0 ; k < otherLen ; k++ )
 		{
-			int compIndex(i + k);
+			size_t compIndex(i + k);
 
 			if ( compIndex < thisLen && lhs[compIndex] != rhs[k] )
 			{

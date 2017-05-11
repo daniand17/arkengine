@@ -221,7 +221,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProjectManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="ProjectResourceManager.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -237,7 +237,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="ProjectManager.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ProjectResourceManager.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

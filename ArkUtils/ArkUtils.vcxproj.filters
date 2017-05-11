@@ -51,12 +51,6 @@
     <ClInclude Include="ArkConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SharedResourceCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ArkFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -64,6 +58,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="YAML_Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,13 +77,13 @@
     <ClCompile Include="StandardLocations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedResourceCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ArkDirectory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ArkFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

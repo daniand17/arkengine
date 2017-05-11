@@ -4,7 +4,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 #include "ArkRendering.h"
-#include "ResourceManager.h"
+#include "ProjectResourceManager.h"
 #include "Filestream.h"
 
 #define MATERIAL_DIR "material_test"

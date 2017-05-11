@@ -4,25 +4,117 @@
 
 #include <vector>
 
-ShaderProgram::ShaderProgram(ArkString name, ArkString vertexShader, ArkString fragmentShader)
-	: m_vertexShader(vertexShader)
-	, m_fragmentShader(fragmentShader)
-	, m_numAttributes(0)
-	, m_numUniforms(0)
-	, m_programId(0)
-	, m_texture(NULL)
+ShaderProgram::ShaderProgram()
+	: m_programId(0)
 {
-	m_name = name;
 }
 
 
 
-void ShaderProgram::compileAndLoadShader()
+void ShaderProgram::compileAndLoadShader(ArkString const & vertexSource, ArkString const & fragmentSource)
 {
-	m_programId = loadShaders(m_vertexShader.c_str(), m_fragmentShader.c_str());
-	glGetProgramInterfaceiv(m_programId, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &m_numAttributes);
-	glGetProgramInterfaceiv(m_programId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &m_numUniforms);
-	// TODO (AD) code to get more info about a shaders attrs http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+	m_programId = loadShaders(vertexSource.c_str(), fragmentSource.c_str());
+
+	doProgramIntrospection(GL_PROGRAM_INPUT, m_attribMap);
+	doProgramIntrospection(GL_UNIFORM, m_uniformMap);
+}
+
+
+// NOTE: Code to get more info about a shaders attrs http://stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade
+void ShaderProgram::doProgramIntrospection(GLint queryItem, std::map<ArkString, PropertyInfo> & theMap)
+{
+	GLint count = 0;
+	glGetProgramInterfaceiv(m_programId, queryItem, GL_ACTIVE_RESOURCES, &count);
+	std::vector<GLenum> properties;
+	properties.push_back(GL_NAME_LENGTH);
+	properties.push_back(GL_TYPE);
+	properties.push_back(GL_ARRAY_SIZE);
+	std::vector<GLint> values(properties.size());
+	std::vector<GLchar> nameData(256);
+
+
+	for ( GLuint i = 0 ; i < count ; i++ )
+	{
+		glGetProgramResourceiv(m_programId, queryItem, i, properties.size(), &properties[0], values.size(), NULL, &values[0]);
+
+		nameData.resize(values[0]);
+		glGetProgramResourceName(m_programId, queryItem, i, nameData.size(), NULL, &nameData[0]);
+		ArkString propName((char *) &(nameData[0]));
+
+		PropertyInfo pInfo;
+		pInfo.type = mapGLTypeToArkType(values[1]);
+		if ( queryItem == GL_PROGRAM_INPUT )
+		{
+			pInfo.location = glGetAttribLocation(m_programId, propName.c_str());
+		}
+		else
+		{
+			pInfo.location = glGetUniformLocation(m_programId, propName.c_str());
+		}
+		theMap.insert(std::pair<ArkString, PropertyInfo>(propName, pInfo));
+	}
+}
+
+
+
+ShaderProgram::PropertyTypes ShaderProgram::mapGLTypeToArkType(const GLint &val)
+{
+	switch ( val )
+	{
+	case GL_FLOAT:			return PT_Float;
+	case GL_FLOAT_VEC2:		return PT_Vec2f;
+	case GL_FLOAT_VEC3:		return PT_Vec3f;
+	case GL_FLOAT_VEC4:		return PT_Vec4f;
+	case GL_FLOAT_MAT2:		return PT_Mat2f;
+	case GL_FLOAT_MAT3:		return PT_Mat3f;
+	case GL_FLOAT_MAT4:		return PT_Mat4f;
+	case GL_FLOAT_MAT2x3:
+		break;
+	case GL_FLOAT_MAT2x4:
+		break;
+	case GL_FLOAT_MAT3x2:
+		break;
+	case GL_FLOAT_MAT3x4:
+		break;
+	case GL_FLOAT_MAT4x2:
+		break;
+	case GL_FLOAT_MAT4x3:
+		break;
+	case GL_INT:			return PT_Int;
+	case GL_INT_VEC2:		return PT_Vec2f;
+	case GL_INT_VEC3:		return PT_Vec3f;
+	case GL_INT_VEC4:		return PT_Vec4f;
+		break;
+	case GL_UNSIGNED_INT:		return PT_Uint;
+	case GL_UNSIGNED_INT_VEC2:	return PT_Vec2f;
+	case GL_UNSIGNED_INT_VEC3:	return PT_Vec3f;
+	case GL_UNSIGNED_INT_VEC4:	return PT_Vec4f;
+	case GL_DOUBLE:				return PT_Double;
+
+	case GL_DOUBLE_VEC2:
+		break;
+	case GL_DOUBLE_VEC3:
+		break;
+	case GL_DOUBLE_VEC4:
+		break;
+	case GL_DOUBLE_MAT2:		return PT_Mat2f;
+	case GL_DOUBLE_MAT3:		return PT_Mat3f;
+	case GL_DOUBLE_MAT4:		return PT_Mat4f;
+	case GL_DOUBLE_MAT2x3:
+		break;
+	case GL_DOUBLE_MAT2x4:
+		break;
+	case GL_DOUBLE_MAT3x2:
+		break;
+	case GL_DOUBLE_MAT3x4:
+		break;
+	case GL_DOUBLE_MAT4x2:
+		break;
+	case GL_DOUBLE_MAT4x3:
+		break;
+	}
+
+	return PT_Unsupported;
 }
 
 
@@ -30,53 +122,23 @@ void ShaderProgram::compileAndLoadShader()
 void ShaderProgram::unloadShader()
 {
 	glDeleteProgram(m_programId);
-	delete m_texture;
 }
 
 
 
-GLuint ShaderProgram::loadShaders(const char * vertex_file_path, const char * fragment_file_path)
+GLuint ShaderProgram::loadShaders(const char * vertexSource, const char * fragmentSource)
 {
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
-	// Read the Vertex Shader code from the file
-	std::string VertexShaderCode;
-	std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-	if ( VertexShaderStream.is_open() )
-	{
-		std::string Line = "";
-		while ( getline(VertexShaderStream, Line) )
-			VertexShaderCode += "\n" + Line;
-		VertexShaderStream.close();
-	}
-	else
-	{
-		printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", vertex_file_path);
-		getchar();
-		return 0;
-	}
-
-	// Read the Fragment Shader code from the file
-	std::string FragmentShaderCode;
-	std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
-	if ( FragmentShaderStream.is_open() )
-	{
-		std::string Line = "";
-		while ( getline(FragmentShaderStream, Line) )
-			FragmentShaderCode += "\n" + Line;
-		FragmentShaderStream.close();
-	}
 
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
 
 
 	// Compile Vertex Shader
-	printf("Compiling shader : %s\n", vertex_file_path);
-	char const * VertexSourcePointer = VertexShaderCode.c_str();
-	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
+	printf("Compiling shader : %s\n", vertexSource);
+	glShaderSource(VertexShaderID, 1, &vertexSource, NULL);
 	glCompileShader(VertexShaderID);
 
 	// Check Vertex Shader
@@ -90,9 +152,8 @@ GLuint ShaderProgram::loadShaders(const char * vertex_file_path, const char * fr
 	}
 
 	// Compile Fragment Shader
-	printf("Compiling shader : %s\n", fragment_file_path);
-	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
+	printf("Compiling shader : %s\n", fragmentSource);
+	glShaderSource(FragmentShaderID, 1, &fragmentSource, NULL);
 	glCompileShader(FragmentShaderID);
 
 	// Check Fragment Shader
@@ -129,30 +190,4 @@ GLuint ShaderProgram::loadShaders(const char * vertex_file_path, const char * fr
 	glDeleteShader(FragmentShaderID);
 
 	return ProgramID;
-}
-
-
-
-ArkString ShaderProgram::getResourceFileExtension() const
-{
-	return "shaderprogram";
-}
-
-
-
-void ShaderProgram::serialize(ArkString absFilepath) const
-{
-	ArkString sync("ShaderProgram");
-	sync += "\n\tname:" + m_name;
-	sync += "\n\tvertexShader:" + getVertexShaderName();
-	sync += "\n\tfragmentShader:" + getFragmentShaderName();
-	// TODO (AD) Serialize shader program to file.
-}
-
-
-
-void ShaderProgram::deserialize(ArkString absFilepath) const
-{
-
-	// TODO (AD) Deserialize ShaderProgram from file
 }

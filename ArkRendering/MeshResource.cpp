@@ -1,6 +1,42 @@
-#include "ModelLoader.h"
+#include "MeshResource.h"
 
-bool ModelLoading::loadOBJ(ArkString path, std::vector<Vec3>& outVertices, std::vector<Vec2>& outUVs, std::vector<Vec3>& outNormals)
+MeshResource::MeshResource(ArkString name, ArkString filepath)
+	: ProjectResource(name, filepath, RT_Mesh)
+{
+}
+
+
+
+void MeshResource::serialize() const
+{
+
+}
+
+
+
+void MeshResource::deserialize()
+{
+	std::vector<Vec3> verts;
+	std::vector<Vec2> uvs;
+	std::vector<Vec3> norms;
+
+	loadOBJ(m_filename, verts, uvs, norms);
+
+	if ( verts.size() == uvs.size() && uvs.size() == norms.size() )
+	{
+		for ( size_t i = 0 ; i < verts.size() ; i++ )
+		{
+			Vertex vert;
+			vert.point = verts.at(i);
+			vert.uv = uvs.at(i);
+			vert.normal = norms.at(i);
+			m_vertices.push_back(vert);
+		}
+	}
+}
+
+
+bool MeshResource::loadOBJ(ArkString path, std::vector<Vec3>& outVertices, std::vector<Vec2>& outUVs, std::vector<Vec3>& outNormals)
 {
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 

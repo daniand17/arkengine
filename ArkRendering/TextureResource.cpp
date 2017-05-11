@@ -1,31 +1,16 @@
 
-#include "TextureInfo.h"
+#include "TextureResource.h"
 
-TextureInfo::TextureInfo(ArkString filename)
-	: mTextureId(0)
+TextureResource::TextureResource(ArkString name, ArkString filename)
+	: ProjectResource(name, filename, RT_Texture)
+	, m_textureId(0)
 {
-	mTextureId = loadBMP_custom(filename.c_str());
 }
 
 
 
-void TextureInfo::serialize(ArkString absFilepath) const
+GLuint TextureResource::loadBMP_custom(char const * filename)
 {
-
-}
-
-
-
-void TextureInfo::deserialize(ArkString absFilepath) const
-{
-
-}
-
-
-
-GLuint TextureInfo::loadBMP_custom(char const * filename)
-{
-
 	// Data read from the header of the BMP file
 	unsigned char header[54]; // Each BMP file begins by a 54-bytes header
 	unsigned int dataPos;     // Position in the file where the actual data begins
@@ -78,4 +63,17 @@ GLuint TextureInfo::loadBMP_custom(char const * filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	return textureID;
+}
+
+
+
+void TextureResource::serialize() const
+{
+}
+
+
+
+void TextureResource::deserialize()
+{
+	m_textureId = loadBMP_custom(m_filename.c_str());
 }

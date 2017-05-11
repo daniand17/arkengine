@@ -4,17 +4,24 @@
 #include "OpenGLRenderer.h"
 #include "ArkMath.h"
 #include "Camera.h"
-#include "ModelLoader.h"
 #include "ArkDebug.h"
-#include "MaterialInfo.h"
+#include "MaterialResource.h"
+#include "LightData.h"
+
 
 using namespace ArkRendering;
 using namespace ArkMath;
 using namespace std;
 
+OpenGLRenderer * OpenGLRenderer::sm_instance = NULL;
+
 OpenGLRenderer::OpenGLRenderer(ArkWindow * windowHandle)
 	: m_arkWindow(windowHandle)
+	, m_shaderFactory(NULL)
 {
+
+	sm_instance = this;
+	m_shaderFactory = new ShaderFactory();
 }
 
 
@@ -48,10 +55,8 @@ void OpenGLRenderer::initializeRenderer()
 void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 {
 	GLFWwindow * win = m_arkWindow->getOSWindowHandle();
-
-	double lastTime = glfwGetTime();
-	int nbFrames = 0;
-
+	////////////////////////////////////////////	This belongs elsewhere.. adhoc right now	////////////////////////////////////////////	
+	
 	Camera cam(m_arkWindow, Camera::Perspective, 45.0f, 0.1f, 100.0f, Vec2(0, 0), Vec2(1, 1));
 	cam.setPosition(Vec3(3, 3, 3));
 	cam.setTarget(Vec3(0, 0, 0));
@@ -61,8 +66,12 @@ void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 	light.eyePosition = Vec3(3, 3, 3);
 	light.color = Vec3(0.5, 0.5, 0.5);
 
+	////////////////////////////////////////////
+
 	clearScreen();
 
+	double lastTime = glfwGetTime();
+	int nbFrames = 0;
 	// Do timer
 	double currentTime = glfwGetTime();
 	nbFrames++;
@@ -73,12 +82,11 @@ void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 		lastTime += 1.0;
 	}
 
-	std::vector<MaterialInfo *> mats;
-
-	for ( std::vector<MaterialInfo *>::const_iterator mIt(mats.begin()) ; mIt != mats.end() ; mIt++ )
+	std::vector<MaterialResource *> mats;
+	for ( std::vector<MaterialResource *>::const_iterator mIt(mats.begin()) ; mIt != mats.end() ; mIt++ )
 	{
 		// Render all the render states
-		MaterialInfo const * material = *mIt;
+		MaterialResource const * material = *mIt;
 
 		std::list<RenderPass *> renderPasses = material->getRenderPasses();
 		for ( std::list<RenderPass *>::const_iterator rpIt(renderPasses.begin()) ; rpIt != renderPasses.end() ; rpIt++ )
@@ -124,8 +132,10 @@ void OpenGLRenderer::renderScene(std::vector<RendererInfo> & renderers)
 	glfwSwapBuffers(win);
 	glfwPollEvents();
 
-	glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS;
-
+	if ( glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS )
+	{
+		exit(0);
+	}
 }
 
 

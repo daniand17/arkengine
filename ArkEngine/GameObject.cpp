@@ -10,30 +10,26 @@ GameObject::GameObject(GameObject const * gameObject)
 
 	subscribeToEvent(NotificationEvent::Tick_Update);
 	subscribeToEvent(NotificationEvent::Tick_FixedUpdate);
-
-	m_transform = new Transform();
 	copyFrom(gameObject);
 }
 
 
-void GameObject::instantiate(GameObject const * obj, Vec3 position, Quaternion rotation) const
+
+GameObject::~GameObject()
 {
-	SceneManager * sceneManager = ArkEngineCore::Instance()->getSceneManager();
-	if ( sceneManager )
+	for ( std::list<GameObject *>::iterator it(m_children.begin()); it != m_children.end(); it++ )
 	{
-		Scene * scene = sceneManager->getCurrentScene();
-		if ( scene )
-		{
-			scene->instantiateGameObject(obj);
-		}
+		delete *it;
 	}
-}
 
+	m_children.clear();
 
+	for ( std::list<Component *>::iterator it(m_components.begin()); it != m_components.end(); it++ )
+	{
+		delete *it;
+	}
 
-void GameObject::destroy(GameObject * object) const
-{
-
+	m_components.clear();
 }
 
 
@@ -42,10 +38,12 @@ void GameObject::copyFrom(GameObject const * gameObject)
 {
 	if ( !gameObject ) return;
 	clearComponents();
+	if ( m_transform )
+	{
+		m_transform->copyFrom(gameObject->m_transform);
+	}
 
-	m_transform->copyFrom(gameObject->m_transform);
-
-	std::list<Rigidbody *> rigidbodies = gameObject->getComponentsOfType<Rigidbody>();
+	std::list<Rigidbody *> rigidbodies = gameObject->getComponentsInChildren<Rigidbody>();
 
 	for ( std::list<Rigidbody *>::iterator it(rigidbodies.begin()) ; it != rigidbodies.end(); it++ )
 	{
@@ -54,7 +52,7 @@ void GameObject::copyFrom(GameObject const * gameObject)
 		m_components.push_back(rb);
 	}
 
-	std::list<MeshRenderer *> meshRenderers = gameObject->getComponentsOfType<MeshRenderer>();
+	std::list<MeshRenderer *> meshRenderers = gameObject->getComponentsInChildren<MeshRenderer>();
 
 	for ( std::list<MeshRenderer *>::iterator it(meshRenderers.begin()); it != meshRenderers.end() ; it++ )
 	{
@@ -69,6 +67,21 @@ void GameObject::copyFrom(GameObject const * gameObject)
 ArkString GameObject::toString()
 {
 	return m_name + ArkString(" (GameObject)");
+}
+
+
+
+void GameObject::addChild(GameObject * child)
+{
+	for ( std::list<GameObject *>::const_iterator it(m_children.begin()); it != m_children.end() ; it++ )
+	{
+		if ( *it == child )
+		{
+			return;
+		}
+	}
+
+	m_children.push_back(child);
 }
 
 

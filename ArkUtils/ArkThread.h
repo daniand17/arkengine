@@ -3,7 +3,7 @@
 #include <thread>
 #include <mutex>
 #include <list>
-#include <windows.h>
+#include "BuildOptions.h"
 #include "ArkString.h"
 
 #define SCOPE_LOCKER ArkThreading::ScopeLock

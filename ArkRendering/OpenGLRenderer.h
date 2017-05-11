@@ -11,7 +11,7 @@
 #include "Vec3.h"
 #include "Camera.h"
 #include "RendererInfo.h"
-
+#include "ShaderFactory.h"
 
 #ifdef USE_OPENGL
 class OpenGLRenderer
@@ -25,12 +25,21 @@ public:
 	void initializeRenderer();
 	void renderScene(std::vector<RendererInfo> & renderers);
 
+	static OpenGLRenderer * Instance() { return sm_instance; }
+
+	ShaderFactory * getShaderFactory() const { return m_shaderFactory; }
+
+
 private:
 	ArkWindow *	m_arkWindow;
 	GLuint	mVertexArrayId;
 
+	ShaderFactory * m_shaderFactory;
+
 private:
 	void clearScreen();
+
+	static OpenGLRenderer * sm_instance;
 
 };
 #endif
